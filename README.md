@@ -6,6 +6,12 @@ vacuum cleaner robots, like Xiaomi. I thought about purchasing one. However, I w
 
 This project is about how to create a simple vacuum cleaner robot.
 
+## Requirements
+* The robot must be a rounded shape
+* [TBD] The robot must be with the following sizes. H.Max - 100 mm, L.Max - 345 mm, W.Max - 345 mm
+* Must be able to connect to Wifi
+* Must be able to be configurable(e.g set up Wifi credentials) bia Bluetooth
+
 ## Stuff
 * Raspberry Pi Zero W
 * Arduino Mega
