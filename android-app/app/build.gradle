@@ -1,10 +1,15 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
     compileSdkVersion 30
+
+    buildFeatures {
+        dataBinding true
+    }
 
     defaultConfig {
         applicationId "com.yurii.vaccumcleaner"
