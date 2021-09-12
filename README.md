@@ -1,2 +1,37 @@
 # vacuum-cleanervacuum-cleaner
 The main aim of the project is to try to create a good DIY vacuum cleaner robot.
+
+A few days ago, while I was sweeping the apartment, I started thinking of automatization becuase this process takes too much time in spite of my little apartment. There are many
+vacuum cleaner robots, like Xiaomi. I thought about purchasing one. However, I would like to try to build my own :)
+
+This project is about how to create a simple vacuum cleaner robot.
+
+## Stuff
+* Raspberry Pi Zero W
+* Arduino Mega
+* 3D printing
+* Android Mobile Phone
+
+# Preparation
+## Iteration 0:
+### Purpose:
+This iteration is about preparing environments, including:
+- [X] Install Fusion 360
+- [X] Install Arduino IDEA
+- [X] Install Cura
+- [X] Get initial experiance with Fusion 360
+- [X] Get initial experiance with Cura & 3D printing
+- [X] Buy & assemble 3D printer. ([Ender 3 Pro](https://www.creality3dofficial.com/products/creality-ender-3-pro-3d-printer))
+- [X] Print some 3D models to get experience with it
+- [X] Run any test program on Arduino Mega
+
+## Iteration 1:
+### Purpose:
+This iteration is about buying\getting initial stuff, including:
+- [ ] Purchase Raspberry Pi Zero W
+- [ ] Buy a mottor
+- [ ] Install OS on Rasperry Pi
+- [ ] Connect Wifi on Raspberry Pi
+- [ ] Connect to Raspberry Pi via SHH
+- [ ] Set up a remotable Python Interpreter in PyCharm 
+- [ ] Try to connect Raspberty Pi to Android smartphone via Bluetooth
