@@ -34,8 +34,8 @@ This iteration is about preparing environments, including:
 ## Iteration 1:
 ### Purpose:
 This iteration is about buying\getting initial stuff, including:
-- [ ] Purchase Raspberry Pi Zero W
-- [ ] Buy a mottor
+- [X] Purchase Raspberry Pi Zero W
+- [X] Buy a mottor
 - [ ] Install OS on Rasperry Pi
 - [ ] Connect Wifi on Raspberry Pi
 - [ ] Connect to Raspberry Pi via SHH
