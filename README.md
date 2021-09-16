@@ -36,8 +36,8 @@ This iteration is about preparing environments, including:
 This iteration is about buying\getting initial stuff, including:
 - [X] Purchase Raspberry Pi Zero W
 - [X] Buy a mottor
-- [ ] Install OS on Rasperry Pi
-- [ ] Connect Wifi on Raspberry Pi
-- [ ] Connect to Raspberry Pi via SHH
-- [ ] Set up a remotable Python Interpreter in PyCharm 
+- [x] Install OS on Rasperry Pi
+- [x] Connect Wifi on Raspberry Pi
+- [x] Connect to Raspberry Pi via SHH
+- [ ] Set up a remotable Python Interpreter in PyCharm. (This is imposible) Come up with a workaround
 - [ ] Try to connect Raspberty Pi to Android smartphone via Bluetooth
