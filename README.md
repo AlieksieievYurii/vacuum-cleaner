@@ -39,5 +39,5 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Install OS on Rasperry Pi
 - [x] Connect Wifi on Raspberry Pi
 - [x] Connect to Raspberry Pi via SHH
-- [ ] Set up a remotable Python Interpreter in PyCharm. (This is imposible) Come up with a workaround
+- [X] Set up a remotable Python Interpreter in PyCharm. (This is imposible) Come up with a workaround / e.g create python script
 - [ ] Try to connect Raspberty Pi to Android smartphone via Bluetooth
