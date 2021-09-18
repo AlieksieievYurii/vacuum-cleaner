@@ -31,7 +31,16 @@ class SSHClient(object):
     def close(self):
         self._ssh_client.close()
 
-    def execute(self, command: List[str], print_continuously: bool = False):
+    def execute(self, command: List[str], print_continuously: bool = False) -> None:
+        """
+            Executes given command on remote python via ssh client.
+
+        :param command: List of commands
+        :param print_continuously: If True the output will be printed continuously.
+                                    Otherwise, it will be printed when finished
+        :return: None
+        """
+
         _, stdout, stderr = self._ssh_client.exec_command(' '.join(command), get_pty=print_continuously)
 
         for line in iter(stdout.readline, ""):
@@ -74,10 +83,29 @@ class RemotePython(object):
             ssh_client.close()
 
     def create_python_environment(self, path: Path, env_name: str) -> None:
+        """
+            Creates python virtual environment on the remote server.
+
+        :param path: Path to the folder where python venv will be created
+        :param env_name: the name of venv folder
+        :return: None
+        """
         with self.open_ssh_client() as ssh_client:
             ssh_client.execute(['python3', '-m', 'venv', path.joinpath(env_name).as_posix()])
 
     def execute_python_project(self, project: Path, file: Path, remote_destination: Path) -> None:
+        """
+            Copy the given python project and runs the given file. If the project already exists on the remove server,
+            it will be deleted and copied again.
+
+        :param project: Local path to a project folder to copy
+        :param file: Start point file which has to be executed on the remote server inside project. It can be both:
+                    * just filename -> e.g main.py
+                    * relative path from the project -> e.g ./folderA/main.py
+        :param remote_destination: Path to a folder where the project has to be copied
+        :return: None
+        """
+
         remote_project_folder = remote_destination / project.name
         with self.open_ssh_client() as ssh_client:
             ssh_client.execute([f'rm -rf {remote_project_folder.as_posix()}'])
