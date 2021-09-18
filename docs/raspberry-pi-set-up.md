@@ -38,5 +38,6 @@ To solve the issue, go to the .ssh folder, usually it is located in the user’s
 8. It's highly recommended to update your device and change the default password:
     * To update the Pi: `sudo apt-get update && sudo apt-get upgrade -y`
     * By default python 3 should be installed. However, pip is not installed. To install it for pyhton3: `sudo apt-get install python3-pip`
+    * [Optional] To install [virtual environment](https://docs.python.org/3/library/venv.html) using pip: `python3 -m pip install virtualenv`
     * To set up new password: passwd
 
