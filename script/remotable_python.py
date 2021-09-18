@@ -1,6 +1,3 @@
-# TODO creating python env
-# TODO installing requirements
-# TODO copy project $ run python
 from argparse import ArgumentParser, Namespace
 from contextlib import contextmanager
 from pathlib import Path
@@ -80,10 +77,12 @@ class RemotePython(object):
         with self.open_ssh_client() as ssh_client:
             ssh_client.execute(['python3', '-m', 'venv', path.joinpath(env_name).as_posix()])
 
-    def execute_python_project(self, project: Path, file: str, remote_destination: Path) -> None:
+    def execute_python_project(self, project: Path, file: Path, remote_destination: Path) -> None:
+        remote_project_folder = remote_destination / project.name
         with self.open_ssh_client() as ssh_client:
+            ssh_client.execute([f'rm -rf {remote_project_folder.as_posix()}'])
             ssh_client.copy_folder(project, remote_destination)
-            ssh_client.execute(['python3', f'{remote_destination.joinpath(project.name, file).as_posix()}'],
+            ssh_client.execute(['python3', f'{remote_project_folder.joinpath(file).as_posix()}'],
                                print_continuously=True)
 
 
@@ -126,7 +125,7 @@ if __name__ == '__main__':
     python_execute_project = sub_parser.add_parser('execute-project', help='Copy given project and execute')
     python_execute_project.add_argument('--remote-destination', type=Path, required=True)
     python_execute_project.add_argument('--project', type=Path, required=True)
-    python_execute_project.add_argument('--execute-file', type=str, required=True)
+    python_execute_project.add_argument('--execute-file', type=Path, required=True)
 
     try:
         main(argument_parser.parse_args())
