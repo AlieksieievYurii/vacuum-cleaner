@@ -7,24 +7,67 @@
 
         <variable
             name="device"
-            type="com.yurii.vaccumcleaner.BluetoothDeviceItem" />
+            type="com.yurii.vaccumcleaner.devices.BluetoothDeviceItem" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
+        android:id="@+id/body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="9dp"
+        app:cardElevation="2dp">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="@{device.name}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:padding="8dp">
 
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_bluetooth"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/content_description_icon" />
+
+            <TextView
+                android:id="@+id/device_name"
+                style="@style/TextAppearance.AppCompat.Headline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                tools:text="Raspberry Pi"
+                android:text="@{device.name}"
+                app:layout_constraintStart_toEndOf="@+id/icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/mac_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                tools:text="2C:54:91:88:C9:E3"
+                android:text="@{device.macAddress}"
+                app:layout_constraintStart_toEndOf="@+id/icon"
+                app:layout_constraintTop_toBottomOf="@+id/device_name" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_background_orange"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/label_paired"
+                android:textColor="@color/white"
+                isVisible="@{device.isPaired}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </layout>

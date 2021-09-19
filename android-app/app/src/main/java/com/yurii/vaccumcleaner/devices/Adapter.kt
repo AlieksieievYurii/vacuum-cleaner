@@ -1,4 +1,4 @@
-package com.yurii.vaccumcleaner
+package com.yurii.vaccumcleaner.devices
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,10 +6,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.ItemBluetoothDeviceBinding
 
 data class BluetoothDeviceItem(
-    val name: String
+    val name: String,
+    val macAddress: String,
+    val isPaired: Boolean
 )
 
 class Adapter : ListAdapter<BluetoothDeviceItem, Adapter.BluetoothDeviceViewHolder>(COMPARATOR) {

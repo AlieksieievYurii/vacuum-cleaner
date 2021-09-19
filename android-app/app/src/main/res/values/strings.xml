@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Vaccum Cleaner</string>
+    <string name="label_paired">Paired</string>
+    <string name="content_description_icon">Icon</string>
 </resources>
