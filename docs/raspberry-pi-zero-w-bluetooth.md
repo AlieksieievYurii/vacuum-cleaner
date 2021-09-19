@@ -27,6 +27,7 @@ agent NoInputNoOutput
 default-agent 
 ```
 The configuration of Bluetooth is done, however if you want to pair some devices, you do not have to close bluetoothctl tool because you will get a confirmation.
+I have written [Python Script](https://github.com/AlieksieievYurii/vacuum-cleaner/blob/main/script/pi_scripts/pairing.py) that waits for incoming Bluetooth pairing requests.
 
 2. For RFCOMM communication special Python library is used: [pybluez](https://github.com/pybluez/pybluez). There you can find how to install it
 3. For an experiment the following example was used: [example](https://github.com/pybluez/pybluez/blob/master/examples/simple/rfcomm-server.py).
