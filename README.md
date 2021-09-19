@@ -34,10 +34,11 @@ This iteration is about preparing environments, including:
 ## Iteration 1:
 ### Purpose:
 This iteration is about buying\getting initial stuff, including:
-- [ ] Purchase Raspberry Pi Zero W
-- [ ] Buy a mottor
-- [ ] Install OS on Rasperry Pi
-- [ ] Connect Wifi on Raspberry Pi
-- [ ] Connect to Raspberry Pi via SHH
-- [ ] Set up a remotable Python Interpreter in PyCharm 
+- [X] Purchase Raspberry Pi Zero W
+- [X] Buy a mottor
+- [x] Install OS on Rasperry Pi
+- [x] Connect Wifi on Raspberry Pi
+- [x] Connect to Raspberry Pi via SHH
+- [X] Set up a remotable Python Interpreter in PyCharm. (This is imposible) Come up with a workaround / e.g create python script
+- [ ] Create script that automatically enable pairing and discovering process on the Pi
 - [ ] Try to connect Raspberty Pi to Android smartphone via Bluetooth

@@ -1,0 +1,2 @@
+rootProject.name = "Vaccum Cleaner"
+include ':app'
