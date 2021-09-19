@@ -30,3 +30,4 @@ The configuration of Bluetooth is done, however if you want to pair some devices
 
 2. For RFCOMM communication special Python library is used: [pybluez](https://github.com/pybluez/pybluez). There you can find how to install it
 3. For an experiment the following example was used: [example](https://github.com/pybluez/pybluez/blob/master/examples/simple/rfcomm-server.py).
+4. Just run the script. It will wait for connection. It the error `_bluetooth.error: no advertisable device` is thrown, turn on discoverable mode `sudo bluetoothctl discoverable on`
