@@ -5,6 +5,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import android.viewbinding.library.fragment.viewBinding
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.yurii.vaccumcleaner.R
@@ -23,11 +24,11 @@ class BluetoothDevicesFragment : Fragment(R.layout.bluetooth_devices_fragment) {
 
         viewModel.bluetoothDevices.observeOnLifecycle(viewLifecycleOwner) { adapter.submitList(it) }
         viewModel.bluetoothState.observeOnLifecycle(viewLifecycleOwner) {
-            when (it) {
-                BluetoothDevicesViewModel.BluetoothState.BluetoothIsDisabled -> {}
-                BluetoothDevicesViewModel.BluetoothState.BluetoothIsUnsupported -> TODO()
-                BluetoothDevicesViewModel.BluetoothState.None -> {
-                }
+            binding.apply {
+                bluetoothDevices.isVisible = it == BluetoothDevicesViewModel.BluetoothState.None
+                bluetoothUnsupported.isVisible = it == BluetoothDevicesViewModel.BluetoothState.BluetoothIsUnsupported
+                bluetoothTurnedOff.isVisible = it == BluetoothDevicesViewModel.BluetoothState.BluetoothIsDisabled
+                enableBluetooth.isVisible = it == BluetoothDevicesViewModel.BluetoothState.BluetoothIsDisabled
             }
         }
     }
