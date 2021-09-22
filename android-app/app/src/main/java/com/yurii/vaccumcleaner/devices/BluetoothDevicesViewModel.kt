@@ -50,6 +50,10 @@ class BluetoothDevicesViewModel : ViewModel() {
         }
     }
 
+    fun connectBluetoothDevice(bluetoothDeviceItem: BluetoothDeviceItem) {
+
+    }
+
     private fun loadPairedDevices() {
         val devices = bluetoothAdapter!!.bondedDevices.map {
             BluetoothDeviceItem(name = it.name, macAddress = it.address, isPaired = true)

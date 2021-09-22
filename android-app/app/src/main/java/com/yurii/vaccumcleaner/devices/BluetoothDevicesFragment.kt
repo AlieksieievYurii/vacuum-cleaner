@@ -15,7 +15,7 @@ import com.yurii.vaccumcleaner.observeOnLifecycle
 class BluetoothDevicesFragment : Fragment(R.layout.bluetooth_devices_fragment) {
     private val viewModel: BluetoothDevicesViewModel by viewModels { BluetoothDevicesViewModel.Factory() }
     private val binding: BluetoothDevicesFragmentBinding by viewBinding()
-    private val adapter = Adapter()
+    private val adapter = Adapter(viewModel::connectBluetoothDevice)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
