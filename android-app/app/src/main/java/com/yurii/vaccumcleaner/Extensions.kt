@@ -38,12 +38,13 @@ inline fun <reified T> Flow<T>.observeOnLifecycle(
     noinline collector: suspend (T) -> Unit
 ) = FlowObserver(lifecycleOwner, this, collector)
 
-fun <T> MutableStateFlow<List<T>>.add(newList: List<T>) {
+fun <T> MutableStateFlow<List<T>>.addUnique(newList: List<T>) {
     this.value = this.value + newList
 }
 
-fun <T> MutableStateFlow<List<T>>.add(item: T) {
-    this.value = this.value + item
+fun <T> MutableStateFlow<List<T>>.addUnique(item: T) {
+    if (!this.value.contains(item))
+        this.value = this.value + item
 }
 
 fun <T> MutableStateFlow<List<T>>.replace(item: T, newItem: T) {

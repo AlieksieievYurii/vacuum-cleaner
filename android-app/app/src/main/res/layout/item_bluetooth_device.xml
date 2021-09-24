@@ -19,6 +19,7 @@
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         app:cardCornerRadius="9dp"
+        app:cardBackgroundColor="@{device.isPairing ? @color/yellow : @color/white}"
         app:cardElevation="2dp">
 
 
@@ -39,13 +40,16 @@
             <TextView
                 android:id="@+id/device_name"
                 style="@style/TextAppearance.AppCompat.Headline"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                tools:text="Raspberry Pi"
                 android:text="@{device.name}"
+                app:layout_constraintEnd_toStartOf="@+id/progressBar"
                 app:layout_constraintStart_toEndOf="@+id/icon"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Raspberry Pi" />
 
             <TextView
                 android:id="@+id/mac_address"
@@ -58,16 +62,29 @@
                 app:layout_constraintTop_toBottomOf="@+id/device_name" />
 
             <TextView
+                android:id="@+id/textView"
+                isVisible="@{device.isPaired}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_background_orange"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
+                tools:visibility="gone"
                 android:text="@string/label_paired"
                 android:textColor="@color/white"
-                isVisible="@{device.isPaired}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                isVisible="@{device.isPairing}"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:indeterminate="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>

@@ -1,5 +1,6 @@
 package com.yurii.vaccumcleaner.devices
 
+import android.bluetooth.BluetoothDevice
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -8,17 +9,23 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.ItemBluetoothDeviceBinding
+import timber.log.Timber
 
 data class BluetoothDeviceItem(
-    val name: String,
-    val macAddress: String,
-    val isPaired: Boolean
-)
+    val isPaired: Boolean,
+    private val bluetoothDevice: BluetoothDevice,
+    var isPairing: Boolean = false
+) {
+    val name: String = bluetoothDevice.name
+    val macAddress: String = bluetoothDevice.address
+
+    fun startPairingProcess() = bluetoothDevice.createBond()
+}
 
 class Adapter(private val onClick: (BluetoothDeviceItem) -> Unit) : ListAdapter<BluetoothDeviceItem, Adapter.BluetoothDeviceViewHolder>(COMPARATOR) {
     companion object {
         private val COMPARATOR = object : DiffUtil.ItemCallback<BluetoothDeviceItem>() {
-            override fun areItemsTheSame(oldItem: BluetoothDeviceItem, newItem: BluetoothDeviceItem): Boolean = oldItem.name == newItem.name
+            override fun areItemsTheSame(oldItem: BluetoothDeviceItem, newItem: BluetoothDeviceItem): Boolean = oldItem.macAddress == newItem.macAddress
 
             override fun areContentsTheSame(oldItem: BluetoothDeviceItem, newItem: BluetoothDeviceItem): Boolean = oldItem == newItem
         }
