@@ -45,7 +45,6 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
                         _bluetoothState.value = BluetoothState.BluetoothIsDisabled
                 }
                 BluetoothDevice.ACTION_FOUND -> {
-
                     val device: BluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!
                     _bluetoothDevices.addUnique(BluetoothDeviceItem(bluetoothDevice = device, isPaired = false))
                 }
@@ -53,11 +52,8 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
                     val state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
                     val prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR)
 
-                    if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
+                    if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING)
                         onPaired(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!)
-                    } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED) {
-                        //Unpaired
-                    }
                 }
             }
         }

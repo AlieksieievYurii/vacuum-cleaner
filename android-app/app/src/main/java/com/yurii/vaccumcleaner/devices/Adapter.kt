@@ -16,7 +16,7 @@ data class BluetoothDeviceItem(
     private val bluetoothDevice: BluetoothDevice,
     var isPairing: Boolean = false
 ) {
-    val name: String = bluetoothDevice.name
+    val name: String? = bluetoothDevice.name
     val macAddress: String = bluetoothDevice.address
 
     fun startPairingProcess() = bluetoothDevice.createBond()
