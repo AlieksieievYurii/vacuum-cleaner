@@ -19,10 +19,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 
 class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(application) {
     sealed class BluetoothState {
-        object None : BluetoothState()
+        data class Ready(val isDiscovering: Boolean) : BluetoothState()
         object BluetoothIsDisabled : BluetoothState()
         object PermissionsDenied : BluetoothState()
         object BluetoothIsUnsupported : BluetoothState()
@@ -39,8 +40,8 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
             when (intent.action) {
                 BluetoothAdapter.ACTION_STATE_CHANGED -> {
                     if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR) == BluetoothAdapter.STATE_ON) {
-                        _bluetoothState.value = BluetoothState.None
                         loadPairedDevicesAndStartDiscovering()
+                        _bluetoothState.value = BluetoothState.Ready(isDiscovering = true)
                     } else
                         _bluetoothState.value = BluetoothState.BluetoothIsDisabled
                 }
@@ -55,6 +56,14 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
                     if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING)
                         onPaired(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!)
                 }
+                BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
+                    if (_bluetoothState.value is BluetoothState.Ready)
+                        _bluetoothState.value = BluetoothState.Ready(isDiscovering = true)
+                }
+                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    if (_bluetoothState.value is BluetoothState.Ready)
+                        _bluetoothState.value = BluetoothState.Ready(isDiscovering = false)
+                }
             }
         }
     }
@@ -62,7 +71,7 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
     private val _bluetoothDevices: MutableStateFlow<List<BluetoothDeviceItem>> = MutableStateFlow(emptyList())
     val bluetoothDevices: StateFlow<List<BluetoothDeviceItem>> = _bluetoothDevices
 
-    private val _bluetoothState: MutableStateFlow<BluetoothState> = MutableStateFlow(BluetoothState.None)
+    private val _bluetoothState: MutableStateFlow<BluetoothState> = MutableStateFlow(BluetoothState.Ready(isDiscovering = false))
     val bluetoothState: StateFlow<BluetoothState> = _bluetoothState
 
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
@@ -86,14 +95,14 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    private fun loadPairedDevicesAndStartDiscovering() {
+     fun loadPairedDevicesAndStartDiscovering() {
         _bluetoothDevices.value = emptyList()
         loadPairedDevices()
-        bluetoothAdapter!!.startDiscovery()
+         bluetoothAdapter!!.startDiscovery()
     }
 
     fun permissionsAreGranted() {
-        _bluetoothState.value = BluetoothState.None
+        _bluetoothState.value = BluetoothState.Ready(isDiscovering = true)
         startBluetooth()
     }
 
@@ -118,13 +127,22 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
     }
 
     private fun onPaired(device: BluetoothDevice) {
-
+        val l = device.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"))
+        val k = object : Thread() {
+            override fun run() {
+                l.connect()
+                l.outputStream.write("test".toByteArray())
+            }
+        }
+        k.start()
     }
 
     companion object {
         val REQUIRED_BROADCAST_FILTERS = IntentFilter().apply {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
             addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
         }
     }

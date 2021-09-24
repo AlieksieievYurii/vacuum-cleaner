@@ -44,7 +44,12 @@ class BluetoothDevicesFragment : Fragment(R.layout.bluetooth_devices_fragment) {
         }
         viewModel.bluetoothState.observeOnLifecycle(viewLifecycleOwner) {
             binding.apply {
-                bluetoothDevices.isVisible = it == BluetoothDevicesViewModel.BluetoothState.None
+                if (it is BluetoothDevicesViewModel.BluetoothState.Ready) {
+                    bluetoothDevices.isVisible = true
+                    discovering.isVisible = it.isDiscovering
+                    search.isVisible = !it.isDiscovering
+                }
+
                 layoutEnableBluetooth.isVisible = it == BluetoothDevicesViewModel.BluetoothState.BluetoothIsDisabled
                 bluetoothUnsupported.isVisible = it == BluetoothDevicesViewModel.BluetoothState.BluetoothIsUnsupported
                 layoutRequestPermissions.isVisible = it == BluetoothDevicesViewModel.BluetoothState.PermissionsDenied
