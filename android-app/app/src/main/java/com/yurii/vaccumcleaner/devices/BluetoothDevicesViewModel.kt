@@ -5,13 +5,14 @@ import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
 import com.yurii.vaccumcleaner.update
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 class BluetoothDevicesViewModel : ViewModel() {
     sealed class BluetoothState {
@@ -20,12 +21,26 @@ class BluetoothDevicesViewModel : ViewModel() {
         object BluetoothIsUnsupported : BluetoothState()
     }
 
+    sealed class Event {
+        object RequestToTurnOnBluetooth : Event()
+    }
+
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
-    val broadcastReceiverBluetoothDeviceFound = object : BroadcastReceiver() {
+    val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val device: BluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!
-            _bluetoothDevices.update(BluetoothDeviceItem(name = device.name, macAddress = device.address, isPaired = false))
+            when (intent.action) {
+                BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                    if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR) == BluetoothAdapter.STATE_ON)
+                        _bluetoothState.value = BluetoothState.None
+                    else
+                        _bluetoothState.value = BluetoothState.BluetoothIsDisabled
+                }
+                BluetoothDevice.ACTION_FOUND -> {
+                    val device: BluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)!!
+                    _bluetoothDevices.update(BluetoothDeviceItem(name = device.name, macAddress = device.address, isPaired = false))
+                }
+            }
         }
     }
 
@@ -35,8 +50,8 @@ class BluetoothDevicesViewModel : ViewModel() {
     private val _bluetoothState: MutableStateFlow<BluetoothState> = MutableStateFlow(BluetoothState.None)
     val bluetoothState: StateFlow<BluetoothState> = _bluetoothState
 
-//    private val eventChannel = Channel<Event>(Channel.BUFFERED)
-//    val eventFlow: Flow<Event> = eventChannel.receiveAsFlow()
+    private val eventChannel = Channel<Event>(Channel.BUFFERED)
+    val eventFlow: Flow<Event> = eventChannel.receiveAsFlow()
 
     init {
         if (bluetoothAdapter == null)
@@ -52,6 +67,10 @@ class BluetoothDevicesViewModel : ViewModel() {
 
     fun connectBluetoothDevice(bluetoothDeviceItem: BluetoothDeviceItem) {
 
+    }
+
+    fun askToTurnOnBluetooth() = viewModelScope.launch {
+        eventChannel.send(Event.RequestToTurnOnBluetooth)
     }
 
     private fun loadPairedDevices() {

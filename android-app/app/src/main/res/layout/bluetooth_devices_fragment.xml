@@ -50,6 +50,7 @@
             android:id="@+id/enable_bluetooth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.askToTurnOnBluetooth()}"
             android:text="Turn on"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
