@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.lang.IllegalStateException
 
 class FlowObserver<T>(
     private val lifecycleOwner: LifecycleOwner,
@@ -37,10 +38,14 @@ inline fun <reified T> Flow<T>.observeOnLifecycle(
     noinline collector: suspend (T) -> Unit
 ) = FlowObserver(lifecycleOwner, this, collector)
 
-fun <T> MutableStateFlow<List<T>>.update(newList: List<T>) {
+fun <T> MutableStateFlow<List<T>>.add(newList: List<T>) {
     this.value = this.value + newList
 }
 
-fun <T> MutableStateFlow<List<T>>.update(item: T) {
+fun <T> MutableStateFlow<List<T>>.add(item: T) {
     this.value = this.value + item
+}
+
+fun <T> MutableStateFlow<List<T>>.replace(item: T, newItem: T) {
+    this.value = this.value.map { if (it == item) newItem else it }
 }
