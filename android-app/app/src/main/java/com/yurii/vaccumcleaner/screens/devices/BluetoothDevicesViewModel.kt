@@ -19,8 +19,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.util.*
 
 class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(application) {
     sealed class BluetoothState {
@@ -32,6 +30,7 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
 
     sealed class Event {
         object ShowMessageUnableToPair : Event()
+        data class NavigateToSettingsFragment(val bluetoothDevice: BluetoothDevice) : Event()
     }
 
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
@@ -96,10 +95,10 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-     fun loadPairedDevicesAndStartDiscovering() {
+    fun loadPairedDevicesAndStartDiscovering() {
         _bluetoothDevices.value = emptyList()
         loadPairedDevices()
-         bluetoothAdapter!!.startDiscovery()
+        bluetoothAdapter!!.startDiscovery()
     }
 
     fun permissionsAreGranted() {
@@ -108,35 +107,14 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
     }
 
     fun connectBluetoothDevice(bluetoothDeviceItem: BluetoothDeviceItem) {
-        if (bluetoothDeviceItem.isPaired) {
-            val l = bluetoothDeviceItem.bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"))
-            val j = object : Thread() {
-                override fun run() {
-                    while(true) {
-                        val mmBuffer: ByteArray = ByteArray(l.inputStream.available())
-                        l.inputStream.read(mmBuffer)
-                        Timber.i(String(mmBuffer, Charsets.UTF_8))
-                    }
-
-                }
-            }
-            val k = object : Thread() {
-                override fun run() {
-                    l.connect()
-                    j.start()
-                    while (true) {
-                        sleep(1000)
-                        l.outputStream.write("test".toByteArray())
-                    }
-
-                }
-            }
-            k.start()
-
-
-        }else
+        if (bluetoothDeviceItem.isPaired)
+            navigateToSettings(bluetoothDeviceItem)
+        else
             pairBluetoothDevice(bluetoothDeviceItem)
+    }
 
+    private fun navigateToSettings(bluetoothDeviceItem: BluetoothDeviceItem) {
+        sendEvent(Event.NavigateToSettingsFragment(bluetoothDeviceItem.bluetoothDevice))
     }
 
     private fun pairBluetoothDevice(bluetoothDeviceItem: BluetoothDeviceItem) {
