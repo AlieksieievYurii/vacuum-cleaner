@@ -31,4 +31,11 @@ I have written [Python Script](https://github.com/AlieksieievYurii/vacuum-cleane
 
 2. For RFCOMM communication special Python library is used: [pybluez](https://github.com/pybluez/pybluez). There you can find how to install it
 3. For an experiment the following example was used: [example](https://github.com/pybluez/pybluez/blob/master/examples/simple/rfcomm-server.py).
-4. Just run the script. It will wait for connection. It the error `_bluetooth.error: no advertisable device` is thrown, turn on discoverable mode `sudo bluetoothctl discoverable on`
+4. Just run the script. It will wait for connection. It the error `_bluetooth.error: no advertisable device` is thrown, type the following `sudo hciconfig hci0 piscan`
+
+
+### Create Android Application
+To create an Android Application that comunicats with Raspberry Pi Zero via Bluetooth:
+1. Following this guide to create Android App with Bluetooth -> [link](https://developer.android.com/guide/topics/connectivity/bluetooth)
+2. To pair device programically, just call `BluetoothDeviceItem.createBond`. To get status of it, register Broadcast receiver with an action `BluetoothDevice.ACTION_BOND_STATE_CHANGED`.![image](https://user-images.githubusercontent.com/39415360/134776029-af0e1dc7-866d-4bc4-bdc7-96516fdda8d9.png)
+
