@@ -13,13 +13,11 @@ import timber.log.Timber
 
 data class BluetoothDeviceItem(
     val isPaired: Boolean,
-    private val bluetoothDevice: BluetoothDevice,
+    val bluetoothDevice: BluetoothDevice,
     var isPairing: Boolean = false
 ) {
     val name: String? = bluetoothDevice.name
     val macAddress: String = bluetoothDevice.address
-
-    fun startPairingProcess() = bluetoothDevice.createBond()
 }
 
 class Adapter(private val onClick: (BluetoothDeviceItem) -> Unit) : ListAdapter<BluetoothDeviceItem, Adapter.BluetoothDeviceViewHolder>(COMPARATOR) {

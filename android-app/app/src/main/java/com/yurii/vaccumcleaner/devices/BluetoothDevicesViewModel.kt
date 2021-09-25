@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(application) {
@@ -107,7 +108,39 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
     }
 
     fun connectBluetoothDevice(bluetoothDeviceItem: BluetoothDeviceItem) {
-        if (bluetoothDeviceItem.startPairingProcess())
+        if (bluetoothDeviceItem.isPaired) {
+            val l = bluetoothDeviceItem.bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"))
+            val j = object : Thread() {
+                override fun run() {
+                    while(true) {
+                        val mmBuffer: ByteArray = ByteArray(l.inputStream.available())
+                        l.inputStream.read(mmBuffer)
+                        Timber.i(String(mmBuffer, Charsets.UTF_8))
+                    }
+
+                }
+            }
+            val k = object : Thread() {
+                override fun run() {
+                    l.connect()
+                    j.start()
+                    while (true) {
+                        sleep(1000)
+                        l.outputStream.write("test".toByteArray())
+                    }
+
+                }
+            }
+            k.start()
+
+
+        }else
+            pairBluetoothDevice(bluetoothDeviceItem)
+
+    }
+
+    private fun pairBluetoothDevice(bluetoothDeviceItem: BluetoothDeviceItem) {
+        if (bluetoothDeviceItem.bluetoothDevice.createBond())
             _bluetoothDevices.replace(bluetoothDeviceItem, bluetoothDeviceItem.copy(isPairing = true))
         else
             sendEvent(Event.ShowMessageUnableToPair)
@@ -127,14 +160,7 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
     }
 
     private fun onPaired(device: BluetoothDevice) {
-        val l = device.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"))
-        val k = object : Thread() {
-            override fun run() {
-                l.connect()
-                l.outputStream.write("test".toByteArray())
-            }
-        }
-        k.start()
+
     }
 
     companion object {
