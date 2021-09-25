@@ -9,5 +9,14 @@
         android:id="@+id/bluetoothDevicesFragment"
         android:name="com.yurii.vaccumcleaner.screens.devices.BluetoothDevicesFragment"
         android:label="BluetoothDevicesFragment"
-        tools:layout="@layout/bluetooth_devices_fragment"/>
+        tools:layout="@layout/bluetooth_devices_fragment">
+        <action
+            android:id="@+id/action_bluetoothDevicesFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.yurii.vaccumcleaner.screens.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings"/>
 </navigation>
