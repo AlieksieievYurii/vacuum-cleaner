@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/bluetoothDevicesFragment"
-        android:name="com.yurii.vaccumcleaner.devices.BluetoothDevicesFragment"
+        android:name="com.yurii.vaccumcleaner.screens.devices.BluetoothDevicesFragment"
         android:label="BluetoothDevicesFragment"
         tools:layout="@layout/bluetooth_devices_fragment"/>
 </navigation>

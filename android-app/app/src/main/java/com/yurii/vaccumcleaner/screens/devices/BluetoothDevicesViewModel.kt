@@ -1,4 +1,4 @@
-package com.yurii.vaccumcleaner.devices
+package com.yurii.vaccumcleaner.screens.devices
 
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.bluetooth.BluetoothAdapter

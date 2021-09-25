@@ -7,7 +7,7 @@
 
         <variable
             name="device"
-            type="com.yurii.vaccumcleaner.devices.BluetoothDeviceItem" />
+            type="com.yurii.vaccumcleaner.screens.devices.BluetoothDeviceItem" />
     </data>
 
     <androidx.cardview.widget.CardView

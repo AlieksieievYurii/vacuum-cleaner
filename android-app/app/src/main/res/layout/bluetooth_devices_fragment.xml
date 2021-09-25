@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="com.yurii.vaccumcleaner.devices.BluetoothDevicesViewModel" />
+            type="com.yurii.vaccumcleaner.screens.devices.BluetoothDevicesViewModel" />
 
     </data>
 

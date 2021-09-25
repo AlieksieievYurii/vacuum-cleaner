@@ -1,4 +1,4 @@
-package com.yurii.vaccumcleaner.devices
+package com.yurii.vaccumcleaner.screens.devices
 
 import android.bluetooth.BluetoothDevice
 import android.view.LayoutInflater
@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.ItemBluetoothDeviceBinding
-import timber.log.Timber
 
 data class BluetoothDeviceItem(
     val isPaired: Boolean,
