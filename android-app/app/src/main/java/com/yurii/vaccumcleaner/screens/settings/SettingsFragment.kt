@@ -14,8 +14,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.setWifi.setOnClickListener {
-            findNavController().
-        }
+        binding.setWifi.setOnClickListener { findNavController().navigate(R.id.action_settingsFragment_to_wifiSettingsFragment) }
     }
 }
