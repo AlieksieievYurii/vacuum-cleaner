@@ -2,9 +2,10 @@ import abc
 import inspect
 import json
 from dataclasses import dataclass
+from json import JSONDecodeError
 from typing import Type, Dict, Optional
 
-from pi_scripts.service.exceptions import RequiredFieldIsNotFound, NoRequiredVariable, InvalidRequest
+from service.exceptions import RequiredFieldIsNotFound, NoRequiredVariable, InvalidRequest
 
 
 @dataclass
@@ -14,7 +15,12 @@ class Request(object):
     data: Optional[Dict]
 
     @classmethod
-    def parse(cls, request: Dict):
+    def parse(cls, data: str):
+        try:
+            request = json.loads(data)
+        except JSONDecodeError:
+            raise InvalidRequest(request_text=data)
+
         try:
             return cls(request_name=request['request_name'],
                        request_id=request['request_id'],
@@ -62,15 +68,12 @@ class ResponseModel(abc.ABC):
 
     def __init__(self, **kwargs):
         fields = list(filter(lambda f: isinstance(f[1], ResponseModel.Field), inspect.getmembers(self)))
-        self._data = {}
+        self.data = {}
 
         for field_name, field in fields:
             if field.is_required and field_name not in kwargs:
                 raise NoRequiredVariable()
-            self._data[field.name] = field.type(kwargs.get(field_name))
-
-    def to_json(self) -> str:
-        return json.dumps(self._data)
+            self.data[field.name] = field.type(kwargs.get(field_name))
 
 
 class RequestHandler(abc.ABC):

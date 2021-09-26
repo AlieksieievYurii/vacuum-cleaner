@@ -2,7 +2,7 @@ from threading import Thread
 from time import sleep
 from typing import Dict
 
-from pi_scripts.service.communitator.communicator import Communicator
+from service.communitator.communicator import Communicator
 
 
 class DummyCommunicator(Communicator):

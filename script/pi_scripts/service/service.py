@@ -1,10 +1,10 @@
 from dataclasses import asdict
 from typing import Dict, List, Type, Optional
 
-from pi_scripts.service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
+from service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
     InvalidRequest
-from pi_scripts.service.communitator.communicator import Communicator
-from pi_scripts.service.models import RequestHandler, RequestModel, ResponseModel, Request, Response
+from service.communitator.communicator import Communicator
+from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response
 import queue
 
 # Request
@@ -47,7 +47,7 @@ class Service(object):
             request = self._queue.get()
             request()
 
-    def _communicator_callback(self, data: Dict) -> None:
+    def _communicator_callback(self, data: str) -> None:
         """
         This method is called by the Communicator.
 
@@ -95,6 +95,6 @@ class Service(object):
         response = Response(
             request_name=request.request_name,
             request_id=request.request_id,
-            data=response_model.to_json()
+            data=response_model.data
         )
         self._communicator.send(asdict(response))
