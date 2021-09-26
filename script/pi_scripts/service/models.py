@@ -7,6 +7,9 @@ from typing import Type, Dict, Optional
 
 from service.exceptions import RequiredFieldIsNotFound, NoRequiredVariable, InvalidRequest
 
+SUCCESS = 0
+ERROR = 1
+
 
 @dataclass
 class Request(object):
@@ -33,6 +36,8 @@ class Request(object):
 class Response(object):
     request_name: str
     request_id: int
+    status: int
+    error_message: Optional[str]
     data: Optional[Dict]
 
 

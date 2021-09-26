@@ -1,10 +1,10 @@
 from dataclasses import asdict
-from typing import Dict, List, Type, Optional
+from typing import List, Type, Optional
 
 from service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
-    InvalidRequest
+    InvalidRequest, ServiceException
 from service.communitator.communicator import Communicator
-from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response
+from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response, SUCCESS, ERROR
 import queue
 
 # Request
@@ -62,9 +62,14 @@ class Service(object):
             self._handle_request(request)
 
     def _handle_request(self, request: Request):
-        handler_request: Type[RequestHandler] = self._find_request_handler(request.request_name)
-        request_model_data: Optional[RequestModel] = self._get_request_model_data(handler_request, request)
-        self._queue.put(lambda: self._execute_request(handler_request, request, request_model_data))
+        try:
+
+            handler_request: Type[RequestHandler] = self._find_request_handler(request.request_name)
+            request_model_data: Optional[RequestModel] = self._get_request_model_data(handler_request, request)
+        except ServiceException as error:
+            self._send_error(request, str(error))
+        else:
+            self._queue.put(lambda: self._execute_request(handler_request, request, request_model_data))
 
     def _find_request_handler(self, request_name: str) -> Type[RequestHandler]:
         for handler in self._handlers:
@@ -91,10 +96,22 @@ class Service(object):
 
         self._send_response(request, response)
 
+    def _send_error(self, request: Request, error_message: str):
+        response = Response(
+            request_name=request.request_name,
+            request_id=request.request_id,
+            status=ERROR,
+            error_message=error_message,
+            data=None
+        )
+        self._communicator.send(asdict(response))
+
     def _send_response(self, request: Request, response_model: ResponseModel):
         response = Response(
             request_name=request.request_name,
             request_id=request.request_id,
-            data=response_model.data
+            data=response_model.data,
+            status=SUCCESS,
+            error_message=None
         )
         self._communicator.send(asdict(response))
