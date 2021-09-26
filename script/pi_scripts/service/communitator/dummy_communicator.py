@@ -11,12 +11,12 @@ class DummyCommunicator(Communicator):
 
     def listen_output(self, call_back) -> None:
         def inner_callback():
-            data = {}
+            data = {'request_name': 'get_all_info', 'request_id': 123, 'data': {'var_one': 'test'}}
             while True:
                 call_back(data)
-                sleep(1)
+                sleep(10)
 
-        Thread(target=inner_callback).start()
+        Thread(target=inner_callback, daemon=True).start()
 
 
 if __name__ == '__main__':
