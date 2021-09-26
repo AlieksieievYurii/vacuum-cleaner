@@ -7,20 +7,6 @@ from service.communitator.communicator import Communicator
 from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response, SUCCESS, ERROR
 import queue
 
-# Request
-"""
-request: str
-request_id: int
-data: Optional[Dict]
-"""
-
-# Response
-"""
-request: str
-request_id: int
-data: Optional[Dict]
-"""
-
 
 class Service(object):
     def __init__(self, communicator: Communicator, handlers: List[RequestHandler]):
