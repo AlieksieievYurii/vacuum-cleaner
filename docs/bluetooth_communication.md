@@ -13,13 +13,13 @@ This message is a main body which is sent between devices.
 }
 ```
 Fields:
-* `type` [string] - points which type of a packet it is. The value can be `REQUEST` if this is request from client to server, and `RESPONSE` if this is a packet containing response from a server side.
+* `type` [string] - points which type of a packet it is. The value can be `request` if this is request from client to server, and `response` if this is a packet containing response from a server side.
 * `content` [json] - contains the content of request or response.
 
 ## Packet as Request
 ``` 
 {
-  "type": "REQUEST",
+  "type": "request",
   "content": {
     "request_name": ...,
     "request_id": ...,
@@ -35,7 +35,7 @@ Fields:
 ## Packet as Response
 ``` 
 {
-  "type": "RESPONSE",
+  "type": "response",
   "content": {
     "request_id": ...,
     "request_name": ...,
