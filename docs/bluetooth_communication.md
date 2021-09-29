@@ -50,4 +50,4 @@ Fields:
 * `request_name` [string] - a request name that is take from a correspondent request.
 * `status` [string] - contaning a response status. `OK` - when the request is done successfuly, `ERROR` - the request is failed, `BAD_REQUEST` - when request parameters are bad.
 * (optional) `error_message` [string] - if the `status` is `BAD_REQUEST` or `ERROR` this field will be added to the response, containing error message.
-* `response` [json] - json object containing output response from the request
+* (optional) `response` [json] - json object containing output response from the request
