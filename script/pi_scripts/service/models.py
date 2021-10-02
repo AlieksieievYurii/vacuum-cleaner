@@ -2,32 +2,54 @@ import abc
 import inspect
 import json
 from dataclasses import dataclass
+from enum import Enum
 from json import JSONDecodeError
 from typing import Type, Dict, Optional
 
 from service.exceptions import RequiredFieldIsNotFound, NoRequiredVariable, InvalidRequest
 
-SUCCESS = 0
-ERROR = 1
+
+class Status(str, Enum):
+    OK: str = 'OK'
+    ERROR: str = 'ERROR'
+    BAD_REQUEST: str = 'BAD_REQUEST'
+
+
+class PacketType(str, Enum):
+    REQUEST: str = "REQUEST"
+    RESPONSE: str = "RESPONSE"
 
 
 @dataclass
-class Request(object):
-    request_name: str
-    request_id: int
-    data: Optional[Dict]
+class Packet(object):
+    type: PacketType
+    content: Dict
 
     @classmethod
-    def parse(cls, data: str):
+    def parse(cls, data: str) -> 'Packet':
         try:
             request = json.loads(data)
         except JSONDecodeError:
             raise InvalidRequest(request_text=data)
 
         try:
+            return cls(type=PacketType(request['type']), content=request['content'])
+        except KeyError:
+            raise InvalidRequest(request=request)
+
+
+@dataclass
+class Request(object):
+    request_name: str
+    request_id: int
+    parameters: Optional[Dict]
+
+    @classmethod
+    def parse(cls, request: Dict) -> 'Request':
+        try:
             return cls(request_name=request['request_name'],
                        request_id=request['request_id'],
-                       data=request.get('data'))
+                       parameters=request.get('parameters'))
         except KeyError:
             raise InvalidRequest(request=request)
 
@@ -36,9 +58,9 @@ class Request(object):
 class Response(object):
     request_name: str
     request_id: int
-    status: int
+    status: Status
     error_message: Optional[str]
-    data: Optional[Dict]
+    response: Optional[Dict]
 
 
 class RequestModel(object):

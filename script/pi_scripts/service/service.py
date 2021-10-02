@@ -4,7 +4,8 @@ from typing import List, Type, Optional
 from service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
     InvalidRequest, ServiceException
 from service.communitator.communicator import Communicator
-from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response, SUCCESS, ERROR
+from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response, Packet, \
+    PacketType, Status
 import queue
 
 
@@ -41,15 +42,18 @@ class Service(object):
         :return: None
         """
         try:
-            request = Request.parse(data)
+            packet = Packet.parse(data)
         except InvalidRequest as error:
-            print(f'Data from communicator is not considered as Request! Error: {error}')
+            print(f'Cannot parse packet! Error: {error}')
         else:
-            self._handle_request(request)
+            if packet.type == PacketType.REQUEST:
+                request = Request.parse(packet.content)
+                self._handle_packet(request)
+            elif packet.type == PacketType.RESPONSE:
+                pass
 
-    def _handle_request(self, request: Request):
+    def _handle_packet(self, request: Request):
         try:
-
             handler_request: Type[RequestHandler] = self._find_request_handler(request.request_name)
             request_model_data: Optional[RequestModel] = self._get_request_model_data(handler_request, request)
         except ServiceException as error:
@@ -67,9 +71,9 @@ class Service(object):
     @staticmethod
     def _get_request_model_data(handler_request: Type[RequestHandler], request: Request) -> Optional[RequestModel]:
         if handler_request.request_model:
-            if not request.data:
+            if not request.parameters:
                 raise RequestDataIsNotFound()
-            return handler_request.request_model.parse(request.data)
+            return handler_request.request_model.parse(request.parameters)
         else:
             return None
 
@@ -86,18 +90,18 @@ class Service(object):
         response = Response(
             request_name=request.request_name,
             request_id=request.request_id,
-            status=ERROR,
+            status=Status.ERROR,
             error_message=error_message,
-            data=None
+            response=None
         )
-        self._communicator.send(asdict(response))
+        self._communicator.send(asdict(Packet(PacketType.RESPONSE, asdict(response))))
 
     def _send_response(self, request: Request, response_model: ResponseModel):
         response = Response(
             request_name=request.request_name,
             request_id=request.request_id,
-            data=response_model.data,
-            status=SUCCESS,
+            response=response_model.data,
+            status=Status.OK,
             error_message=None
         )
-        self._communicator.send(asdict(response))
+        self._communicator.send(asdict(Packet(PacketType.RESPONSE, asdict(response))))

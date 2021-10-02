@@ -13,12 +13,12 @@ class TestRequestModel(RequestModel):
 
 # noinspection PyCallByClass
 class InfoResponseModel(ResponseModel):
-    user_name = ResponseModel.Field(name='user_Name', type=str, is_required=True)
+    user_name = ResponseModel.Field(name='user_name', type=str, is_required=True)
 
 
 class GetAllInfoRequestHandler(RequestHandler):
     request = "get_all_info"
-    request_model = TestRequestModel
+    request_model = None
     response_model = InfoResponseModel
 
     def handle(self, request, data):

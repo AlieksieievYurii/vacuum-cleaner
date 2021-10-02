@@ -25,6 +25,7 @@ class BluetoothCommunicator(Communicator):
         self.client_sock = client_sock
 
     def send(self, data: Dict) -> None:
+        print(f'Data to be send: {data}')
         self.client_sock.send(json.dumps(data))
 
     def listen_output(self, call_back) -> None:
