@@ -1,6 +1,8 @@
 import inspect
+import time
 from dataclasses import asdict
-from typing import List, Type, Optional, Union
+from threading import Thread
+from typing import List, Type, Optional, Union, Dict, TypeVar
 
 from service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
     InvalidRequest, ServiceException
@@ -8,6 +10,9 @@ from service.communitator.communicator import Communicator
 from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response, Packet, \
     PacketType, Status
 import queue
+import logging
+
+T = TypeVar("T")
 
 
 class Service(object):
@@ -23,7 +28,20 @@ class Service(object):
         :return: None
         """
         self._communicator.listen_output(call_back=self._communicator_callback)
-        self._start_handling_queue()
+
+        def _fun():
+            self._start_handling_queue()
+
+        Thread(target=_fun, daemon=False).start()
+
+    def send(self, request_name: str, response_model: T, parameters: Optional[Dict] = None) -> T:
+        request = Request(
+            request_name=request_name,
+            request_id=round(time.time() * 1000),
+            parameters=parameters
+        )
+        self._send_request(request)
+        # TODO add awaiting for response
 
     def _start_handling_queue(self) -> None:
         """
@@ -42,6 +60,7 @@ class Service(object):
         :param data: Data from the communicator
         :return: None
         """
+        logging.debug(f'Data received: {data}')
         try:
             packet = Packet.parse(data)
         except InvalidRequest as error:
@@ -88,6 +107,10 @@ class Service(object):
             raise NoRequiredResponse(handler_request.response_model, response)
 
         self._send_response(request, response)
+
+    def _send_request(self, request: Request) -> None:
+        packet = Packet(PacketType.REQUEST, asdict(request))
+        self._communicator.send(asdict(packet))
 
     def _send_error(self, request: Request, error_message: str):
         response = Response(

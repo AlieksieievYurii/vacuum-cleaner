@@ -1,14 +1,22 @@
 import threading
+from dataclasses import dataclass
+import logging
 
 from service.communitator.bluetooth_communicator import BluetoothCommunicator
 from service.models import ResponseModel, RequestModel, RequestHandler
 from service.service import Service
 
+logging.basicConfig(level='DEBUG')
 
 # noinspection PyCallByClass
 class TestRequestModel(RequestModel):
     test_variable_one = RequestModel.Field(name="var_one", type=str, is_required=True)
     test_variable_two = RequestModel.Field(name="var_two", type=int)
+
+
+@dataclass
+class ClientNameResponse(object):
+    name: str
 
 
 # noinspection PyCallByClass
@@ -35,4 +43,6 @@ if __name__ == '__main__':
     service = Service(communicator=dummy_communicator, handlers=[
         GetAllInfoRequestHandler("Test")
     ])
+
     service.start()
+    a = service.send("get_client_name", ClientNameResponse, parameters={'my_name': 'pi'})

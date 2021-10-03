@@ -21,9 +21,9 @@ class BluetoothCommunicator(Communicator):
         bluetooth.advertise_service(self.server_sock, "SampleServer", service_id=self.UUID,
                                     service_classes=[self.UUID, bluetooth.SERIAL_PORT_CLASS],
                                     profiles=[bluetooth.SERIAL_PORT_PROFILE])
-        logging.info("Waiting for connection on RFCOMM channel", self.server_sock.getsockname()[1])
+        logging.info(f"Waiting for connection on RFCOMM channel: {self.server_sock.getsockname()[1]}",)
         client_sock, client_info = self.server_sock.accept()
-        logging.info("Accepted connection from", client_info)
+        logging.info(f"Accepted connection from: {client_info}", )
         self.client_sock = client_sock
 
     def send(self, data: Dict) -> None:
