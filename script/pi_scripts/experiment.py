@@ -21,6 +21,9 @@ class GetAllInfoRequestHandler(RequestHandler):
     request_model = None
     response_model = InfoResponseModel
 
+    def __init__(self, test_input):
+        self.test_input = test_input
+
     def handle(self, request, data):
         print(f'Is called from {threading.currentThread().getName()}')
         return InfoResponseModel(user_name='yurii')
@@ -30,6 +33,6 @@ if __name__ == '__main__':
     print('Start...')
     dummy_communicator = BluetoothCommunicator()
     service = Service(communicator=dummy_communicator, handlers=[
-        GetAllInfoRequestHandler
+        GetAllInfoRequestHandler("Test")
     ])
     service.start()

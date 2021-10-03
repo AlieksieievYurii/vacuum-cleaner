@@ -1,5 +1,6 @@
+import inspect
 from dataclasses import asdict
-from typing import List, Type, Optional
+from typing import List, Type, Optional, Union
 
 from service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
     InvalidRequest, ServiceException
@@ -10,7 +11,7 @@ import queue
 
 
 class Service(object):
-    def __init__(self, communicator: Communicator, handlers: List[RequestHandler]):
+    def __init__(self, communicator: Communicator, handlers: List[Union[RequestHandler, Type[RequestHandler]]]):
         self._communicator = communicator
         self._handlers = handlers
         self._queue = queue.Queue()
@@ -54,7 +55,8 @@ class Service(object):
 
     def _handle_packet(self, request: Request):
         try:
-            handler_request: Type[RequestHandler] = self._find_request_handler(request.request_name)
+            handler_request: Union[RequestHandler, Type[RequestHandler]] = self._find_request_handler(
+                request.request_name)
             request_model_data: Optional[RequestModel] = self._get_request_model_data(handler_request, request)
         except ServiceException as error:
             self._send_error(request, str(error))
@@ -77,9 +79,10 @@ class Service(object):
         else:
             return None
 
-    def _execute_request(self, handler_request: Type[RequestHandler], request: Request,
+    def _execute_request(self, handler_request: Union[RequestHandler, Type[RequestHandler]], request: Request,
                          request_model: Optional[RequestModel]):
-        response: Optional[ResponseModel] = handler_request().handle(request, request_model)
+        handler_request_instance = handler_request() if inspect.isclass(handler_request) else handler_request
+        response: Optional[ResponseModel] = handler_request_instance.handle(request, request_model)
 
         if handler_request.response_model and (not response or not isinstance(response, ResponseModel)):
             raise NoRequiredResponse(handler_request.response_model, response)
