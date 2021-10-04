@@ -2,11 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="17b021c8-ae03-4e26-bcd9-0bf2e733209c" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/../android-app/.idea/sonarlint/issuestore/d/e/de1a315e920b329f9be319a021b87ac545295dfc" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../android-app/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../android-app/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/app/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../android-app/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/remotable_python.py" beforeDir="false" afterPath="$PROJECT_DIR$/remotable_python.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/screens/wifi/WifiSettingsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/screens/wifi/WifiSettingsFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/screens/wifi/WifiSettingsViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/screens/wifi/WifiSettingsViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/service/Communicator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/service/Communicator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/service/Service.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../android-app/app/src/main/java/com/yurii/vaccumcleaner/service/Service.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/script.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/script.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pi_scripts/service/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/pi_scripts/service/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pi_scripts/service/service.py" beforeDir="false" afterPath="$PROJECT_DIR$/pi_scripts/service/service.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,6 +39,10 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\vacuum-cleaner\script\pi_scripts\service" />
+      <recent name="D:\vacuum-cleaner\script\pi_scripts\service\communitator" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\vacuum-cleaner\script\experiment\c" />
       <recent name="D:\vacuum-cleaner\script\experiment" />
@@ -51,6 +61,27 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.execute-project">
+    <configuration name="bluetooth_connector" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="script" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/pi_scripts" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pi_scripts/bluetooth_connector.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="create-venv" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="script" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -85,7 +116,49 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/remotable_python.py" />
-      <option name="PARAMETERS" value="--server=raspberrypi --user=pi --password=1234admin execute-project --remote-destination=/home/pi --project=D:\vacuum-cleaner\script\experiment --execute-file=main.py" />
+      <option name="PARAMETERS" value="--server=raspberrypi --user=pi --password=1234admin execute-project --remote-destination=/home/pi --project=D:\vacuum-cleaner\script\pi_scripts --execute-file=experiment.py" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="experiment" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="script" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/pi_scripts" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pi_scripts/experiment.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pairing" type="PythonConfigurationType" factoryName="Python">
+      <module name="script" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="D:\foody\foody-backend\env\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/remotable_python.py" />
+      <option name="PARAMETERS" value="--server=raspberrypi --user=pi --password=1234admin execute-project --remote-destination=/home/pi --project=D:\vacuum-cleaner\script\pi_scripts --execute-file=pairing.py" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -95,10 +168,15 @@
     </configuration>
     <list>
       <item itemvalue="Python.execute-project" />
+      <item itemvalue="Python.pairing" />
       <item itemvalue="Python.create-venv" />
+      <item itemvalue="Python.bluetooth_connector" />
+      <item itemvalue="Python.experiment" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.experiment" />
+        <item itemvalue="Python.bluetooth_connector" />
         <item itemvalue="Python.create-venv" />
       </list>
     </recent_temporary>
@@ -121,7 +199,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
