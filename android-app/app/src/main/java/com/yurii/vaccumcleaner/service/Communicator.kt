@@ -3,6 +3,7 @@ package com.yurii.vaccumcleaner.service
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
@@ -16,7 +17,7 @@ class BluetoothCommunicator(private val bluetoothDevice: BluetoothDevice) {
         bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"))
     }
 
-    private val _output = MutableSharedFlow<String>(replay = 5)
+    private val _output = MutableSharedFlow<String>(extraBufferCapacity=5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val output: SharedFlow<String> = _output
 
     @Suppress("BlockingMethodInNonBlockingContext")

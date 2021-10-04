@@ -33,6 +33,11 @@ class Service(private val coroutineScope: CoroutineScope, bluetoothDevice: Bluet
         coroutineScope.launch {
             communicator.startListening()
         }
+        coroutineScope.launch {
+            communicator.output.collect {
+                Timber.d("Data received: $it")
+            }
+        }
     }
 
     suspend fun <R : Any, P : Any> request(
@@ -71,7 +76,6 @@ class Service(private val coroutineScope: CoroutineScope, bluetoothDevice: Bluet
     }
 
     private fun <R : Any> getResponseFromRequest(request: Request<*>, jsonResponse: String, responseClass: Class<R>): R? {
-        Timber.i("DATA: $jsonResponse")
         val packet = packetAdapter.fromJson(jsonResponse)!!
         if (packet.type == PacketType.REQUEST)
             return null
