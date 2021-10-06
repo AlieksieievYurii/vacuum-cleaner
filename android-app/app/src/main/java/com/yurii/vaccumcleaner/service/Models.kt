@@ -2,6 +2,7 @@ package com.yurii.vaccumcleaner.service
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import kotlin.reflect.KClass
 
 @JsonClass(generateAdapter = false)
 enum class ResponseStatus {
@@ -45,3 +46,7 @@ data class Response<R : Any>(
     @Json(name = "error_message") val errorMessage: String?,
     val response: R?
 )
+
+abstract class RequestHandler<R : Any, P : Any>(private val requestName: String, responseModelClass: KClass<R>, parameters: KClass<P>?) {
+    abstract fun handle(request: Request<P>): R
+}

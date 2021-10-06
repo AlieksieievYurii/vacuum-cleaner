@@ -15,7 +15,7 @@ fun <R : Any> Moshi.createResponseModelAdapter(responseClass: Class<R>): JsonAda
 fun <R : Any> Moshi.createParametrizedRequestAdapter(parameters: Class<R>): JsonAdapter<Request<R>> =
     this.adapter(Types.newParameterizedType(Request::class.java, parameters))
 
-class Service(private val coroutineScope: CoroutineScope, bluetoothDevice: BluetoothDevice) {
+class Service(private val coroutineScope: CoroutineScope, bluetoothDevice: BluetoothDevice, private val requestHandlers: List<RequestHandler<*, *>>) {
     private val communicator = BluetoothCommunicator(bluetoothDevice)
 
     private val moshi = Moshi.Builder().build()
@@ -39,6 +39,12 @@ class Service(private val coroutineScope: CoroutineScope, bluetoothDevice: Bluet
             }
         }
     }
+
+//    private fun parseAsRequest(json: String): Request<*> {
+//        val packet = packetAdapter.fromJson(jsonResponse)!!
+////        if (packet.type == PacketType.REQUEST)
+////            return null
+//    }
 
     suspend fun <R : Any, P : Any> request(
         requestName: String,
