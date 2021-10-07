@@ -8,6 +8,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentDebugBinding
+import com.yurii.vaccumcleaner.observeOnLifecycle
 
 class DebugFragment : Fragment(R.layout.fragment_debug) {
     private val binding: FragmentDebugBinding by viewBinding()
@@ -15,6 +16,34 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
     private val viewModel: DebugViewModel by viewModels { DebugViewModel.Factory(args.bluetoothDevice) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
+        binding.viewModel = viewModel
+
+        viewModel.bluetoothStatus.observeOnLifecycle(viewLifecycleOwner) {
+            binding.apply {
+                when (it) {
+                    BluetoothStatus.DISCONNECTED -> {
+                        bluetoothStatusIndicator.setBackgroundResource(R.drawable.circle_red)
+                        bluetoothStatus.text = getString(R.string.label_disconnected)
+                    }
+                    BluetoothStatus.CONNECTING -> {
+                        bluetoothStatusIndicator.setBackgroundResource(R.drawable.circle_yellow)
+                        bluetoothStatus.text = getString(R.string.label_connecting)
+                    }
+                    BluetoothStatus.CONNECTED -> {
+                        bluetoothStatusIndicator.setBackgroundResource(R.drawable.circle_green)
+                        bluetoothStatus.text = getString(R.string.label_connected)
+                    }
+                }
+            }
+        }
+
+        val adapter = Adapter()
+        val list = listOf(Packet.Request("test", "1", "d", true),
+            Packet.Response("dupa", "2", "OK", null, response = "", isSent = true),
+            Packet.Response("dupa", "2", "OK", null, response = "", isSent = true),
+        Packet.Broken("LOL"))
+        binding.packets.adapter = adapter
+        adapter.submitList(list)
     }
 }

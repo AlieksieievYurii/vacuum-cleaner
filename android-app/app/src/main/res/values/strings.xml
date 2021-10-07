@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vaccum Cleaner</string>
+    <string name="app_name">Vacuum Cleaner</string>
     <string name="label_paired">Paired</string>
     <string name="content_description_icon">Icon</string>
     <string name="label_name">Name:</string>
@@ -11,4 +11,9 @@
     <string name="label_error_message">Error Message:</string>
     <string name="label_response_2">Response:</string>
     <string name="label_broken">BROKEN</string>
+    <string name="label_reconnect">reconnect</string>
+    <string name="label_disconnected">disconnected</string>
+    <string name="label_connecting">connecting</string>
+    <string name="label_connected">connected</string>
+    <string name="label_packets">Packets</string>
 </resources>
