@@ -64,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:onClick="@{() -> viewModel.connectBluetooth()}"
             android:text="@string/label_reconnect"
             app:layout_constraintStart_toEndOf="@+id/bluetooth_status"
             app:layout_constraintTop_toTopOf="@+id/top_horizontal" />

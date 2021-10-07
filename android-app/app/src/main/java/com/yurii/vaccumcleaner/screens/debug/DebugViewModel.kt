@@ -26,6 +26,10 @@ class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
     }
 
     init {
+        connectBluetooth()
+    }
+
+    fun connectBluetooth() {
         viewModelScope.launch(coroutineException) {
             _bluetoothStatus.value = BluetoothStatus.CONNECTING
             service.start()
