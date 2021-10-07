@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/top_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <TextView
+            android:id="@+id/textView4"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_request"
+            android:textColor="@color/yellow"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
+
+        <TextView
+            android:id="@+id/label_endpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_name"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/request_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="@+id/label_endpoint"
+            app:layout_constraintStart_toEndOf="@+id/label_endpoint"
+            app:layout_constraintTop_toTopOf="@+id/label_endpoint"
+            tools:text="get_all_info" />
+
+        <TextView
+            android:id="@+id/request_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/right_vertical"
+            app:layout_constraintTop_toTopOf="@+id/top_horizontal"
+            tools:text="124235435" />
+
+        <TextView
+            android:id="@+id/packet_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/label_sent"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/request_id"
+            app:layout_constraintTop_toBottomOf="@+id/request_id" />
+
+        <TextView
+            android:id="@+id/parameters_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_parameters"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_horizontal"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/label_endpoint" />
+
+        <TextView
+            android:id="@+id/parameters"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/parameters_label"
+            app:layout_constraintEnd_toStartOf="@+id/packet_mode"
+            app:layout_constraintStart_toEndOf="@+id/parameters_label"
+            app:layout_constraintTop_toTopOf="@+id/parameters_label"
+            tools:text="fff" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottom_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="8dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
