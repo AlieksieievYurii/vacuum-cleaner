@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="8dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/top_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="8dp" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_broken"
+            android:textColor="@android:color/holo_red_dark"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_horizontal"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tools:text="ssss" />
+
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottom_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="8dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

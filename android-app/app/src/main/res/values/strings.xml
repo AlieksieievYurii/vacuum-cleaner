@@ -10,4 +10,5 @@
     <string name="label_status">Status:</string>
     <string name="label_error_message">Error Message:</string>
     <string name="label_response_2">Response:</string>
+    <string name="label_broken">BROKEN</string>
 </resources>
