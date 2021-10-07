@@ -3,58 +3,78 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+        <variable
+            name="broken"
+            type="com.yurii.vaccumcleaner.screens.debug.Packet.Broken" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="9dp"
+        app:cardElevation="2dp">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/left_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="8dp" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/right_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_end="8dp" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/left_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="8dp" />
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/top_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_begin="8dp" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/right_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="8dp" />
 
-        <TextView
-            android:id="@+id/title"
-            style="@style/TextAppearance.AppCompat.Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_broken"
-            android:textColor="@android:color/holo_red_dark"
-            android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="8dp" />
 
-        <TextView
-            android:id="@+id/content"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_horizontal"
-            app:layout_constraintStart_toStartOf="@+id/left_vertical"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            tools:text="ssss" />
+            <TextView
+                android:id="@+id/title"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_broken"
+                android:textColor="@android:color/holo_red_dark"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
+
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{broken.content}"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_horizontal"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/title"
+                tools:text="ssss" />
 
 
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/bottom_horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_end="8dp" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/bottom_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="8dp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 </layout>
