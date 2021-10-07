@@ -2,4 +2,12 @@
     <string name="app_name">Vaccum Cleaner</string>
     <string name="label_paired">Paired</string>
     <string name="content_description_icon">Icon</string>
+    <string name="label_name">Name:</string>
+    <string name="label_sent">sent</string>
+    <string name="label_parameters">Parameters:</string>
+    <string name="label_request">REQUEST</string>
+    <string name="label_response">RESPONSE</string>
+    <string name="label_status">Status:</string>
+    <string name="label_error_message">Error Message:</string>
+    <string name="label_response_2">Response:</string>
 </resources>
