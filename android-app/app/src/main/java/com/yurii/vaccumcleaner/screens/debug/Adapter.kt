@@ -14,10 +14,10 @@ import com.yurii.vaccumcleaner.databinding.ItemDebugPacketResponseBinding
 import java.lang.IllegalStateException
 
 sealed class Packet {
-    data class Request(val requestName: String, val requestId: String, val parameters: String, val isSent: Boolean) : Packet()
+    data class Request(val requestName: String, val requestId: Long, val parameters: String, val isSent: Boolean) : Packet()
     data class Response(
         val requestName: String,
-        val requestId: String,
+        val requestId: Long,
         val status: String,
         val errorMessage: String?,
         val response: String,

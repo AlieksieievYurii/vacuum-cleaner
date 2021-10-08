@@ -81,7 +81,7 @@
                 android:id="@+id/request_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{response.requestId}"
+                android:text="@{Long.toString(response.requestId)}"
                 app:layout_constraintEnd_toStartOf="@+id/right_vertical"
                 app:layout_constraintTop_toTopOf="@+id/top_horizontal"
                 tools:text="124235435" />
