@@ -58,15 +58,48 @@
                 app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
 
             <TextView
-                android:id="@+id/content"
+                android:id="@+id/label_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@string/label_content"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/title" />
+
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:lines="1"
                 android:text="@{broken.content}"
                 app:layout_constraintBottom_toTopOf="@+id/bottom_horizontal"
-                app:layout_constraintStart_toStartOf="@+id/left_vertical"
-                app:layout_constraintTop_toBottomOf="@+id/title"
+                app:layout_constraintEnd_toStartOf="@+id/right_vertical"
+                app:layout_constraintStart_toEndOf="@+id/label_content"
+                app:layout_constraintTop_toTopOf="@+id/label_content"
+                app:layout_constraintVertical_bias="0.0"
                 tools:text="ssss" />
 
+            <TextView
+                android:id="@+id/label_error_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_error_message"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_horizontal"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/label_content" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@{broken.error.message}"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_horizontal"
+                app:layout_constraintEnd_toStartOf="@+id/right_vertical"
+                app:layout_constraintStart_toEndOf="@+id/label_error_message"
+                tools:text="Some error" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/bottom_horizontal"
