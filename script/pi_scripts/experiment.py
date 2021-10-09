@@ -1,27 +1,28 @@
 import threading
-from dataclasses import dataclass
 import logging
 
 from service.communitator.bluetooth_communicator import BluetoothCommunicator
-from service.models import ResponseModel, RequestModel, RequestHandler
+from service.models import ResponseModel, RequestModel, RequestHandler, Field
 from service.service import Service
 
 logging.basicConfig(level='DEBUG')
 
+
 # noinspection PyCallByClass
 class TestRequestModel(RequestModel):
-    test_variable_one = RequestModel.Field(name="var_one", type=str, is_required=True)
-    test_variable_two = RequestModel.Field(name="var_two", type=int)
+    test_variable_one = Field(name="var_one", type=str, is_required=True)
+    test_variable_two = Field(name="var_two", type=int)
 
 
-@dataclass
-class ClientNameResponse(object):
-    name: str
+class ClientNameResponse(ResponseModel):
+    server_name = Field(name="server_name", type=str, is_required=True)
+    client_name = Field(name="client_name", type=str, is_required=True)
+    test_name = Field(name="test_name", type=str, is_required=False)
 
 
 # noinspection PyCallByClass
 class InfoResponseModel(ResponseModel):
-    user_name = ResponseModel.Field(name='user_name', type=str, is_required=True)
+    user_name = Field(name='user_name', type=str, is_required=True)
 
 
 class GetAllInfoRequestHandler(RequestHandler):
@@ -45,4 +46,7 @@ if __name__ == '__main__':
     ])
 
     service.start()
-    a = service.send("get_client_name", ClientNameResponse, parameters={'my_name': 'pi'})
+    # a = service.send("validation_request", ClientNameResponse, parameters={'server_name': 'Raspberry Pi Zero'})
+    # print(a.server_name)
+    # print(a.client_name)
+    service._communicator.send({'dupa': '123'})

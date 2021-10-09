@@ -2,17 +2,15 @@ import inspect
 import time
 from dataclasses import asdict
 from threading import Thread
-from typing import List, Type, Optional, Union, Dict, TypeVar
+from typing import List, Type, Optional, Union, Dict
 
 from service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
     InvalidRequest, ServiceException
 from service.communitator.communicator import Communicator
 from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response, Packet, \
-    PacketType, Status
+    PacketType, Status, Field
 import queue
 import logging
-
-T = TypeVar("T")
 
 
 class Service(object):
@@ -20,6 +18,7 @@ class Service(object):
         self._communicator = communicator
         self._handlers = handlers
         self._queue = queue.Queue()
+        self._response_row: List[Response] = []
 
     def start(self) -> None:
         """
@@ -34,14 +33,21 @@ class Service(object):
 
         Thread(target=_fun, daemon=False).start()
 
-    def send(self, request_name: str, response_model: T, parameters: Optional[Dict] = None) -> T:
+    def send(self, request_name: str, response_model: Type[ResponseModel], parameters: Optional[Dict] = None):
         request = Request(
             request_name=request_name,
             request_id=round(time.time() * 1000),
             parameters=parameters
         )
         self._send_request(request)
-        # TODO add awaiting for response
+        return self._await_for_response(request, response_model)
+
+    def _await_for_response(self, request: Request, response_model: Type[ResponseModel], timeout: int = 5000):
+        while True:
+            for response in self._response_row:
+                if response.request_id == request.request_id and response.request_name == request.request_name:
+                    # TODO handle bad request and error
+                    return Field.parse_from_dict(response_model, response.response)
 
     def _start_handling_queue(self) -> None:
         """
@@ -70,7 +76,14 @@ class Service(object):
                 request = Request.parse(packet.content)
                 self._handle_packet(request)
             elif packet.type == PacketType.RESPONSE:
-                pass
+                self._add_response_to_row(packet.content)
+
+    def _add_response_to_row(self, request: Dict):
+        request = Response.parse(request)
+        if len(self._response_row) >= 5:
+            self._response_row.pop(0)
+
+        self._response_row.append(request)
 
     def _handle_packet(self, request: Request):
         try:
@@ -94,7 +107,7 @@ class Service(object):
         if handler_request.request_model:
             if not request.parameters:
                 raise RequestDataIsNotFound()
-            return handler_request.request_model.parse(request.parameters)
+            return Field.parse_from_dict(handler_request.request_model, request.parameters)
         else:
             return None
 
@@ -122,11 +135,11 @@ class Service(object):
         )
         self._communicator.send(asdict(Packet(PacketType.RESPONSE, asdict(response))))
 
-    def _send_response(self, request: Request, response_model: ResponseModel):
+    def _send_response(self, request: Request, response: ResponseModel):
         response = Response(
             request_name=request.request_name,
             request_id=request.request_id,
-            response=response_model.data,
+            response=Field.to_data(response),
             status=Status.OK,
             error_message=None
         )

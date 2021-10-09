@@ -43,10 +43,9 @@ class Field(object):
 
     @classmethod
     def to_data(cls, instance) -> Dict:
-        fields = list(filter(lambda f: isinstance(f[1], Field), inspect.getmembers(instance)))
+        fields = {k: v for k, v in instance.__class__.__dict__.items() if isinstance(v, Field)}
         data = {}
-
-        for field_name, field in fields:
+        for field_name, field in fields.items():
             if field.is_required and field_name not in instance.__dict__:
                 raise NoRequiredVariable(f'"{field_name}" is required!')
             data[field.name] = field.type(instance.__dict__.get(field_name))
@@ -123,7 +122,7 @@ class RequestModel(abc.ABC):
 
 class ResponseModel(abc.ABC):
     def __init__(self, **kwargs):
-        for k, v in kwargs:
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
 
