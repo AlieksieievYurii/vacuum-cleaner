@@ -4,6 +4,7 @@
     <string name="content_description_icon">Icon</string>
     <string name="label_name">Name:</string>
     <string name="label_sent">sent</string>
+    <string name="label_received">received</string>
     <string name="label_parameters">Parameters:</string>
     <string name="label_request">REQUEST</string>
     <string name="label_response">RESPONSE</string>

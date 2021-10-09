@@ -90,10 +90,9 @@
                 android:id="@+id/packet_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/label_sent"
-                android:textStyle="italic"
-                app:layout_constraintStart_toStartOf="@+id/request_id"
+                android:text="@{request.sent ? @string/label_sent : @string/label_received}"
+                android:textStyle="italic|bold"
+                app:layout_constraintEnd_toStartOf="@+id/right_vertical"
                 app:layout_constraintTop_toBottomOf="@+id/request_id" />
 
             <TextView
@@ -111,11 +110,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
+                android:lines="1"
+                android:ellipsize="end"
+                android:text="@{request.parameters}"
                 app:layout_constraintBottom_toBottomOf="@+id/parameters_label"
                 app:layout_constraintEnd_toStartOf="@+id/packet_mode"
                 app:layout_constraintStart_toEndOf="@+id/parameters_label"
                 app:layout_constraintTop_toTopOf="@+id/parameters_label"
-                tools:text="fff" />
+                tools:text="@tools:sample/lorem/random" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/bottom_horizontal"
