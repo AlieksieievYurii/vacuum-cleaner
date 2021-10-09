@@ -90,6 +90,7 @@
                 android:id="@+id/packet_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:text="@{request.sent ? @string/label_sent : @string/label_received}"
                 android:textStyle="italic|bold"
                 app:layout_constraintEnd_toStartOf="@+id/right_vertical"
