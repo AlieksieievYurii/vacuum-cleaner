@@ -121,7 +121,12 @@ class Service(
     }
 
     private fun <R : Any> getResponseFromRequest(request: Request<*>, jsonResponse: String, responseClass: Class<R>): R? {
-        val packet = packetAdapter.fromJson(jsonResponse)!!
+        val packet = try {
+            packetAdapter.fromJson(jsonResponse)!!
+        }catch (e: Exception) {
+            return null
+        }
+
         if (packet.type == PacketType.REQUEST)
             return null
 
