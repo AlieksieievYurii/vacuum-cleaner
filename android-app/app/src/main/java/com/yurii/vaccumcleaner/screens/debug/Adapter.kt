@@ -11,6 +11,7 @@ import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.ItemDebugPacketBrokenBinding
 import com.yurii.vaccumcleaner.databinding.ItemDebugPacketRequestBinding
 import com.yurii.vaccumcleaner.databinding.ItemDebugPacketResponseBinding
+import java.lang.Exception
 import java.lang.IllegalStateException
 
 sealed class Packet {
@@ -24,10 +25,10 @@ sealed class Packet {
         val isSent: Boolean
     ) : Packet()
 
-    data class Broken(val content: String) : Packet()
+    data class Broken(val content: String, val error: Exception) : Packet()
 }
 
-class Adapter : ListAdapter<Packet, Adapter.PacketViewHolder<out Packet>>(COMPARATOR) {
+class Adapter(private val click: (packet: Packet) -> Unit) : ListAdapter<Packet, Adapter.PacketViewHolder<out Packet>>(COMPARATOR) {
 
     companion object {
         private const val ITEM_REQUEST = 1
@@ -64,29 +65,32 @@ class Adapter : ListAdapter<Packet, Adapter.PacketViewHolder<out Packet>>(COMPAR
     }
 
     override fun onBindViewHolder(holder: PacketViewHolder<out Packet>, position: Int) = when (holder) {
-        is PacketViewHolder.BrokenViewHolder -> holder.bind(getItem(position) as Packet.Broken)
-        is PacketViewHolder.RequestViewHolder -> holder.bind(getItem(position) as Packet.Request)
-        is PacketViewHolder.ResponseViewHolder -> holder.bind(getItem(position) as Packet.Response)
+        is PacketViewHolder.BrokenViewHolder -> holder.bind(getItem(position) as Packet.Broken, click)
+        is PacketViewHolder.RequestViewHolder -> holder.bind(getItem(position) as Packet.Request, click)
+        is PacketViewHolder.ResponseViewHolder -> holder.bind(getItem(position) as Packet.Response, click)
     }
 
     sealed class PacketViewHolder<T : Packet>(binding: ViewDataBinding) : RecyclerView.ViewHolder(binding.root) {
-        abstract fun bind(data: T)
+        abstract fun bind(data: T, onClick: (packet: Packet) -> Unit)
 
         class RequestViewHolder(private val binding: ItemDebugPacketRequestBinding) : PacketViewHolder<Packet.Request>(binding) {
-            override fun bind(data: Packet.Request) = binding.run {
+            override fun bind(data: Packet.Request, onClick: (packet: Packet) -> Unit) = binding.run {
                 request = data
+                body.setOnClickListener { onClick.invoke(data) }
             }
         }
 
         class ResponseViewHolder(private val binding: ItemDebugPacketResponseBinding) : PacketViewHolder<Packet.Response>(binding) {
-            override fun bind(data: Packet.Response) = binding.run {
+            override fun bind(data: Packet.Response, onClick: (packet: Packet) -> Unit) = binding.run {
                 response = data
+                body.setOnClickListener { onClick.invoke(data) }
             }
         }
 
         class BrokenViewHolder(private val binding: ItemDebugPacketBrokenBinding) : PacketViewHolder<Packet.Broken>(binding) {
-            override fun bind(data: Packet.Broken) = binding.run {
+            override fun bind(data: Packet.Broken, onClick: (packet: Packet) -> Unit) = binding.run {
                 broken = data
+                body.setOnClickListener { onClick.invoke(data) }
             }
         }
     }

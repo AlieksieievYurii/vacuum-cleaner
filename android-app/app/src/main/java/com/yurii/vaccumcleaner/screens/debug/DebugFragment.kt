@@ -14,9 +14,15 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
     private val binding: FragmentDebugBinding by viewBinding()
     private val args: DebugFragmentArgs by navArgs()
     private val viewModel: DebugViewModel by viewModels { DebugViewModel.Factory(args.bluetoothDevice) }
+    private val adapter: Adapter by lazy {
+        Adapter { packet ->
+
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.packets.adapter = adapter
         binding.viewModel = viewModel
 
         viewModel.bluetoothStatus.observeOnLifecycle(viewLifecycleOwner) {
@@ -38,12 +44,6 @@ class DebugFragment : Fragment(R.layout.fragment_debug) {
             }
         }
 
-        val adapter = Adapter()
-        val list = listOf(Packet.Request("test", "1", "d", true),
-            Packet.Response("dupa", "2", "OK", null, response = "", isSent = true),
-            Packet.Response("dupa", "2", "OK", null, response = "", isSent = true),
-        Packet.Broken("LOL"))
-        binding.packets.adapter = adapter
-        adapter.submitList(list)
+        viewModel.packets.observeOnLifecycle(viewLifecycleOwner) { adapter.submitList(it) }
     }
 }
