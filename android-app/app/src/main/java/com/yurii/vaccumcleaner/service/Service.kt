@@ -13,8 +13,8 @@ import java.util.concurrent.TimeoutException
 fun <R : Any> Moshi.createResponseModelAdapter(responseClass: Class<R>): JsonAdapter<Packet<Response<R>>> =
     this.adapter(Types.newParameterizedType(Packet::class.java, Types.newParameterizedType(Response::class.java, responseClass)))
 
-fun <R : Any> Moshi.createParametrizedRequestAdapter(parameters: Class<R>): JsonAdapter<Request<R>> =
-    this.adapter(Types.newParameterizedType(Request::class.java, parameters))
+fun <R : Any> Moshi.createParametrizedRequestAdapter(parameters: Class<R>): JsonAdapter<Packet<Request<R>>> =
+    this.adapter(Types.newParameterizedType(Packet::class.java, Types.newParameterizedType(Request::class.java, parameters)))
 
 class Service(
     private val coroutineScope: CoroutineScope,
@@ -98,7 +98,7 @@ class Service(
             parameters = parameters
         )
 
-        communicator.send(moshi.createParametrizedRequestAdapter(parametersClass).toJson(request))
+        communicator.send(moshi.createParametrizedRequestAdapter(parametersClass).toJson(Packet(PacketType.REQUEST, request)))
         return@withContext withTimeoutOrNull(timeout) { awaitForResponse(request, responseClass) }
             ?: throw TimeoutException("No response from $requestName. Parameters: $parameters")
     }
