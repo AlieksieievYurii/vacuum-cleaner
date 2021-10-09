@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="request"
+            type="com.yurii.vaccumcleaner.screens.debug.Packet.Request" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/label_endpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/request_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{request.requestName}"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="@+id/label_endpoint"
+            app:layout_constraintStart_toEndOf="@+id/label_endpoint"
+            app:layout_constraintTop_toTopOf="@+id/label_endpoint"
+            tools:text="get_all_info" />
+
+        <TextView
+            android:id="@+id/label_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_mode"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_endpoint" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{request.sent ? @string/label_sent : @string/label_received}"
+            android:textStyle="bold|italic"
+            app:layout_constraintStart_toEndOf="@+id/label_mode"
+            app:layout_constraintTop_toTopOf="@+id/label_mode"
+            tools:text="@string/label_received" />
+
+        <TextView
+            android:id="@+id/parameters_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_parameters"
+
+            app:layout_constraintTop_toBottomOf="@+id/label_mode" />
+
+        <TextView
+            android:id="@+id/parameters"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{request.parameters}"
+            app:layout_constraintBottom_toBottomOf="@+id/parameters_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/parameters_label"
+            app:layout_constraintTop_toTopOf="@+id/parameters_label"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="@tools:sample/lorem/random" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
