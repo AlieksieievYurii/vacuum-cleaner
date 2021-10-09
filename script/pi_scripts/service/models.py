@@ -6,7 +6,51 @@ from enum import Enum
 from json import JSONDecodeError
 from typing import Type, Dict, Optional
 
-from service.exceptions import RequiredFieldIsNotFound, NoRequiredVariable, InvalidRequest
+from service.exceptions import NoRequiredVariable, InvalidRequest
+
+
+class AttributeHolder(object):
+    pass
+
+
+@dataclass
+class Field(object):
+    """
+    Is used to annotate some classes' fields so that is able to parse from dict
+    Usage:
+        >>> class SomeClass(object):
+        >>>     some_var = Field(name='someVar', type=str, is_required=True)
+    Then the following dict can be parsed and converted into object with defiled Fields.
+    For example:
+        >>> data = {'someVar': 'some value'}
+        >>> obj = Field.parse_from_dict(SomeClass, data)
+        >>> obj.some_var # some value
+    """
+    name: str
+    type: Type
+    is_required: bool = False
+
+    @classmethod
+    def parse_from_dict(cls, obj, data: Dict) -> AttributeHolder:
+        fields = {var: val for var, val in obj.__dict__.items() if isinstance(val, Field)}
+        obj = AttributeHolder()
+
+        for field_name, field in fields.items():
+            if field.is_required and field_name not in data:
+                raise NoRequiredVariable(f'"{field_name}" is required!')
+            setattr(obj, field.name, field.type(data.get(field_name)))
+        return obj
+
+    @classmethod
+    def to_data(cls, instance) -> Dict:
+        fields = list(filter(lambda f: isinstance(f[1], Field), inspect.getmembers(instance)))
+        data = {}
+
+        for field_name, field in fields:
+            if field.is_required and field_name not in instance.__dict__:
+                raise NoRequiredVariable(f'"{field_name}" is required!')
+            data[field.name] = field.type(instance.__dict__.get(field_name))
+        return data
 
 
 class Status(str, Enum):
@@ -62,45 +106,25 @@ class Response(object):
     error_message: Optional[str]
     response: Optional[Dict]
 
-
-class RequestModel(object):
-    @dataclass
-    class Field(object):
-        name: str
-        type: Type
-        is_required: bool = False
-
     @classmethod
-    def parse(cls, data: Dict):
-        fields = list(filter(lambda f: isinstance(f[1], RequestModel.Field), inspect.getmembers(cls)))
-        request_model = RequestModel()
-        for field_name, field in fields:
-            value = cls._get_field_value(data, field)
-            setattr(request_model, field_name, value)
-        return request_model
+    def parse(cls, response: Dict):
+        return cls(
+            request_name=response['request_name'],
+            request_id=response['request_id'],
+            status=Status(response['status']),
+            error_message=response.get('error_message'),
+            response=response.get('response')
+        )
 
-    @staticmethod
-    def _get_field_value(data: Dict, field: Field) -> any:
-        if field.is_required and field.name not in data:
-            raise RequiredFieldIsNotFound(field, data)
-        return field.type(data[field.name]) if field.name in data else None
+
+class RequestModel(abc.ABC):
+    pass
 
 
 class ResponseModel(abc.ABC):
-    @dataclass
-    class Field(object):
-        name: str
-        type: Type
-        is_required: bool = False
-
     def __init__(self, **kwargs):
-        fields = list(filter(lambda f: isinstance(f[1], ResponseModel.Field), inspect.getmembers(self)))
-        self.data = {}
-
-        for field_name, field in fields:
-            if field.is_required and field_name not in kwargs:
-                raise NoRequiredVariable()
-            self.data[field.name] = field.type(kwargs.get(field_name))
+        for k, v in kwargs:
+            setattr(self, k, v)
 
 
 class RequestHandler(abc.ABC):
