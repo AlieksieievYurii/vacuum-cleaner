@@ -38,3 +38,6 @@ class NoRequiredResponse(ServiceException):
 
 class NoRequiredVariable(ServiceException):
     pass
+
+class TimeOut(ServiceException):
+    pass

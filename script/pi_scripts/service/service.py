@@ -5,12 +5,14 @@ from threading import Thread
 from typing import List, Type, Optional, Union, Dict
 
 from service.exceptions import RequestHandlerIsNotRegistered, RequestDataIsNotFound, NoRequiredResponse, \
-    InvalidRequest, ServiceException
+    InvalidRequest, ServiceException, TimeOut
 from service.communitator.communicator import Communicator
 from service.models import RequestHandler, RequestModel, ResponseModel, Request, Response, Packet, \
     PacketType, Status, Field
 import queue
 import logging
+
+from service.utils import get_time_in_millis
 
 
 class Service(object):
@@ -33,21 +35,30 @@ class Service(object):
 
         Thread(target=_fun, daemon=False).start()
 
-    def send(self, request_name: str, response_model: Type[ResponseModel], parameters: Optional[Dict] = None):
+    def request(self, request_name: str, response_model: Type[ResponseModel], parameters: Optional[Dict] = None,
+                timeout: int = 10000):
         request = Request(
             request_name=request_name,
-            request_id=str(round(time.time() * 1000)),
+            request_id=str(get_time_in_millis()),
             parameters=parameters
         )
         self._send_request(request)
-        return self._await_for_response(request, response_model)
+        return self._await_for_response(request, response_model, timeout)
 
-    def _await_for_response(self, request: Request, response_model: Type[ResponseModel], timeout: int = 5000):
+    def _await_for_response(self, request: Request, response_model: Type[ResponseModel], timeout: int):
+        start_time = get_time_in_millis()
         while True:
+            if get_time_in_millis() - start_time > timeout:
+                raise TimeOut(f'No response from {request.request_name} ID[{request.request_id}]')
             for response in self._response_row:
                 if response.request_id == request.request_id and response.request_name == request.request_name:
-                    # TODO handle bad request and error
-                    return Field.parse_from_dict(response_model, response.response)
+                    return self._handle_response(response, response_model)
+
+    def _handle_response(self, response: Response, response_model: Type[ResponseModel]):
+        if response.status != Status.OK:
+            raise Exception(response.error_message)
+        else:
+            return Field.parse_from_dict(response_model, response.response)
 
     def _start_handling_queue(self) -> None:
         """
