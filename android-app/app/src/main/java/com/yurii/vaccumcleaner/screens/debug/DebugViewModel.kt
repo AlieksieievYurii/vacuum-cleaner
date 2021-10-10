@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import timber.log.Timber
 
 enum class BluetoothStatus {
     DISCONNECTED, CONNECTING, CONNECTED
@@ -41,6 +42,17 @@ class CheckRequestHandler :
     }
 }
 
+@JsonClass(generateAdapter = true)
+data class TestResponse(
+    @Json(name = "user_name") val userName: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Param(
+    @Json(name = "test") val test: String,
+    @Json(name = "test_2") val test2: String
+)
+
 class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
     private val service = Service(viewModelScope, bluetoothDevice, requestHandlers = listOf(CheckRequestHandler()))
     private val _bluetoothStatus: MutableStateFlow<BluetoothStatus> = MutableStateFlow(BluetoothStatus.DISCONNECTED)
@@ -55,6 +67,31 @@ class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
 
     init {
         connectBluetooth()
+
+    }
+
+    private fun sendTestRequest() {
+//        viewModelScope.launch {
+//            val a = service.request("get_all_info", TestResponse::class.java)
+//            Timber.i(a.toString())
+//            val b = service.request("get_all_info", TestResponse::class.java)
+//            Timber.i(b.toString())
+//            val c = service.request("get_all_info", TestResponse::class.java)
+//            Timber.i(c.toString())
+//        }
+        (0..100).forEach {
+            viewModelScope.launch {
+                val a = service.request(
+                    requestName = "get_info",
+                    parameters = Param(test = "I", test2 = "C:/test/test"),
+                    TestResponse::class.java,
+                    Param::class.java
+                )
+                Timber.i("DUPA1: ${a.userName}")
+            }
+        }
+
+
     }
 
     fun connectBluetooth() {
@@ -63,6 +100,7 @@ class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
             service.start()
             _bluetoothStatus.value = BluetoothStatus.CONNECTED
             startListeningToAllOutput()
+            sendTestRequest()
         }
     }
 
@@ -86,7 +124,7 @@ class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
             RVPacket.Request(
                 requestName = request.requestName,
                 requestId = request.requestId,
-                parameters = JSONObject(request.parameters as Map<*, *>).toString(),
+                parameters = if (request.parameters != null) JSONObject(request.parameters as Map<*, *>).toString() else "",
                 isSent = false
             )
         }
@@ -96,7 +134,7 @@ class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
             RVPacket.Response(
                 requestName = response.requestName,
                 requestId = response.requestId,
-                response = JSONObject(response.response as Map<*, *>).toString(),
+                response = if (response.response != null) JSONObject(response.response as Map<*, *>).toString() else "",
                 isSent = false,
                 status = response.status.name,
                 errorMessage = response.errorMessage

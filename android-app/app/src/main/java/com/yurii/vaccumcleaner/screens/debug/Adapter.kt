@@ -15,10 +15,10 @@ import java.lang.Exception
 import java.lang.IllegalStateException
 
 sealed class Packet {
-    data class Request(val requestName: String, val requestId: Long, val parameters: String, val isSent: Boolean) : Packet()
+    data class Request(val requestName: String, val requestId: String, val parameters: String, val isSent: Boolean) : Packet()
     data class Response(
         val requestName: String,
-        val requestId: Long,
+        val requestId: String,
         val status: String,
         val errorMessage: String?,
         val response: String,

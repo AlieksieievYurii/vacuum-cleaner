@@ -35,13 +35,13 @@ data class Packet<C>(
 @JsonClass(generateAdapter = true)
 data class Request<P>(
     @Json(name = "request_name") val requestName: String,
-    @Json(name = "request_id") val requestId: Long,
+    @Json(name = "request_id") val requestId: String,
     val parameters: P?
 )
 
 @JsonClass(generateAdapter = true)
 data class Response<R : Any>(
-    @Json(name = "request_id") val requestId: Long,
+    @Json(name = "request_id") val requestId: String,
     @Json(name = "request_name") val requestName: String,
     val status: ResponseStatus,
     @Json(name = "error_message") val errorMessage: String?,
