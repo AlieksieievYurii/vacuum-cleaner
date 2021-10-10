@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.*
 import org.json.JSONObject
 import java.lang.Exception
 import java.lang.IllegalStateException
+import java.util.*
 import java.util.concurrent.TimeoutException
 
 fun <R : Any> Moshi.createResponseModelAdapter(responseClass: Class<R>): JsonAdapter<Packet<Response<R>>> =
@@ -100,7 +101,7 @@ class Service(
     ): R = withContext(Dispatchers.IO) {
         val request = Request(
             requestName = requestName,
-            requestId = System.currentTimeMillis(),
+            requestId = UUID.randomUUID().toString(),
             parameters = parameters
         )
 
@@ -112,7 +113,7 @@ class Service(
     suspend fun <R : Any> request(requestName: String, responseClass: Class<R>, timeout: Long = 10000L): R = withContext(Dispatchers.IO) {
         val request = Request(
             requestName = requestName,
-            requestId = System.currentTimeMillis(),
+            requestId = UUID.randomUUID().toString(),
             parameters = null
         )
 
@@ -126,7 +127,7 @@ class Service(
             if (System.currentTimeMillis() - startTime > timeout)
                 throw TimeoutException("No response from ${request.requestName}")
 
-            synchronized(responses) {
+            synchronized(this) {
                 responses.find { it.requestId == request.requestId && it.requestName == request.requestName }?.run {
                     responses.remove(this)
                     if (this.status != ResponseStatus.OK)

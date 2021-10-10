@@ -36,7 +36,7 @@ class Service(object):
     def send(self, request_name: str, response_model: Type[ResponseModel], parameters: Optional[Dict] = None):
         request = Request(
             request_name=request_name,
-            request_id=round(time.time() * 1000),
+            request_id=str(round(time.time() * 1000)),
             parameters=parameters
         )
         self._send_request(request)

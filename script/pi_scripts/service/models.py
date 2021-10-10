@@ -1,5 +1,4 @@
 import abc
-import inspect
 import json
 from dataclasses import dataclass
 from enum import Enum
@@ -84,7 +83,7 @@ class Packet(object):
 @dataclass
 class Request(object):
     request_name: str
-    request_id: int
+    request_id: str
     parameters: Optional[Dict]
 
     @classmethod
@@ -100,7 +99,7 @@ class Request(object):
 @dataclass
 class Response(object):
     request_name: str
-    request_id: int
+    request_id: str
     status: Status
     error_message: Optional[str]
     response: Optional[Dict]
