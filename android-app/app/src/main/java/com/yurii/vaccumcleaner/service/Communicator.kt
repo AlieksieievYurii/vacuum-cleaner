@@ -17,7 +17,7 @@ class BluetoothCommunicator(private val bluetoothDevice: BluetoothDevice) {
         bluetoothDevice.createRfcommSocketToServiceRecord(UUID.fromString("94f39d29-7d6d-437d-973b-fba39e49d4ee"))
     }
 
-    private val _output = MutableSharedFlow<String>(extraBufferCapacity=5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    private val _output = MutableSharedFlow<String>(extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST)
     val output: SharedFlow<String> = _output
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -46,7 +46,7 @@ class BluetoothCommunicator(private val bluetoothDevice: BluetoothDevice) {
     @Suppress("BlockingMethodInNonBlockingContext")
     suspend fun send(text: String) = withContext(Dispatchers.IO) {
         Timber.d("Data to send via Bluetooth: $text")
-        socket.outputStream.write(text.toByteArray())
+        socket.outputStream.write((text + '\n').toByteArray())
     }
 
 }
