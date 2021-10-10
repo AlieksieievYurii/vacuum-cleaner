@@ -6,6 +6,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import org.json.JSONObject
 import java.lang.Exception
 import java.lang.IllegalStateException
 import java.util.concurrent.TimeoutException
@@ -43,6 +44,8 @@ class Service(
     private val _brokenPacket: MutableSharedFlow<Pair<String, Exception>> = MutableSharedFlow()
     val brokenPackets = _brokenPacket.asSharedFlow()
 
+    private val responses = mutableListOf<Response<*>>()
+
     suspend fun start() {
         communicator.connect()
         coroutineScope.launch {
@@ -53,7 +56,10 @@ class Service(
                 try {
                     val packet = parsePacket(packetJson)
                     _receivedPackets.emit(packet)
-                    handleIfRequest(packet)
+                    when (packet.type) {
+                        PacketType.REQUEST -> handleRequest(packet.content as Request<*>)
+                        PacketType.RESPONSE -> addToResponseRow(packet.content as Response<*>)
+                    }
                 } catch (error: Exception) {
                     _brokenPacket.emit(packetJson to error)
                 }
@@ -61,16 +67,16 @@ class Service(
         }
     }
 
-    private fun handleIfRequest(packet: Packet<*>) {
-        if (packet.type == PacketType.RESPONSE)
-            return
-        val request = packet.content as Request<*>
-        val requestHandler = requestHandlers.find { it.requestName == request.requestName }
-            ?: throw IllegalStateException("Cannot find request handler for ${request.requestName}")
-        handleRequest(request, requestHandler)
+    private fun addToResponseRow(response: Response<*>) {
+        if (responses.size > 5)
+            responses.removeFirst()
+        responses.add(response)
     }
 
-    private fun handleRequest(request: Request<*>, requestHandler: RequestHandler<*, *>) {
+    private fun handleRequest(request: Request<*>) {
+        val requestHandler = requestHandlers.find { it.requestName == request.requestName }
+            ?: throw IllegalStateException("Cannot find request handler for ${request.requestName}")
+
         coroutineScope.launch(Dispatchers.IO) {
             val response = requestHandler.handleIncomingRequest(moshi, request)
             communicator.send(response)
@@ -111,32 +117,24 @@ class Service(
         )
 
         communicator.send(noParametrizedRequestAdapter.toJson(Packet(PacketType.REQUEST, request)))
-        return@withContext withTimeoutOrNull(timeout) { awaitForResponse(request, responseClass) }
-            ?: throw TimeoutException("No response from $requestName")
+        return@withContext awaitForResponse(request, responseClass, timeout)
     }
 
-    private suspend fun <R : Any> awaitForResponse(request: Request<*>, responseClass: Class<R>): R {
-        while (true)
-            return getResponseFromRequest(request, communicator.output.first(), responseClass) ?: continue
-    }
+    private fun <R : Any> awaitForResponse(request: Request<*>, responseClass: Class<R>, timeout: Long = 10000L): R {
+        val startTime = System.currentTimeMillis()
+        while (true) {
+            if (System.currentTimeMillis() - startTime > timeout)
+                throw TimeoutException("No response from ${request.requestName}")
 
-    private fun <R : Any> getResponseFromRequest(request: Request<*>, jsonResponse: String, responseClass: Class<R>): R? {
-        val packet = try {
-            packetAdapter.fromJson(jsonResponse)!!
-        }catch (e: Exception) {
-            return null
+            synchronized(responses) {
+                responses.find { it.requestId == request.requestId && it.requestName == request.requestName }?.run {
+                    responses.remove(this)
+                    if (this.status != ResponseStatus.OK)
+                        throw IllegalStateException(this.errorMessage)
+
+                    return moshi.adapter(responseClass).fromJson(JSONObject(this.response as Map<*, *>).toString())!!
+                }
+            }
         }
-
-        if (packet.type == PacketType.REQUEST)
-            return null
-
-        val responsePacket = packetResponseAdapter.fromJson(jsonResponse)!!.content
-
-        if (responsePacket.requestId != request.requestId || responsePacket.requestName != request.requestName)
-            return null
-
-        val packetRespAdapter = moshi.createResponseModelAdapter(responseClass)
-        return packetRespAdapter.fromJson(jsonResponse)!!.content.response
     }
-
 }
