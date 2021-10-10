@@ -4,6 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.Moshi
 import org.json.JSONObject
+import java.lang.Exception
 
 @JsonClass(generateAdapter = false)
 enum class ResponseStatus {
@@ -54,22 +55,48 @@ abstract class RequestHandler<R : Any, P : Any>(
     private val parameters: Class<P>?
 ) {
     fun handleIncomingRequest(moshi: Moshi, request: Request<*>): String {
-        val inputParameters: P? =
-            if (parameters != null) moshi.adapter(parameters).fromJson(JSONObject(request.parameters as Map<*, *>).toString())!! else null
-        val output = handle(request, inputParameters)
-        val response = Response(
+        val packet = Packet(
+            type = PacketType.RESPONSE,
+            content = handleRequestAndGetResponse(moshi, request)
+        )
+        return moshi.createResponseModelAdapter(responseModelClass).toJson(packet)
+    }
+
+    private fun handleRequestAndGetResponse(moshi: Moshi, request: Request<*>): Response<R> = try {
+        val output = if (parameters != null) handleRequestWithParameters(moshi, request) else handleNoParametrizedRequest(request)
+        Response(
             requestId = request.requestId,
             requestName = requestName,
             status = ResponseStatus.OK,
             errorMessage = null,
             response = output
         )
-        val packet = Packet(
-            type = PacketType.RESPONSE,
-            content = response
+    } catch (error: WrongParameters) {
+        Response(
+            requestId = request.requestId,
+            requestName = requestName,
+            status = ResponseStatus.BAD_REQUEST,
+            errorMessage = error.message,
+            response = null
         )
-        return moshi.createResponseModelAdapter(responseModelClass).toJson(packet)
     }
+
+    private fun handleNoParametrizedRequest(request: Request<*>): R {
+        return handle(request, null)
+    }
+
+    private fun handleRequestWithParameters(moshi: Moshi, request: Request<*>): R {
+        if (request.parameters == null)
+            throw WrongParameters(request, "This request requires parameters!")
+
+        val parameters = try {
+            moshi.adapter(parameters!!).fromJson(JSONObject(request.parameters as Map<*, *>).toString())!!
+        } catch (exception: Exception) {
+            throw WrongParameters(request, "Wrong parameters")
+        }
+        return handle(request, parameters)
+    }
+
 
     abstract fun handle(request: Request<*>, parameters: P?): R
 }
