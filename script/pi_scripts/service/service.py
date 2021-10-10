@@ -67,16 +67,18 @@ class Service(object):
         :return: None
         """
         logging.debug(f'Data received: {data}')
-        try:
-            packet = Packet.parse(data)
-        except InvalidRequest as error:
-            print(f'Cannot parse packet! Error: {error}')
-        else:
-            if packet.type == PacketType.REQUEST:
-                request = Request.parse(packet.content)
-                self._handle_packet(request)
-            elif packet.type == PacketType.RESPONSE:
-                self._add_response_to_row(packet.content)
+
+        for data_item in data.split(sep='\n'):
+            try:
+                packet = Packet.parse(data_item)
+            except InvalidRequest as error:
+                print(f'Cannot parse packet! Error: {error}')
+            else:
+                if packet.type == PacketType.REQUEST:
+                    request = Request.parse(packet.content)
+                    self._handle_packet(request)
+                elif packet.type == PacketType.RESPONSE:
+                    self._add_response_to_row(packet.content)
 
     def _add_response_to_row(self, request: Dict):
         request = Response.parse(request)
