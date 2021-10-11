@@ -24,7 +24,7 @@ class Service(object):
 
     def start(self) -> None:
         """
-        Blocking method! Starts listening Communicator as well as starts executing Queue with Requests
+        Starts listening Communicator as well as starts executing Queue with Requests
 
         :return: None
         """
@@ -35,13 +35,20 @@ class Service(object):
 
         Thread(target=_fun, daemon=False).start()
 
-    def request(self, request_name: str, response_model: Type[ResponseModel], parameters: Optional[Dict] = None,
-                timeout: int = 10000):
-        request = Request(
-            request_name=request_name,
-            request_id=str(get_time_in_millis()),
-            parameters=parameters
-        )
+    def request(self, request_name: str, response_model: Type[ResponseModel],
+                parameters: Optional[Dict] = None, timeout: int = 10000):
+        """
+        Makes a request and awaits for the response.
+        If it takes more than given timeout, [TimeOut] exception will be thrown.
+
+        :param request_name: a name of the request which has to be performed
+        :param response_model: an object, extending [ResponseModel], representing response from the request
+        :param parameters: optional argument. a dict of needed parameters for the request
+        :param timeout: maximum timeout in milliseconds for awaiting for the response
+        :return: an instance of given response model class
+        """
+
+        request = Request(request_name=request_name, request_id=str(get_time_in_millis()), parameters=parameters)
         self._send_request(request)
         return self._await_for_response(request, response_model, timeout)
 
