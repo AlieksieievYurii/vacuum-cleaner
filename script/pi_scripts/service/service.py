@@ -127,12 +127,15 @@ class Service(object):
     def _execute_request(self, handler_request: Union[RequestHandler, Type[RequestHandler]], request: Request,
                          request_model: Optional[RequestModel]):
         handler_request_instance = handler_request() if inspect.isclass(handler_request) else handler_request
-        response: Optional[ResponseModel] = handler_request_instance.handle(request, request_model)
+        try:
+            response: Optional[ResponseModel] = handler_request_instance.handle(request, request_model)
+        except Exception as error:
+            self._send_error(request, str(error))
+        else:
+            if handler_request.response_model and (not response or not isinstance(response, ResponseModel)):
+                raise NoRequiredResponse(handler_request.response_model, response)
 
-        if handler_request.response_model and (not response or not isinstance(response, ResponseModel)):
-            raise NoRequiredResponse(handler_request.response_model, response)
-
-        self._send_response(request, response)
+            self._send_response(request, response)
 
     def _send_request(self, request: Request) -> None:
         packet = Packet(PacketType.REQUEST, asdict(request))
