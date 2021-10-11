@@ -81,7 +81,7 @@ class Service(object):
         """
         This method is called by the Communicator.
 
-        :param data: Data from the communicator
+        :param data: string data from the communicator
         :return: None
         """
         logging.debug(f'Data received: {data}')
@@ -146,7 +146,7 @@ class Service(object):
 
     def _send_request(self, request: Request) -> None:
         packet = Packet(PacketType.REQUEST, asdict(request))
-        self._communicator.send(asdict(packet))
+        self._send_packet(packet)
 
     def _send_error(self, request: Request, error_message: str):
         response = Response(
@@ -156,14 +156,12 @@ class Service(object):
             error_message=error_message,
             response=None
         )
-        self._communicator.send(asdict(Packet(PacketType.RESPONSE, asdict(response))))
+        self._send_packet(packet=Packet(PacketType.RESPONSE, asdict(response)))
 
     def _send_response(self, request: Request, response: ResponseModel):
-        response = Response(
-            request_name=request.request_name,
-            request_id=request.request_id,
-            response=Field.to_data(response),
-            status=Status.OK,
-            error_message=None
-        )
-        self._communicator.send(asdict(Packet(PacketType.RESPONSE, asdict(response))))
+        response = Response(request_name=request.request_name, request_id=request.request_id,
+                            response=Field.to_data(response), status=Status.OK, error_message=None)
+        self._send_packet(packet=Packet(PacketType.RESPONSE, asdict(response)))
+
+    def _send_packet(self, packet: Packet) -> None:
+        self._communicator.send(data=asdict(packet))
