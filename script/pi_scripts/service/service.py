@@ -1,5 +1,5 @@
 import inspect
-import time
+import uuid
 from dataclasses import asdict
 from threading import Thread
 from typing import List, Type, Optional, Union, Dict
@@ -48,7 +48,7 @@ class Service(object):
         :return: an instance of given response model class
         """
 
-        request = Request(request_name=request_name, request_id=str(get_time_in_millis()), parameters=parameters)
+        request = Request(request_name=request_name, request_id=str(uuid.uuid4()), parameters=parameters)
         self._send_request(request)
         return self._await_for_response(request, response_model, timeout)
 
