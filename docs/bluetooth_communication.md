@@ -5,7 +5,7 @@ The entire process of communication is done by sending a JSON texts between two 
 ![image](https://user-images.githubusercontent.com/39415360/135327957-4e9222cf-fe4f-478e-a888-0e3d026f421e.png)
 
 ## Packet
-This message is a main body which is sent between devices.
+Packet is a main part which is sent between client&server and vice versa.
 ``` 
 {
   "type": ...,
@@ -13,7 +13,7 @@ This message is a main body which is sent between devices.
 }
 ```
 Fields:
-* `type` [string] - points which type of a packet it is. The value can be `REQUEST` if this is request from client to server, and `RESPONSE` if this is a packet containing response from a server side.
+* `type` [string] - points which type of a packet it is. The value can be `REQUEST` if the packet represents a request. If the value is "RESPONSE" then it represents a response for the request.
 * `content` [json] - contains the content of request or response.
 
 ## Packet as Request
