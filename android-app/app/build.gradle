@@ -62,6 +62,9 @@ dependencies {
     implementation 'com.squareup.moshi:moshi:1.12.0'
     kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.12.0'
 
+    //Lottie Animations
+    implementation "com.airbnb.android:lottie:3.7.0"
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
