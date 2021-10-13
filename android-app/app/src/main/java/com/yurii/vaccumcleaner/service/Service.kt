@@ -106,8 +106,7 @@ class Service(
         )
 
         communicator.send(moshi.createParametrizedRequestAdapter(parametersClass).toJson(Packet(PacketType.REQUEST, request)))
-        return@withContext withTimeoutOrNull(timeout) { awaitForResponse(request, responseClass) }
-            ?: throw TimeoutException("No response from $requestName. Parameters: $parameters")
+        return@withContext awaitForResponse(request, responseClass, timeout)
     }
 
     suspend fun <R : Any> request(requestName: String, responseClass: Class<R>, timeout: Long = 10000L): R = withContext(Dispatchers.IO) {
@@ -125,7 +124,7 @@ class Service(
         val startTime = System.currentTimeMillis()
         while (true) {
             if (System.currentTimeMillis() - startTime > timeout)
-                throw TimeoutException("No response from ${request.requestName}")
+                throw TimeoutException("No response from ${request.requestName}. Timeout: $timeout")
 
             synchronized(this) {
                 responses.find { it.requestId == request.requestId && it.requestName == request.requestName }?.run {
