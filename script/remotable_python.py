@@ -71,6 +71,13 @@ class SSHClient(object):
                 self.copy_folder(l_dir, remote_destination.joinpath(local_folder.name), sftp)
 
     def copy_file(self, local_file: Path, remote_destination: Path) -> None:
+        """
+            Copies a local file on the remote machine. The name of copied file will be the same
+
+        :param local_file: Absolute path to a local file
+        :param remote_destination: Absolute destination path on the remote machine
+        :return: None
+        """
         sftp = self._ssh_client.open_sftp()
         sftp.put(local_file.as_posix(), remote_destination.joinpath(local_file.name).as_posix())
 
@@ -122,6 +129,14 @@ class RemotePython(object):
                                print_continuously=True)
 
     def execute_python_file(self, local_file: Path, remote_destination: Path, as_root: bool) -> None:
+        """
+            Copies the given Python file on the remote destination and executes it.
+
+        :param local_file: absolute path to a local Python file
+        :param remote_destination: absolute path to a destination on the remote machine
+        :param as_root: if True, the Python script will be executed as a root user
+        :return: None
+        """
         assert local_file.is_file()
         file_to_execute = remote_destination.joinpath(local_file.name).as_posix()
         with self.open_ssh_client() as ssh_client:
