@@ -1,4 +1,5 @@
 import inspect
+import threading
 import uuid
 from dataclasses import asdict
 from threading import Thread
@@ -33,7 +34,7 @@ class Service(object):
         def _fun():
             self._start_handling_queue()
 
-        Thread(target=_fun, daemon=False).start()
+        Thread(name='queue_handler', target=_fun, daemon=False).start()
 
     def request(self, request_name: str, response_model: Type[ResponseModel],
                 parameters: Optional[Dict] = None, timeout: int = 10000):

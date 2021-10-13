@@ -131,5 +131,5 @@ class RequestHandler(abc.ABC):
     response_model: ResponseModel
 
     @abc.abstractmethod
-    def handle(self, request, data: RequestModel):
+    def handle(self, request: Request, data: RequestModel):
         pass
