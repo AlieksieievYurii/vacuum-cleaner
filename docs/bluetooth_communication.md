@@ -50,6 +50,6 @@ This sort of packet is supposed to be reveived by a client as a response from a 
 Fields:
 * `request_id` [string] - an unique id that is taken from a correspondent request.
 * `request_name` [string] - a request name that is take from a correspondent request.
-* `status` [string] - contaning a response status. `OK` - when the request is done successfuly, `ERROR` - the request is failed, `BAD_REQUEST` - when request parameters are bad.
-* (optional) `error_message` [string] - if the `status` is `BAD_REQUEST` or `ERROR` this field will be added to the response, containing error message.
-* (optional) `response` [json] - json object containing output response from the request
+* `status` [string] - contaning a response status. `OK` - when the request is done successfuly, `ERROR` - the request is failed due to unexpected failure, `BAD_REQUEST` - when request parameters are bad.
+* (optional) `error_message` [string] - if the `status` is `BAD_REQUEST` or `ERROR` this field is supposed to be added to the response, containing error message.
+* (optional) `response` [json] - json object containing output response from the request.
