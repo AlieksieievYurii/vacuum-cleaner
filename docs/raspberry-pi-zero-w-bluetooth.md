@@ -1,7 +1,6 @@
 # Raspberry Pi Zero W - Bluethooth Connection 
 
-This document describes how to connect custom Android Application to Raspberry Pi Zero W. Android Application is supposed to be a **Client**, and Raspberry Pi as **Server**.
-The final purpose of the document is guide how to create communication beetwen Android Application and Raspberry Pi Zero W and sending custom data.
+This document describes how to connect custom Android Application to Raspberry Pi Zero W. Android Application is supposed to be a **Client**, and Raspberry Pi as **Server**. However, the server can send requests to the Android App too. The final purpose of the document is guide how to create communication beetwen Android Application and Raspberry Pi Zero W and sending custom data.
 
 ## Rasperry Bluetooth
 1. Set up bluetooth in compatibility mode. Just modify `/etc/systemd/system/dbus-org.bluez.service`, add `-C` or `--compat` to `ExecStart=/usr/lib/bluetooth/bluetoothd`.
