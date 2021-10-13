@@ -1,5 +1,4 @@
 import re
-import threading
 from pathlib import Path
 
 from service.models import RequestHandler, ResponseModel, Field, Request
