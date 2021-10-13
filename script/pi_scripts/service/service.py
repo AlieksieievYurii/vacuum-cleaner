@@ -1,5 +1,4 @@
 import inspect
-import threading
 import uuid
 from dataclasses import asdict
 from threading import Thread
@@ -17,6 +16,8 @@ from service.utils import get_time_in_millis
 
 
 class Service(object):
+    RESPONSE_ROW_SIZE = 5
+
     def __init__(self, communicator: Communicator, handlers: List[Union[RequestHandler, Type[RequestHandler]]]):
         self._communicator = communicator
         self._handlers = handlers
@@ -31,10 +32,7 @@ class Service(object):
         """
         self._communicator.listen_output(call_back=self._communicator_callback)
 
-        def _fun():
-            self._start_handling_queue()
-
-        Thread(name='queue_handler', target=_fun, daemon=False).start()
+        Thread(name='queue_handler', target=self._start_handling_queue, daemon=False).start()
 
     def request(self, request_name: str, response_model: Type[ResponseModel],
                 parameters: Optional[Dict] = None, timeout: int = 10000):
@@ -91,22 +89,27 @@ class Service(object):
             try:
                 packet = Packet.parse(data_item)
             except InvalidRequest as error:
-                print(f'Cannot parse packet! Error: {error}')
+                logging.error(f'Cannot parse packet! Error: {error}')
             else:
-                if packet.type == PacketType.REQUEST:
-                    request = Request.parse(packet.content)
-                    self._handle_packet(request)
-                elif packet.type == PacketType.RESPONSE:
-                    self._add_response_to_row(packet.content)
+                self._handle_received_packet(packet)
+
+    def _handle_received_packet(self, packet: Packet) -> None:
+        if packet.type == PacketType.REQUEST:
+            request = Request.parse(packet.content)
+            self._handle_request(request)
+        elif packet.type == PacketType.RESPONSE:
+            self._add_response_to_row(packet.content)
+        else:
+            raise ValueError(f'Unhandled packet type {packet.type}')
 
     def _add_response_to_row(self, request: Dict):
         request = Response.parse(request)
-        if len(self._response_row) >= 5:
+        if len(self._response_row) >= self.RESPONSE_ROW_SIZE:
             self._response_row.pop(0)
 
         self._response_row.append(request)
 
-    def _handle_packet(self, request: Request):
+    def _handle_request(self, request: Request):
         try:
             handler_request: Union[RequestHandler, Type[RequestHandler]] = self._find_request_handler(
                 request.request_name)
