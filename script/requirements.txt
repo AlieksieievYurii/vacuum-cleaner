@@ -1,1 +1,2 @@
 paramiko==2.7.2
+pybluez==0.23
