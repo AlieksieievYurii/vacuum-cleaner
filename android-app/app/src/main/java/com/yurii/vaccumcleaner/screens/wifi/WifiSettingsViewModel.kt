@@ -1,15 +1,11 @@
 package com.yurii.vaccumcleaner.screens.wifi
 
-import android.bluetooth.BluetoothDevice
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.yurii.vaccumcleaner.Empty
-import com.yurii.vaccumcleaner.SetWifiResponse
-import com.yurii.vaccumcleaner.WifiSettings
+import com.yurii.vaccumcleaner.*
 import com.yurii.vaccumcleaner.service.Service
-import com.yurii.vaccumcleaner.value
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +14,9 @@ import kotlinx.coroutines.launch
 import java.lang.Exception
 
 
-class WifiSettingsViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
+class WifiSettingsViewModel(_service: Service) : ViewModel() {
+    private val service = ServiceWrapper(_service)
+
     sealed class State {
         object None : State()
         object LoadingWifiSettings : State()
@@ -40,13 +38,11 @@ class WifiSettingsViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
     private val eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventFlow = eventChannel.receiveAsFlow()
 
-    private val service = Service(viewModelScope, bluetoothDevice, listOf())
 
     init {
         viewModelScope.launch {
-            service.start()
             try {
-                val wifiSettings = service.request("get_wifi_settings", WifiSettings::class.java)
+                val wifiSettings = service.getCurrentWifiSettings()
                 _state.value = State.None
                 ssidField.set(wifiSettings.ssid)
                 passwordField.set(wifiSettings.password)
@@ -59,12 +55,8 @@ class WifiSettingsViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
     fun applyWifiSettings() {
         viewModelScope.launch {
             _state.value = State.ApplyingWifiSettings
-            val wifiSettings = WifiSettings(ssid = ssidField.value, password = passwordField.value)
             try {
-                val resp = service.request(
-                    "set_wifi_settings", wifiSettings, SetWifiResponse::class.java, WifiSettings::class.java,
-                    timeout = 13000
-                )
+                val resp = service.setWifiSettings(WifiSettings(ssid = ssidField.value, password = passwordField.value))
                 if (resp.isConnected) {
                     _state.value = State.None
                     eventChannel.send(Event.SettingsHaveBeenApplied)
@@ -75,11 +67,11 @@ class WifiSettingsViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
         }
     }
 
-    class Factory(private val bluetoothDevice: BluetoothDevice) : ViewModelProvider.Factory {
+    class Factory(private val service: Service) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(WifiSettingsViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
-                return WifiSettingsViewModel(bluetoothDevice) as T
+                return WifiSettingsViewModel(service) as T
             }
             throw IllegalArgumentException("Unable to construct viewModel")
         }

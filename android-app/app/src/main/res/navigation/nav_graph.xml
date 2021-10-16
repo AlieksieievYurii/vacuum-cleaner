@@ -33,11 +33,7 @@
         android:id="@+id/wifiSettingsFragment"
         android:name="com.yurii.vaccumcleaner.screens.wifi.WifiSettingsFragment"
         android:label="WifiSettingsFragment"
-        tools:layout="@layout/fragment_wifi_settings">
-        <argument
-            android:name="bluetoothDevice"
-            app:argType="android.bluetooth.BluetoothDevice" />
-    </fragment>
+        tools:layout="@layout/fragment_wifi_settings"/>
     <fragment
         android:id="@+id/debugFragment"
         android:name="com.yurii.vaccumcleaner.screens.debug.DebugFragment"

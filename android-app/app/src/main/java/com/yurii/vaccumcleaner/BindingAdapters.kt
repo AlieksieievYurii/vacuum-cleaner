@@ -8,3 +8,7 @@ import androidx.databinding.BindingAdapter
 fun isVisible(view: View, isVisible: Boolean) {
     view.isVisible = isVisible
 }
+@BindingAdapter("isEnabled")
+fun isEnabled(view: View, isEnabled: Boolean) {
+    view.isEnabled = isEnabled
+}

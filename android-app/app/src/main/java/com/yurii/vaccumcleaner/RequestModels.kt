@@ -4,6 +4,9 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
+data class TestPacket(val id: String)
+
+@JsonClass(generateAdapter = true)
 data class WifiSettings(
     val ssid: String,
     val password: String
