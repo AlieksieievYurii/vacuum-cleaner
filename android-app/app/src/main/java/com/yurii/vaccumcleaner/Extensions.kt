@@ -1,5 +1,6 @@
 package com.yurii.vaccumcleaner
 
+import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -50,3 +51,9 @@ fun <T> MutableStateFlow<List<T>>.addUnique(item: T) {
 fun <T> MutableStateFlow<List<T>>.replace(item: T, newItem: T) {
     this.value = this.value.map { if (it == item) newItem else it }
 }
+
+val String.Companion.Empty
+    get() = ""
+
+val <T> ObservableField<T>.value: T
+    get() = this.get()!!
