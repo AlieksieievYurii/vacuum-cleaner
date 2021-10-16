@@ -1,9 +1,25 @@
 import re
 import subprocess
 from pathlib import Path
+from time import sleep
 from typing import List
 
 from service.models import RequestHandler, ResponseModel, Field, Request, RequestModel
+
+
+class ValidateConnectionRequestHandler(RequestHandler):
+    class TestPacketRequestHandler(RequestModel):
+        id = Field(name='id', type=str, is_required=True)
+
+    class TestPacketResponseHandler(ResponseModel):
+        id = Field(name='id', type=str, is_required=True)
+
+    request = "send_test_packet"
+    request_model = TestPacketRequestHandler
+    response_model = TestPacketResponseHandler
+
+    def handle(self, request: Request, data: TestPacketRequestHandler):
+        return ValidateConnectionRequestHandler.TestPacketResponseHandler(id=data.id)
 
 
 class GetWifiSettingsRequestHandler(RequestHandler):
@@ -57,7 +73,7 @@ network={{
         if reconfigure_out.strip() != 'OK':
             return SetWifiSettingsRequestHandler.WifiSettingsResponseModel(is_connected=False,
                                                                            error_message=reconfigure_out)
-
+        sleep(10)
         check = self._run_command(['ifconfig', 'wlan0'])
         address = re.search(r'inet\s(\d+.\d+.\d+.\d+)', check).group(1)
 
