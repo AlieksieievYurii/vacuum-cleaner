@@ -21,40 +21,9 @@ enum class BluetoothStatus {
     DISCONNECTED, CONNECTING, CONNECTED
 }
 
-@JsonClass(generateAdapter = true)
-data class CheckParameters(
-    @Json(name = "server_name") val serverName: String
-)
-
-@JsonClass(generateAdapter = true)
-data class CheckResponseModel(
-    @Json(name = "server_name") val serverName: String,
-    @Json(name = "client_name") val clientName: String
-)
-
-class CheckRequestHandler :
-    RequestHandler<CheckResponseModel, CheckParameters>("validation_request", CheckResponseModel::class.java, CheckParameters::class.java) {
-    override fun handle(request: Request<*>, parameters: CheckParameters?): CheckResponseModel {
-        return CheckResponseModel(
-            serverName = parameters!!.serverName,
-            clientName = "Yurii"
-        )
-    }
-}
-
-@JsonClass(generateAdapter = true)
-data class TestResponse(
-    @Json(name = "user_name") val userName: String
-)
-
-@JsonClass(generateAdapter = true)
-data class Param(
-    @Json(name = "test") val test: String,
-    @Json(name = "test_2") val test2: String
-)
 
 class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
-    private val service = Service(viewModelScope, bluetoothDevice, requestHandlers = listOf(CheckRequestHandler()))
+    private val service = Service(viewModelScope, bluetoothDevice, requestHandlers = listOf())
     private val _bluetoothStatus: MutableStateFlow<BluetoothStatus> = MutableStateFlow(BluetoothStatus.DISCONNECTED)
     val bluetoothStatus: StateFlow<BluetoothStatus> = _bluetoothStatus
 
@@ -71,26 +40,6 @@ class DebugViewModel(bluetoothDevice: BluetoothDevice) : ViewModel() {
     }
 
     private fun sendTestRequest() {
-//        viewModelScope.launch {
-//            val a = service.request("get_all_info", TestResponse::class.java)
-//            Timber.i(a.toString())
-//            val b = service.request("get_all_info", TestResponse::class.java)
-//            Timber.i(b.toString())
-//            val c = service.request("get_all_info", TestResponse::class.java)
-//            Timber.i(c.toString())
-//        }
-        (0..100).forEach {
-            viewModelScope.launch {
-                val a = service.request(
-                    requestName = "get_info",
-                    parameters = Param(test = "I", test2 = "C:/test/test"),
-                    TestResponse::class.java,
-                    Param::class.java
-                )
-                Timber.i("DUPA1: ${a.userName}")
-            }
-        }
-
 
     }
 
