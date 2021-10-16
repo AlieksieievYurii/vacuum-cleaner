@@ -9,7 +9,7 @@
     <string name="label_request">REQUEST</string>
     <string name="label_response">RESPONSE</string>
     <string name="label_status">Status:</string>
-    <string name="label_error_message">Error Message:</string>
+    <string name="label_error_message">Error: %s</string>
     <string name="label_response_2">Response:</string>
     <string name="label_broken">BROKEN</string>
     <string name="label_reconnect">reconnect</string>
@@ -17,4 +17,11 @@
     <string name="label_connecting">connecting</string>
     <string name="label_connected">connected</string>
     <string name="label_packets">Packets</string>
+    <string name="label_content">content:</string>
+    <string name="label_mode">Mode:</string>
+    <string name="hint_loading_cuurent_configuration">Loading current configuration...</string>
+    <string name="label_apply">Apply</string>
+    <string name="label_password">Password</string>
+    <string name="label_ssid">SSID</string>
+    <string name="hint_applying_wifi_settings">Applying Wifi settings...</string>
 </resources>
