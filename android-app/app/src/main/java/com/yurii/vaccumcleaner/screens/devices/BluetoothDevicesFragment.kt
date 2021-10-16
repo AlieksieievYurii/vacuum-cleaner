@@ -69,8 +69,8 @@ class BluetoothDevicesFragment : Fragment(R.layout.bluetooth_devices_fragment) {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         requireActivity().unregisterReceiver(viewModel.broadcastReceiver)
     }
 }
