@@ -44,4 +44,4 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Try to connect Raspberty Pi to Android smartphone via Bluetooth
 - [x] Create a standarazied communication between Android App and Raspberry Pi via Bluetooth. [Link](https://github.com/AlieksieievYurii/vacuum-cleaner/blob/main/docs/bluetooth_communication.md)
 - [x] Create a Python Service and Android Service to communicate via BL
-- [ ] Implement setting up Wifi connection via BL communication 
+- [x] Implement setting up Wifi connection via BL communication 
