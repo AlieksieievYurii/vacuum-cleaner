@@ -31,15 +31,18 @@ class SSHClient(object):
     def close(self):
         self._ssh_client.close()
 
-    def execute(self, command: List[str], print_continuously: bool = False) -> None:
+    def execute(self, command: List[str], as_root: bool = False, print_continuously: bool = False) -> None:
         """
             Executes given command on remote python via ssh client.
 
         :param command: List of commands
         :param print_continuously: If True the output will be printed continuously.
                                     Otherwise, it will be printed when finished
+        :param as_root: if True, the command will be executed with `sudo`
         :return: None
         """
+
+        command = ['sudo'] + command if as_root else command
 
         _, stdout, stderr = self._ssh_client.exec_command(' '.join(command), get_pty=print_continuously)
 
@@ -67,6 +70,17 @@ class SSHClient(object):
             elif l_dir.is_dir():
                 self.copy_folder(l_dir, remote_destination.joinpath(local_folder.name), sftp)
 
+    def copy_file(self, local_file: Path, remote_destination: Path) -> None:
+        """
+            Copies a local file on the remote machine. The name of copied file will be the same
+
+        :param local_file: Absolute path to a local file
+        :param remote_destination: Absolute destination path on the remote machine
+        :return: None
+        """
+        sftp = self._ssh_client.open_sftp()
+        sftp.put(local_file.as_posix(), remote_destination.joinpath(local_file.name).as_posix())
+
 
 class RemotePython(object):
     def __init__(self, server: str, user: str, password: str):
@@ -93,7 +107,7 @@ class RemotePython(object):
         with self.open_ssh_client() as ssh_client:
             ssh_client.execute(['python3', '-m', 'venv', path.joinpath(env_name).as_posix()])
 
-    def execute_python_project(self, project: Path, file: Path, remote_destination: Path) -> None:
+    def execute_python_project(self, project: Path, file: Path, remote_destination: Path, as_root: bool) -> None:
         """
             Copy the given python project and runs the given file. If the project already exists on the remove server,
             it will be deleted and copied again.
@@ -103,15 +117,32 @@ class RemotePython(object):
                     * just filename -> e.g main.py
                     * relative path from the project -> e.g ./folderA/main.py
         :param remote_destination: Path to a folder where the project has to be copied
+        :param as_root: if is True, the project will be executed as a root user
         :return: None
         """
 
         remote_project_folder = remote_destination / project.name
         with self.open_ssh_client() as ssh_client:
-            ssh_client.execute([f'rm -rf {remote_project_folder.as_posix()}'])
+            ssh_client.execute([f'rm -rf {remote_project_folder.as_posix()}'], as_root)
             ssh_client.copy_folder(project, remote_destination)
-            ssh_client.execute(['python3', f'{remote_project_folder.joinpath(file).as_posix()}'],
+            ssh_client.execute(['python3', f'{remote_project_folder.joinpath(file).as_posix()}'], as_root,
                                print_continuously=True)
+
+    def execute_python_file(self, local_file: Path, remote_destination: Path, as_root: bool) -> None:
+        """
+            Copies the given Python file on the remote destination and executes it.
+
+        :param local_file: absolute path to a local Python file
+        :param remote_destination: absolute path to a destination on the remote machine
+        :param as_root: if True, the Python script will be executed as a root user
+        :return: None
+        """
+        assert local_file.is_file()
+        file_to_execute = remote_destination.joinpath(local_file.name).as_posix()
+        with self.open_ssh_client() as ssh_client:
+            ssh_client.execute([f'rm -f {file_to_execute}'])
+            ssh_client.copy_file(local_file=local_file, remote_destination=remote_destination)
+            ssh_client.execute(['python3', f'{file_to_execute}'], as_root, print_continuously=True)
 
 
 def create_python_env(remote_python: RemotePython, args: Namespace) -> None:
@@ -125,15 +156,26 @@ def execute_python_project(remote_python: RemotePython, args: Namespace) -> None
     remote_python.execute_python_project(
         project=args.project,
         file=args.execute_file,
-        remote_destination=args.remote_destination
+        remote_destination=args.remote_destination,
+        as_root=args.as_root
+    )
+
+
+def execute_python_file(remote_python: RemotePython, args: Namespace) -> None:
+    remote_python.execute_python_file(
+        local_file=args.execute_file,
+        remote_destination=args.remote_destination,
+        as_root=args.as_root
     )
 
 
 def main(arguments: Namespace):
     remote_python = RemotePython(server=arguments.server, user=arguments.user, password=arguments.password)
+
     actions = {
         'env': create_python_env,
-        'execute-project': execute_python_project
+        'execute-project': execute_python_project,
+        'execute-file': execute_python_file
     }
 
     actions[arguments.action](remote_python, arguments)
@@ -151,9 +193,21 @@ if __name__ == '__main__':
     python_env_action.add_argument('--name', type=str, required=True, help='Env folder name')
 
     python_execute_project = sub_parser.add_parser('execute-project', help='Copy given project and execute')
-    python_execute_project.add_argument('--remote-destination', type=Path, required=True)
+    python_execute_project.add_argument('--remote-destination', type=Path, required=True,
+                                        help='Destination path on a remote machine')
+    python_execute_project.add_argument('--as-root', action='store_true',
+                                        help='If defined, the project will be executed as root user')
     python_execute_project.add_argument('--project', type=Path, required=True)
-    python_execute_project.add_argument('--execute-file', type=Path, required=True)
+    python_execute_project.add_argument('--execute-file', type=Path, required=True,
+                                        help='Relative path to a python file from project folder level')
+
+    python_execute_file = sub_parser.add_parser('execute-file', help='Copy given file and execute')
+    python_execute_file.add_argument('--remote-destination', type=Path, required=True,
+                                     help='Destination path on a remote machine')
+    python_execute_file.add_argument('--as-root', action='store_true',
+                                     help='If defined, the file will be executed as root user')
+    python_execute_file.add_argument('--execute-file', type=Path, required=True,
+                                     help='Absolute local path to a Python file to execute')
 
     try:
         main(argument_parser.parse_args())

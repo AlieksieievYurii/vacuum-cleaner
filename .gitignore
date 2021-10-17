@@ -1,0 +1,11 @@
+*.iml
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+**/.idea/sonarlint/**
+**/.idea/workspace.xml
+**/.idea/misc.xml
+/.idea/assetWizardSettings.xml
+

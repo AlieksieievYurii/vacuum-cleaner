@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="response"
+            type="com.yurii.vaccumcleaner.screens.debug.Packet.Response" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/label_endpoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/request_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{response.requestName}"
+            android:textStyle="italic"
+            app:layout_constraintBottom_toBottomOf="@+id/label_endpoint"
+            app:layout_constraintStart_toEndOf="@+id/label_endpoint"
+            app:layout_constraintTop_toTopOf="@+id/label_endpoint"
+            tools:text="get_all_info" />
+
+        <TextView
+            android:id="@+id/status_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_endpoint" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@{response.status}"
+            android:textStyle="italic|bold"
+            app:layout_constraintBottom_toBottomOf="@+id/status_label"
+            app:layout_constraintStart_toEndOf="@+id/status_label"
+            app:layout_constraintTop_toTopOf="@+id/status_label"
+            tools:text="OK" />
+
+        <TextView
+            android:id="@+id/error_message_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_error_message"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/status_label" />
+
+        <TextView
+            android:id="@+id/error_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{response.errorMessage}"
+            android:textStyle="italic|bold"
+            app:layout_constraintBottom_toBottomOf="@+id/error_message_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/error_message_label"
+            app:layout_constraintTop_toTopOf="@+id/error_message_label"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="No" />
+
+        <TextView
+            android:id="@+id/label_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_mode"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/error_message_label" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{response.sent ? @string/label_sent : @string/label_received}"
+            android:textStyle="bold|italic"
+            app:layout_constraintStart_toEndOf="@+id/label_mode"
+            app:layout_constraintTop_toTopOf="@+id/label_mode"
+            tools:text="@string/label_received" />
+
+
+        <TextView
+            android:id="@+id/response_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_response_2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/label_mode" />
+
+        <TextView
+            android:id="@+id/response_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@{response.response}"
+            app:layout_constraintBottom_toBottomOf="@+id/response_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/response_label"
+            app:layout_constraintTop_toTopOf="@+id/response_label"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="some resp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

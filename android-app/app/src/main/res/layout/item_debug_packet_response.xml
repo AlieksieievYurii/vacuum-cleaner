@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="response"
+            type="com.yurii.vaccumcleaner.screens.debug.Packet.Response" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardCornerRadius="9dp"
+        app:cardElevation="2dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/left_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_begin="8dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/right_vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="8dp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_begin="8dp" />
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/TextAppearance.AppCompat.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_response"
+                android:textColor="@color/yellow"
+                android:textStyle="italic"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
+
+            <TextView
+                android:id="@+id/label_endpoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_name"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/title" />
+
+            <TextView
+                android:id="@+id/request_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@{response.requestName}"
+                android:textStyle="italic"
+                app:layout_constraintBottom_toBottomOf="@+id/label_endpoint"
+                app:layout_constraintStart_toEndOf="@+id/label_endpoint"
+                app:layout_constraintTop_toTopOf="@+id/label_endpoint"
+                tools:text="get_all_info" />
+
+            <TextView
+                android:id="@+id/request_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{response.requestId}"
+                app:layout_constraintEnd_toStartOf="@+id/right_vertical"
+                app:layout_constraintTop_toTopOf="@+id/top_horizontal"
+                tools:text="124235435" />
+
+            <TextView
+                android:id="@+id/packet_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@{response.sent ? @string/label_sent : @string/label_received}"
+                android:textStyle="italic|bold"
+                app:layout_constraintEnd_toStartOf="@+id/right_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/request_id" />
+
+            <TextView
+                android:id="@+id/status_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_status"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/label_endpoint" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="@{response.status}"
+                android:textStyle="italic|bold"
+                app:layout_constraintBottom_toBottomOf="@+id/status_label"
+                app:layout_constraintEnd_toStartOf="@+id/packet_mode"
+                app:layout_constraintStart_toEndOf="@+id/status_label"
+                app:layout_constraintTop_toTopOf="@+id/status_label"
+                tools:text="OK" />
+
+            <TextView
+                android:id="@+id/error_message_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_error_message"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/status_label" />
+
+            <TextView
+                android:id="@+id/error_message"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@{response.errorMessage}"
+                android:textStyle="italic|bold"
+                app:layout_constraintBottom_toBottomOf="@+id/error_message_label"
+                app:layout_constraintEnd_toStartOf="@+id/packet_mode"
+                app:layout_constraintStart_toEndOf="@+id/error_message_label"
+                app:layout_constraintTop_toTopOf="@+id/error_message_label"
+                tools:text="No" />
+
+            <TextView
+                android:id="@+id/response_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_response_2"
+                app:layout_constraintStart_toStartOf="@+id/left_vertical"
+                app:layout_constraintTop_toBottomOf="@+id/error_message_label" />
+
+            <TextView
+                android:id="@+id/response_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:ellipsize="end"
+                android:lines="1"
+                android:text="@{response.response}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/response_label"
+                app:layout_constraintTop_toTopOf="@+id/response_label"
+                tools:text="some resp" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/bottom_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_end="8dp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

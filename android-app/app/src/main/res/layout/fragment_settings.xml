@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.yurii.vaccumcleaner.screens.settings.SettingsViewModel" />
+
+        <import type="com.yurii.vaccumcleaner.screens.settings.BluetoothStatus" />
+        <import type="com.yurii.vaccumcleaner.screens.settings.ServiceConnectionStatus" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/top_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <View
+            android:id="@+id/bluetooth_status_indicator"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/circle_red"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
+
+        <View
+            android:id="@+id/service_status_indicator"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/circle_red"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+        <TextView
+            android:id="@+id/bluetooth_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/bluetooth_status_indicator"
+            app:layout_constraintStart_toEndOf="@+id/bluetooth_status_indicator"
+            app:layout_constraintTop_toTopOf="@+id/bluetooth_status_indicator"
+            tools:text="Disconnected" />
+
+        <TextView
+            android:id="@+id/label_service_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/label_service_status"
+            android:textStyle="italic"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/bluetooth_status_indicator" />
+
+        <TextView
+            android:id="@+id/service_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/service_status_indicator"
+            app:layout_constraintStart_toEndOf="@+id/service_status_indicator"
+            app:layout_constraintTop_toTopOf="@+id/service_status_indicator"
+            tools:text="Disconnected" />
+
+        <Button
+            android:id="@+id/reconnect"
+            isVisible="@{viewModel.bluetoothStatus == BluetoothStatus.DISCONNECTED}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:onClick="@{() -> viewModel.connectBluetooth()}"
+            android:text="@string/label_reconnect"
+            app:layout_constraintStart_toEndOf="@+id/bluetooth_status"
+            app:layout_constraintTop_toTopOf="@+id/top_horizontal" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progress"
+            isVisible="@{viewModel.bluetoothStatus == BluetoothStatus.CONNECTING}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:indeterminate="true"
+            android:progress="50"
+            app:layout_constraintBottom_toBottomOf="@+id/bluetooth_status"
+            app:layout_constraintStart_toEndOf="@+id/bluetooth_status"
+            app:layout_constraintTop_toTopOf="@+id/bluetooth_status" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toStartOf="@+id/right_vertical"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical"
+            app:layout_constraintTop_toBottomOf="@+id/label_service_status" />
+
+        <Button
+            android:id="@+id/set_wifi"
+            isEnabled="@{viewModel.serviceConnectionStatus == ServiceConnectionStatus.VALIDATED}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wifi"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/debug"
+            isEnabled="@{viewModel.serviceConnectionStatus == ServiceConnectionStatus.VALIDATED}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="debug"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/set_wifi" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
