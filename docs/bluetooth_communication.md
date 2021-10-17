@@ -53,3 +53,42 @@ Fields:
 * `status` [string] - contaning a response status. `OK` - when the request is done successfuly, `ERROR` - the request is failed due to unexpected failure, `BAD_REQUEST` - when request parameters are bad.
 * (optional) `error_message` [string] - if the `status` is `BAD_REQUEST` or `ERROR` this field is supposed to be added to the response, containing error message.
 * (optional) `response` [json] - json object containing output response from the request.
+
+---
+
+# Core endpoints
+This section describes Bluetooth requests in the core
+
+### Test Packet
+This request is about just validation whether the Bluetooth Service in the core works
+
+Request name: `send_test_packet`</br>
+Parameters: 
+* `id` [string] - random string which will be returned in the response
+
+Response:
+* `id` [string] - the same id which is given in the parameters
+
+### Get current Wifi settings
+This request returns current Wifi settings of the Raspberry Pi
+
+Request name: `get_wifi_settings`</br>
+Parameters: --
+Response:
+* `ssid` [string] - SSID of the wifi
+* `password` [string] - the password of wifi
+
+### Set Wifi
+This request sets given Wifi settins such as ssid and password. 
+Note: The request takes at least 10 seconds
+
+Request name: `set_wifi_settings`</br>
+Parameters:
+* `ssid` [string] - SSID of the wifi
+* `password` [string] - password of the wifi
+
+Response:
+* `is_connected` [boolean] - is True if succeded to connect
+* `ip` [string] - the given IP by the network
+* (optional) `error_message` [string] - if something went wrong
+
