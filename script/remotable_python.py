@@ -123,7 +123,7 @@ class RemotePython(object):
 
         remote_project_folder = remote_destination / project.name
         with self.open_ssh_client() as ssh_client:
-            ssh_client.execute([f'rm -rf {remote_project_folder.as_posix()}'])
+            ssh_client.execute([f'rm -rf {remote_project_folder.as_posix()}'], as_root)
             ssh_client.copy_folder(project, remote_destination)
             ssh_client.execute(['python3', f'{remote_project_folder.joinpath(file).as_posix()}'], as_root,
                                print_continuously=True)
