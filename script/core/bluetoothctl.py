@@ -28,6 +28,9 @@ class Bluetoothctl(object):
     def power_on(self):
         self._send('power on')
 
+    def power_off(self):
+        self._send('power off')
+
     def discoverable_on(self):
         self._send('discoverable on')
 
