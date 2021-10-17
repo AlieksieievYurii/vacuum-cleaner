@@ -1,4 +1,5 @@
 import inspect
+import threading
 import uuid
 from dataclasses import asdict
 from threading import Thread
@@ -23,6 +24,8 @@ class Service(object):
         self._handlers = handlers
         self._queue = queue.Queue()
         self._response_row: List[Response] = []
+        self._stop_handling_queue = threading.Event()
+        self._queue_handler_thread = None
 
     def start(self) -> None:
         """
@@ -32,7 +35,13 @@ class Service(object):
         """
         self._communicator.listen_output(call_back=self._communicator_callback)
 
-        Thread(name='queue_handler', target=self._start_handling_queue, daemon=False).start()
+        self._queue_handler_thread = Thread(name='queue_handler', target=self._start_handling_queue, daemon=False)
+        self._queue_handler_thread.start()
+
+    def stop(self):
+        self._communicator.stop()
+        self._stop_handling_queue.set()
+        self._queue_handler_thread.join()
 
     def request(self, request_name: str, response_model: Type[ResponseModel],
                 parameters: Optional[Dict] = None, timeout: int = 10000):
@@ -73,8 +82,12 @@ class Service(object):
         :return: None
         """
         while True:
-            request = self._queue.get()
-            request()
+            if self._stop_handling_queue.is_set():
+                self._stop_handling_queue.clear()
+                break
+            if self._queue.qsize():
+                request = self._queue.get()
+                request()
 
     def _communicator_callback(self, data: str) -> None:
         """

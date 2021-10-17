@@ -1,5 +1,6 @@
 import json
 import logging
+import socket
 from threading import Thread
 from typing import Dict
 
@@ -15,13 +16,13 @@ class BluetoothCommunicator(Communicator):
         self.server_sock.bind(("", bluetooth.PORT_ANY))
         self.server_sock.listen(1)
         self.client_sock = None
-
-    def _connect(self):
-        logging.info('Start connecting...')
-        bluetooth.advertise_service(self.server_sock, "SampleServer", service_id=self.UUID,
+        self._thread = None
+        bluetooth.advertise_service(self.server_sock, "CoreBluetoothService", service_id=self.UUID,
                                     service_classes=[self.UUID, bluetooth.SERIAL_PORT_CLASS],
                                     profiles=[bluetooth.SERIAL_PORT_PROFILE])
-        logging.info(f"Waiting for connection on RFCOMM channel: {self.server_sock.getsockname()[1]}",)
+
+    def _connect(self):
+        logging.info(f"Waiting for connection on RFCOMM channel: {self.server_sock.getsockname()[1]}")
         client_sock, client_info = self.server_sock.accept()
         logging.info(f"Accepted connection from: {client_info}", )
         self.client_sock = client_sock
@@ -40,5 +41,10 @@ class BluetoothCommunicator(Communicator):
                     break
                 call_back(data.decode().rstrip())
 
-        Thread(target=inner_callback, daemon=True).start()
+        self._thread = Thread(name='thread-listening-bl', target=inner_callback, daemon=True)
+        self._thread.start()
         logging.debug('Started listening for the output.')
+
+    def stop(self) -> None:
+        self.client_sock.shutdown(socket.SHUT_RDWR)
+        self._thread.join()

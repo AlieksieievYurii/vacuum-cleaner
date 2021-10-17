@@ -10,3 +10,7 @@ class Communicator(abc.ABC):
     @abc.abstractmethod
     def listen_output(self, call_back) -> None:
         pass
+
+    @abc.abstractmethod
+    def stop(self) -> None:
+        pass
