@@ -28,8 +28,25 @@ Fields:
 * (optional) `err` [string] - if `res` is `ERR` then this field will contain error message
 
 ## A1 Commands
+### Enable Output Reading
+Description: This command enables reading of A1 output.</br>
+Command: `EOR`</br>
+Parameters:
+  * `s` [bool] - if `true` - enables reading A1 output, if `false` - disables
+
+
 ### Test Led
 Description: this command turn off/on connected led to 13 port.</br>
 Command: `TL`</br>
 Parameters:
   * `s` [bool] - if `true` - turn on test led, if `false` - turn off test led
+
+
+# Sensors
+```
+{
+  "out": {
+    "m_s": true | false
+  }
+}
+```
