@@ -47,7 +47,8 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Implement setting up Wifi connection via BL communication
 
 ## Iteration 2:
-- [ ] Build A1 based on Arduino Mega so that it sends information(values from sensors) and accept some action commands
+- [ ] Create an experimental model of vaccum fan 
+- [x] Build A1 based on Arduino Mega so that it sends information(values from sensors) and accept some action commands
 - [ ] Measure Voltage
 - [ ] Measure Current
 - [ ] Connect Mosfet
