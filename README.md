@@ -52,5 +52,5 @@ This iteration is about buying\getting initial stuff, including:
 - [ ] Measure Voltage
 - [ ] Measure Current
 - [x] Connect Mosfet
-- [ ] Connect a temperature sensor
-- [ ] Start some electronic circuit of A1
+- [x] Connect a temperature sensor
+- [x] Start some electronic circuit of A1
