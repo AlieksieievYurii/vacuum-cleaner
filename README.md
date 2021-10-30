@@ -51,4 +51,6 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Build A1 based on Arduino Mega so that it sends information(values from sensors) and accept some action commands
 - [ ] Measure Voltage
 - [ ] Measure Current
-- [ ] Connect Mosfet
+- [x] Connect Mosfet
+- [ ] Connect a temperature sensor
+- [ ] Start some electronic circuit of A1
