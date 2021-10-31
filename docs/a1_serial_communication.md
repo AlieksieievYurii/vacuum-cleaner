@@ -41,8 +41,14 @@ Command: `TL`</br>
 Parameters:
   * `s` [bool] - if `true` - turn on test led, if `false` - turn off test led
 
+### Start Vaccum Motor
+Description: This command starts main vaccum motor.</br>
+Command: `VM`</br>
+Parameters:
+  * `v` [int] - value in 0..100 range. 0 - disable the motor completely 
 
 # Sensors
+Once the EOR is enable, the all sensors are readed and sent to the serrial. 
 ```
 {
   "out": {
@@ -50,3 +56,6 @@ Parameters:
   }
 }
 ```
+
+Outputs:
+* `tms` - main vaccum mottor cover temperature
