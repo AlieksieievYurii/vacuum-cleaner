@@ -52,7 +52,7 @@ Once the EOR is enable, the all sensors are readed and sent to the serrial.
 ```
 {
   "out": {
-    "m_s": true | false
+    "tms": int
   }
 }
 ```
