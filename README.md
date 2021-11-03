@@ -47,10 +47,19 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Implement setting up Wifi connection via BL communication
 
 ## Iteration 2:
-- [ ] Create an experimental model of vaccum fan 
+- [x] Create an experimental model of vaccum fan 
 - [x] Build A1 based on Arduino Mega so that it sends information(values from sensors) and accept some action commands
-- [ ] Measure Voltage
-- [ ] Measure Current
+- [ ] Measure Voltage FAILED
+- [ ] Measure Current FAILED
 - [x] Connect Mosfet
 - [x] Connect a temperature sensor
 - [x] Start some electronic circuit of A1
+
+## Iteration 3:
+- [ ] Purchase already implemente chassis of some robot vaccum cleaner
+- [ ] Learn some basics of C++
+- [ ] Learn good basics of Arduino Framework
+- [ ] Learn about PID
+- [ ] Connect the chassis, just run them
+- [ ] Measures the speed of the chass motor
+- [ ] Create a PID regulator to maintain given speed of motors 
