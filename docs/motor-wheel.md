@@ -27,31 +27,13 @@ This section describes how to connect the wheel module to Arduino in order to me
 
 The following code is used to measure number of pulses in one 360 rotation:
 ``` 
-#define HALL_ENCODER_H2 2
-
-// Keeps how many pulses are done during one INTERVAL
-volatile long wheel_pulse_count = 0;
-
-void setup() {
-  Serial.begin(9600);
-  pinMode(HALL_ENCODER_H2, INPUT);
-
-  attachInterrupt(digitalPinToInterrupt(HALL_ENCODER_H2), right_wheel_pulse, RISING);
-}
-
-void loop() {
- Serial.print("Pulses: "); Serial.println(wheel_pulse_count);
-}
-void right_wheel_pulse() {
-  wheel_pulse_count++;
-}
-```
-A few measurements showed that in this Wheel Module, full rotation equals `235` pulses! This value is needed to used to calculate RPM. The following script measure speed and direction:
-```
 #define INTERVAL 1000
 
 // How many pulses in one 360 rotation, must be measured manually!!!!
 #define ENC_COUNT_REV 235
+
+// Distance made by full rotation. Diameter of the wheel: 67.5 mm -> Pi * 67.5 => 212 mm
+#define FULL_ROTATION_DISTANCE 212 
 
 #define HALL_ENCODER_H1 3
 #define HALL_ENCODER_H2 2
@@ -83,9 +65,11 @@ void loop() {
 
 void calculate_and_print_measurements() {
   const float rpm_right = (float)(wheel_pulse_count * 60 / ENC_COUNT_REV);
-
+  const float distance = ((float)wheel_pulse_count / ENC_COUNT_REV) * FULL_ROTATION_DISTANCE;
+  
   Serial.print("Pulses: "); Serial.println(wheel_pulse_count);
   Serial.print("Speed: "); Serial.print(rpm_right); Serial.println(" RPM");
+  Serial.print("Distance: ");Serial.print(distance);Serial.println(" mm");
   Serial.print("Forwad: "); Serial.println(forwad_direction);
   Serial.println();
 
@@ -97,10 +81,3 @@ void right_wheel_pulse() {
   wheel_pulse_count++;
 }
 ```
-
-1. Add info about pins
-2. Info about voltage/current
-
-https://automaticaddison.com/how-to-calculate-the-velocity-of-a-dc-motor-with-encoder/
-
-https://automaticaddison.com/calculate-pulses-per-revolution-for-a-dc-motor-with-encoder/
