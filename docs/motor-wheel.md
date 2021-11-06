@@ -18,6 +18,86 @@ A few experiments have been done to figure out the suitable voltages(motor and h
 The hall sensors(Vcc) - *3.3..5 V*</br>
 The motor - *3..8 V* -> 40 mA - 100 mA</br>
 
+## Integration with Arduino
+This section describes how to connect the wheel module to Arduino in order to measure rotation velocity(RPM). As an example Arduino Nano has been chosen, so connection should be as follows:</br>
+**Vcc** - to 5v of Arduino.</br>
+**GND** - it is obvious.</br>
+**H1** - to pin 3.</br>
+**H2** - to pin 2.</br>
+
+The following code is used to measure number of pulses in one 360 rotation:
+``` 
+#define HALL_ENCODER_H2 2
+
+// Keeps how many pulses are done during one INTERVAL
+volatile long wheel_pulse_count = 0;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(HALL_ENCODER_H2, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(HALL_ENCODER_H2), right_wheel_pulse, RISING);
+}
+
+void loop() {
+ Serial.print("Pulses: "); Serial.println(wheel_pulse_count);
+}
+void right_wheel_pulse() {
+  wheel_pulse_count++;
+}
+```
+A few measurements showed that in this Wheel Module, full rotation equals `235` pulses! This value is needed to used to calculate RPM. The following script measure speed and direction:
+```
+#define INTERVAL 1000
+
+// How many pulses in one 360 rotation, must be measured manually!!!!
+#define ENC_COUNT_REV 235
+
+#define HALL_ENCODER_H1 3
+#define HALL_ENCODER_H2 2
+
+// True = Forward; False = Reverse
+boolean forwad_direction = true;
+
+// Keeps how many pulses are done during one INTERVAL
+volatile long wheel_pulse_count = 0;
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(HALL_ENCODER_H1, INPUT);
+  pinMode(HALL_ENCODER_H2, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(HALL_ENCODER_H2), right_wheel_pulse, RISING);
+}
+
+void loop() {
+  static uint32_t previous_milis = 0;
+  const uint32_t currentMillis = millis();
+
+  if (currentMillis - previous_milis > INTERVAL) {
+    previous_milis = currentMillis;
+    calculate_and_print_measurements();
+  }
+}
+
+void calculate_and_print_measurements() {
+  const float rpm_right = (float)(wheel_pulse_count * 60 / ENC_COUNT_REV);
+
+  Serial.print("Pulses: "); Serial.println(wheel_pulse_count);
+  Serial.print("Speed: "); Serial.print(rpm_right); Serial.println(" RPM");
+  Serial.print("Forwad: "); Serial.println(forwad_direction);
+  Serial.println();
+
+  wheel_pulse_count = 0;
+}
+
+void right_wheel_pulse() {
+  forwad_direction = digitalRead(HALL_ENCODER_H1) == LOW ? true : false;
+  wheel_pulse_count++;
+}
+```
+
 1. Add info about pins
 2. Info about voltage/current
 
