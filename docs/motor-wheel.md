@@ -26,6 +26,25 @@ This section describes how to connect the wheel module to Arduino in order to me
 **H2** - to pin 2.</br>
 
 The following code is used to measure number of pulses in one 360 rotation:
+
+``` 
+#define HALL_ENCODER_H2 2
+// Keeps how many pulses are done during one INTERVAL
+volatile long wheel_pulse_count = 0;
+void setup() {
+  Serial.begin(9600);
+  pinMode(HALL_ENCODER_H2, INPUT);
+  attachInterrupt(digitalPinToInterrupt(HALL_ENCODER_H2), right_wheel_pulse, RISING);
+}
+void loop() {
+ Serial.print("Pulses: "); Serial.println(wheel_pulse_count);
+}
+void right_wheel_pulse() {
+  wheel_pulse_count++;
+}
+```
+A few measurements showed that in this Wheel Module, full rotation equals `235` pulses! This value is needed to used to calculate RPM. The following script measure speed and direction:
+
 ``` 
 #define INTERVAL 1000
 
