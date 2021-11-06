@@ -14,9 +14,9 @@ Little reverse enginering has been done. The following input pins are revealed:
 **H1** - first hall sensor.</br>
 **H2** - second hall sensor.</br>
 
-A few experiments have been done to figure out the suitable voltages(motor and hall sensors) for the wheel motor.</br>
-The hall sensors(Vcc) - *3.3..5 V*
-The motor - *3..8 V*
+A few experiments have been done to figure out the suitable voltages(motor and hall sensors) for the wheel module.</br>
+The hall sensors(Vcc) - *3.3..5 V*</br>
+The motor - *3..8 V* -> 40 mA - 100 mA</br>
 
 1. Add info about pins
 2. Info about voltage/current
