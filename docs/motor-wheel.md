@@ -84,7 +84,7 @@ void loop() {
 
 void calculate_and_print_measurements() {
   const float rpm_right = (float)(wheel_pulse_count * 60 / ENC_COUNT_REV);
-  const float distance = ((float)wheel_pulse_count / ENC_COUNT_REV) * FULL_ROTATION_DISTANCE;
+  const float distance = rpm_right * FULL_ROTATION_DISTANCE;
   
   Serial.print("Pulses: "); Serial.println(wheel_pulse_count);
   Serial.print("Speed: "); Serial.print(rpm_right); Serial.println(" RPM");
