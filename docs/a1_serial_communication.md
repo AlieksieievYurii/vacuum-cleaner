@@ -47,6 +47,30 @@ Command: `VM`</br>
 Parameters:
   * `v` [int] - value in 0..100 range. 0 - disable the motor completely 
 
+### Start Right Wheel
+Description: This command starts and sets constant speed of the right wheel.</br>
+Command: `RW`</br>
+Parameters:
+  * `s` [int] - speed in RPM.
+  * `f` [bool] - forward if true, otherwise reverse
+
+### Start Left Wheel
+Description: This command starts and sets constant speed of the left wheel.</br>
+Command: `LW`</br>
+Parameters:
+  * `s` [int] - speed in RPM.
+  * `f` [bool] - forward if true, otherwise reverse
+
+
+### Set Wheels PID values
+Description: Sets PID values for both right and left wheels. Also the lates values can be saved in EEPROM memory so that they will be used as initial(default) values.</br>
+Command: `WPID`</br>
+Parameters:
+  * `p` [float] - sets proportional value.
+  * `i` [float] - sets integral value.
+  * `d` [float] - sets derivative value.
+  * `s` [bool] - the values will be saved, if true
+
 # Sensors
 Once the EOR is enable, the all sensors are readed and sent to the serrial. 
 ```
@@ -58,4 +82,4 @@ Once the EOR is enable, the all sensors are readed and sent to the serrial.
 ```
 
 Outputs:
-* `tms` - main vaccum mottor cover temperature
+* `tms` - main vaccum motor cover temperature
