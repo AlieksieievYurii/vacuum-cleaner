@@ -62,4 +62,6 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Learn about PID
 - [x] Connect the chassis, just run them
 - [x] Measures the speed of the chass motor
-- [x] Create a PID regulator to maintain given speed of motors 
+- [x] Create a PID regulator to maintain given speed of motors
+- [x] Create a new model of vacuum motor
+- [ ] Create a clear roll
