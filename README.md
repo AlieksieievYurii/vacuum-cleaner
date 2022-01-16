@@ -57,11 +57,11 @@ This iteration is about buying\getting initial stuff, including:
 
 ## Iteration 3:
 - [x] Purchase already implemente chassis of some robot vaccum cleaner
-- [ ] Learn some basics of C++
-- [ ] Learn good basics of Arduino Framework
+- [x] Learn some basics of C++
+- [x] Learn good basics of Arduino Framework
 - [x] Learn about PID
 - [x] Connect the chassis, just run them
 - [x] Measures the speed of the chass motor
 - [x] Create a PID regulator to maintain given speed of motors
 - [x] Create a new model of vacuum motor
-- [ ] Create a clear roll
+- [x] Create a clear roll
