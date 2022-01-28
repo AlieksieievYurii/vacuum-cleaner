@@ -65,3 +65,6 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Create a PID regulator to maintain given speed of motors
 - [x] Create a new model of vacuum motor
 - [x] Create a clear roll
+
+## Iteration 4:
+- [ ] Create a 3d model 
