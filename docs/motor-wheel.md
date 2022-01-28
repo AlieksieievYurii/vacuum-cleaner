@@ -11,8 +11,7 @@ Little reverse enginering has been done. The following input pins are revealed:
 **MA** and **MB** - are wires connected to DC mottor.</br>
 **Vcc** - is connected to bouth hall sensors.</br>
 **GND** - is connected to bouth hall sensors.</br>
-**H1** - first hall sensor.</br>
-**H2** - second hall sensor.</br>
+**H1** and **H2** - first and second hall sensors. Together works as an encoder, so the direction and speed can be measured.</br>
 
 A few experiments have been done to figure out the suitable voltages(motor and hall sensors) for the wheel module.</br>
 The hall sensors(Vcc) - *3.3..5 V*</br>
