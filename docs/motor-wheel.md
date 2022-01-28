@@ -42,7 +42,7 @@ void right_wheel_pulse() {
   wheel_pulse_count++;
 }
 ```
-A few measurements showed that in this Wheel Module, full rotation equals `235` pulses! This value is needed to used to calculate RPM. The following script measure speed and direction:
+A few measurements showed that in this Wheel Module, full rotation equals `235` pulses! This value is needed to calculate RPM. The following script measures the speed and direction:
 
 ``` 
 #define INTERVAL 1000
@@ -50,7 +50,7 @@ A few measurements showed that in this Wheel Module, full rotation equals `235` 
 // How many pulses in one 360 rotation, must be measured manually!!!!
 #define ENC_COUNT_REV 235
 
-// Distance made by full rotation. Diameter of the wheel: 67.5 mm -> Pi * 67.5 => 212 mm
+// Distance made by a full rotation. Diameter of the wheel: 67.5 mm -> Pi * 67.5 => 212 mm
 #define FULL_ROTATION_DISTANCE 212 
 
 #define HALL_ENCODER_H1 3
