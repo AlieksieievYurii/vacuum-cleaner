@@ -68,3 +68,9 @@ This iteration is about buying\getting initial stuff, including:
 
 ## Iteration 4:
 - [ ] Create a 3d model 
+
+What I've learnt?
+- Modeling with Fusion 360
+- Improving C Embedded
+- Programming Raspberry PI
+- Android BL
