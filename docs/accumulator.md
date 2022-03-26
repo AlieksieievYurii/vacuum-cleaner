@@ -6,6 +6,8 @@ Overview:
 Cells: 4S</br>
 Charging Voltage: 16.8V
 
+resistors for LM338t: 4.4 K & 1k
+
 [18650 Battery](https://allegro.pl/oferta/akumulator-18650-samsung-3500mah-35e-nowe-11328113273?snapshot=MjAyMi0wMy0xMlQyMTowODo0My43NThaO2J1eWVyO2E1ZTk4NmY4NDg0NGQ2N2E4YzMwZWNiMWI3NmJjYTk4ZDI0YzBlYTAxZGE5NDUyMmU4Mjk4N2NiNThkZjAwOGU%3D)
 
 [BMS](https://www.aliexpress.com/item/1005002369756124.html?spm=a2g0o.order_detail.0.0.6509f19c1LpNGw)
