@@ -4,7 +4,8 @@ This section describes the process of creating the accumulator for the project
 
 Overview:
 Cells: 4S</br>
-Charging Voltage: 16.8V
+Charging Voltage: 16.8V</br>
+Capacity: +- 5 Ah
 
 resistors for LM338t: 4.4 K & 1k
 
@@ -23,4 +24,10 @@ Calculating voltages of the cells:</br>
 `actual v-B2-B6 = v-B2-B6 - v-B1-B5`</br>
 `actual v-B3-B7 = v-B3-B7 - v-B2-B6`</br>
 `actual v-B4-B8 = v-B4-B8 - v-B3-B7`</br>
+
+Images:
+
+![image](https://user-images.githubusercontent.com/39415360/160284697-daae46ed-e1fc-4e51-9077-3b66b13032fa.png)
+![image](https://user-images.githubusercontent.com/39415360/160284704-cdde96f5-a7b4-4fe7-ac90-609e5b22dd55.png)
+
 
