@@ -67,7 +67,10 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Create a clear roll
 
 ## Iteration 4:
-- [ ] Create a 3d model 
+- [ ] Create a 3d model
+- [ ] Add controll buttons
+- [ ] Make an experiment with voltage regulator
+- [ ] Connect amplifier & speaker to Raspberry Pi Zero
 
 What I've learnt?
 - Modeling with Fusion 360
