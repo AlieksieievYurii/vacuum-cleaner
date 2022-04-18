@@ -67,9 +67,19 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Create a clear roll
 
 ## Iteration 4:
-- [ ] Create a 3d model
-- [ ] Add controll buttons
-- [ ] Make an experiment with voltage regulator
+- [x] Create a 3d model
+- [x] Add controll buttons
+- [x] Make an experiment with voltage regulator
+## Iteration 5:
+- [X] Get started with EasyEDA
+- [X] Connect Motor Drivers
+- [X] Connect Distanses Sensors
+- [X] Connect the display
+- [X] Connect Acceleromenter
+- [ ] Connect and test PNP transistor for Powel Button Led
+- [ ] Connect Voltage Stabilizator for 12v
+- [ ] Buy Radiators
+- [ ] Connect Raspberry and Arduino via UART
 - [ ] Connect amplifier & speaker to Raspberry Pi Zero
 
 What I've learnt?
