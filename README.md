@@ -76,11 +76,11 @@ This iteration is about buying\getting initial stuff, including:
 - [X] Connect Distanses Sensors
 - [X] Connect the display
 - [X] Connect Acceleromenter
-- [ ] Connect and test PNP transistor for Powel Button Led
-- [ ] Connect Voltage Stabilizator for 12v
-- [ ] Buy Radiators
-- [ ] Connect Raspberry and Arduino via UART
-- [ ] Connect amplifier & speaker to Raspberry Pi Zero
+- [x] Connect and test PNP transistor for Powel Button Led[FAILED]
+- [x] Connect Voltage Stabilizator for 12v
+- [x] Buy Radiators
+- [x] Connect Raspberry and Arduino via UART
+- [x] Connect amplifier & speaker to Raspberry Pi Zero
 
 What I've learnt?
 - Modeling with Fusion 360
