@@ -17,3 +17,11 @@ Example: #021:1343:1\n
 Read sensors:
 
 `@<input_a>:<value_a>;<input_b>:<value_b>\n`
+
+
+Instructions
+| Command  |      parameters      |  Description |
+|----------|:-------------:|------:|
+| 0x01 | None | Inform that the core has been initialized |
+| col 2 is |    centered   |   $12 |
+| col 3 is | right-aligned |    $1 |
