@@ -4,7 +4,9 @@ The comunication between A1 and Core modules is done throught UART protocol. The
 # Format
 To send the command to A1
 
-`#<command number(3)>:<id(4)>:<parameters>\n`
+`#<command number(2)>:<id(4)>:<parameters>\n`
+
+Command number and ID must be hex.
 
 A1 responces: 
   * `$S:<id(4)>\n` - if the command is executed successfuly
