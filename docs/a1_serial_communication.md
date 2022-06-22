@@ -10,7 +10,7 @@ Command number and ID must be hex.
 
 A1 responces: 
   * `$S:<id(4)>\n` - if the command is executed successfuly
-  * `$E:<id(4)>:<description>\n` - if the command is failed
+  * `$E:<id(4)>\n` - if the command is failed
 
 Example: #021:1343:1\n
 
