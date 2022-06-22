@@ -22,6 +22,6 @@ Read sensors:
 Instructions
 | Command  |      parameters      |  Description |
 |----------|:-------------:|------:|
-| 0x01 | None | Inform that the core has been initialized |
+| 0x01 | 0 - if everything is fine; 1 - something wrong | Inform that the core has been initialized |
 | col 2 is |    centered   |   $12 |
 | col 3 is | right-aligned |    $1 |
