@@ -1,27 +1,33 @@
 # A1 and Core comunication
 The comunication between A1 and Core modules is done throught UART protocol. The following document describes the format of the commands.
 
-# Format
-To send the command to A1
+# Input
+To send the command to A1:
 
-`#<command number(2)>:<id(4)>:<parameters>\n`
+`#<command number(2 bytes of hex)>:<id(4 bytes of hex)>:<parameters>\n`
 
-Command number and ID must be hex.
+Each command supposed to return a response containing the status `S` or `F`:
 
-A1 responces: 
-  * `$S:<id(4)>\n` - if the command is executed successfuly
-  * `$F:<id(4)>:<code error>\n` - if the command is failed
+  * `$S:<id(4 bytes of hex)>\n` - if the command is executed successfuly
+  * `$F:<id(4 bytes of hex)>:<code error>\n` - if the command has failed. Also it contains error code
 
-Example: #021:1343:1\n
+Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 
-Read sensors:
+# Output
+A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. The following format is made of key and value:
 
-`@<input_a>:<value_a>;<input_b>:<value_b>\n`
+`@<id(2 bytes if hex)>:<value(4 bytes of hex)>;<id(2 bytes if hex)>:<value(4 bytes of hex)>\n`
 
 
-Instructions
-| Command  |      parameters      |  Description |
-|----------|:-------------:|------:|
-| 0x01 | 0 - if everything is fine; 1 - something wrong | Inform that the core has been initialized |
-| col 2 is |    centered   |   $12 |
-| col 3 is | right-aligned |    $1 |
+# Instructions table
+| Instruction  |      parameters      |    Error Codes    |    Description      |
+|--------------|:--------------------:|:-----------------:|--------------------:|
+| 0x01 | 0 - initialization is succsessful; 1 - something wrong| 1 - wrong parameter | Initialize and inform that the core has been initialized |
+| 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 1 - wrong parameter | Turns on, off or blink the Wifi led |
+| 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 1 - wrong parameter | Turns on, off or blink the Error led |
+| 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 1 - wrong parameter | Turns on, off or blink the Status led |
+
+# Output table
+|  Id  |              Value            |                     Description                    |
+|------|:-----------------------------:|:--------------------------------------------------:|
+| 0x01 | Bits `**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Up, Second - OK, third - Down. | Reads click events of controll panel(Up, Ok, Down buttons) |
