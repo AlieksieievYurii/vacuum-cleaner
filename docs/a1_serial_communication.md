@@ -22,10 +22,11 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. Th
 # Instructions table
 | Instruction  |      parameters      |    Error Codes    |    Description      |
 |--------------|:--------------------:|:-----------------:|--------------------:|
-| 0x01 | 0 - initialization is succsessful; 1 - something wrong| 1 - wrong parameter | Initialize and inform that the core has been initialized |
-| 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 1 - wrong parameter | Turns on, off or blink the Wifi led |
-| 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 1 - wrong parameter | Turns on, off or blink the Error led |
-| 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 1 - wrong parameter | Turns on, off or blink the Status led |
+| 0x01 | 0 - initialization is succsessful; 1 - something wrong| 0x1 - wrong parameter | Initialize and inform that the core has been initialized |
+| 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Wifi led |
+| 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Error led |
+| 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Status led |
+| 0x05 | `<beep count(max 2 bytes of hex)>;<period(max 4 bytes of hex)>` | 0x1 - Wrong parameters | Makes beeps |
 
 # Output table
 |  Id  |              Value            |                     Description                    |
