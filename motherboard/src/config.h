@@ -32,6 +32,8 @@
 #define LEFT_WHEEL_DIRECTION_SENSOR 25 
 //=============================
 
+#define BUZZER 46
+
 void init_hardware(void) {
   pinMode(LEFT_END, INPUT_PULLUP);
   pinMode(RIGHT_END, INPUT_PULLUP);
@@ -54,6 +56,7 @@ void init_hardware(void) {
   pinMode(RIGHT_BACKWARD, OUTPUT);
   pinMode(LEFT_FORWARD, OUTPUT);
   pinMode(LEFT_BACKWARD, OUTPUT);
+  pinMode(BUZZER, OUTPUT);
 }
 
 #endif
