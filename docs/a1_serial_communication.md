@@ -1,85 +1,34 @@
-# A1 Serial Communication
-A1 communication works with JSON format
+# A1 and Core comunication
+The comunication between A1 and Core modules is done throught UART protocol. The following document describes the format of the commands.
 
-## Sending commands
-```
-{
-  "id": ...,
-  "com": ...,
-  "params": ...
-}
-```
-Fields:
-* `id` [string] - random unique id.
-* `com` [string] - stands for command.
-* (optional) `params` [json] - required parameters by a command.
+# Input
+To send the command to A1:
 
-Response:
-```
-{
-  "id": ...,
-  "res": ...,
-  "err": ...
-}
-```
-Fields:
-* `id` [string] - the same id as in sended command.
-* `res` [string] - if `OK` - everything is allright, otherwise `ERR`.
-* (optional) `err` [string] - if `res` is `ERR` then this field will contain error message
+`#<command number(2 bytes of hex)>:<id(4 bytes of hex)>:<parameters>\n`
 
-## A1 Commands
-### Enable Output Reading
-Description: This command enables reading of A1 output.</br>
-Command: `EOR`</br>
-Parameters:
-  * `s` [bool] - if `true` - enables reading A1 output, if `false` - disables
+Each command supposed to return a response containing the status `S` or `F`:
+
+  * `$S:<id(4 bytes of hex)>\n` - if the command is executed successfuly
+  * `$F:<id(4 bytes of hex)>:<code error>\n` - if the command has failed. Also it contains error code
+
+Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
+
+# Output
+A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. The following format is made of key and value:
+
+`@<id(2 bytes if hex)>:<value(4 bytes of hex)>;<id(2 bytes if hex)>:<value(4 bytes of hex)>\n`
 
 
-### Test Led
-Description: this command turn off/on connected led to 13 port.</br>
-Command: `TL`</br>
-Parameters:
-  * `s` [bool] - if `true` - turn on test led, if `false` - turn off test led
+# Instructions table
+| Instruction  |      parameters      |    Error Codes    |    Description      |
+|--------------|:--------------------:|:-----------------:|--------------------:|
+| 0x01 | 0 - initialization is succsessful; 1 - something wrong| 0x1 - wrong parameter | Initialize and inform that the core has been initialized |
+| 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Wifi led |
+| 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Error led |
+| 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Status led |
+| 0x05 | `<beep count(max 2 bytes of hex)>;<period(max 4 bytes of hex)>` | 0x1 - Wrong parameters | Makes beeps |
 
-### Start Vaccum Motor
-Description: This command starts main vaccum motor.</br>
-Command: `VM`</br>
-Parameters:
-  * `v` [int] - value in 0..100 range. 0 - disable the motor completely 
-
-### Start Right Wheel
-Description: This command starts and sets constant speed of the right wheel.</br>
-Command: `RW`</br>
-Parameters:
-  * `s` [int] - speed in RPM.
-  * `f` [bool] - forward if true, otherwise reverse
-
-### Start Left Wheel
-Description: This command starts and sets constant speed of the left wheel.</br>
-Command: `LW`</br>
-Parameters:
-  * `s` [int] - speed in RPM.
-  * `f` [bool] - forward if true, otherwise reverse
-
-
-### Set Wheels PID values
-Description: Sets PID values for both right and left wheels. Also the lates values can be saved in EEPROM memory so that they will be used as initial(default) values.</br>
-Command: `WPID`</br>
-Parameters:
-  * `p` [float] - sets proportional value.
-  * `i` [float] - sets integral value.
-  * `d` [float] - sets derivative value.
-  * `s` [bool] - the values will be saved, if true
-
-# Sensors
-Once the EOR is enable, the all sensors are readed and sent to the serrial. 
-```
-{
-  "out": {
-    "tms": int
-  }
-}
-```
-
-Outputs:
-* `tms` - main vaccum motor cover temperature
+# Output table
+|  Id  |              Value            |                     Description                    |
+|------|:-----------------------------:|:--------------------------------------------------:|
+| 0x01 | Bits `**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Up, Second - OK, third - Down. | Reads click events of controll panel(Up, Ok, Down buttons) |
