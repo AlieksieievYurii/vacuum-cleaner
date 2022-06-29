@@ -2,7 +2,6 @@
 
 Led::Led(uint8_t port) {
   _port = port;
-  
 }
 
 void Led::tick() {
@@ -19,7 +18,7 @@ void Led::tick() {
 }
 
 void Led::on() {
-  _led_state = ON;
+  _led_state = ON; 
 }
 
 void Led::off() {
