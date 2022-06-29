@@ -18,7 +18,8 @@ void loop() {
   instruction_handler.perform();
   propagandate_tick_signal();
   
-//  instruction_handler.reset_sensors_output_buffer();
-//  instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
-//  instruction_handler.send_sensors_output();
+  instruction_handler.reset_sensors_output_buffer();
+  instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
+  instruction_handler.add_sensor_output(0x02, get_ends_state());
+  instruction_handler.send_sensors_output();
 }

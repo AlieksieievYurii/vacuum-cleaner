@@ -14,6 +14,8 @@ Button btn_up(BUT_UP);
 Button btn_ok(BUT_OK);
 Button btn_down(BUT_DOWN);
 
+#define IS_PRESSED(pin) !digitalRead(pin)
+
 Buzzer buzzer(BUZZER);
 
 void _handle_led(uint16_t id, Led &led, char* input) {
@@ -43,12 +45,12 @@ void on_led_st(uint16_t id, char* input) {
 
 void on_beep(uint16_t id, char* input) {
   int8_t index = find_character_index(input, ';', 2);
-  
+
   if (index == -1) {
     instruction_handler.on_failed(id, 0x1);
     return;
   }
-  
+
   char beep_count_array[2] = {0};
   char period_array[6] = {0};
   strncpy(beep_count_array, input, index);
@@ -79,6 +81,24 @@ uint8_t get_controll_buttons_state() {
     case LONG_CLICK: state |= 0x3; break;
     case UNPRESSED: break;
   }
+
+  return state;
+}
+
+uint8_t get_ends_state() {
+  uint8_t state = 0;
+
+  if (IS_PRESSED(RIGHT_END ))
+    state |= 0x1;
+
+  if (IS_PRESSED(LEFT_END))
+    state |= 0x2;
+
+  if (IS_PRESSED(LID_END))
+    state |= 0x4;
+
+  if (IS_PRESSED(DUST_BOX_END))
+    state |= 0x8;
 
   return state;
 }
