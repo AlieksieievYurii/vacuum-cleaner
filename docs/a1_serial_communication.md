@@ -32,3 +32,4 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. Th
 |  Id  |              Value            |                     Description                    |
 |------|:-----------------------------:|:--------------------------------------------------:|
 | 0x01 | Bits `**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Up, Second - OK, third - Down. | Reads click events of controll panel(Up, Ok, Down buttons) |
+| 0x02 | 4 bits where 1st - Right End, 2nd - Left End, 3rd - Lid End, 4th - Dust Box End | The state of ends |
