@@ -16,7 +16,7 @@ Button btn_down(BUT_DOWN);
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
-Buzzer buzzer(BUZZER);
+Buzzer buzzer(BUZZER, instruction_handler);
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -57,8 +57,7 @@ void on_beep(uint16_t id, char* input) {
   strncpy(period_array, &input[index + 1], 6);
   uint8_t bepp_count = strtol(beep_count_array, NULL, 16);
   uint16_t period = strtol(period_array, NULL, 16);
-  buzzer.beep(bepp_count, period);
-  instruction_handler.on_finished(id);
+  buzzer.beep(id, bepp_count, period);
 }
 
 uint8_t get_controll_buttons_state() {
