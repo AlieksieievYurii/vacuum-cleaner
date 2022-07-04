@@ -2,6 +2,7 @@
 #define __wheels_h__
 
 #include <Arduino.h>
+#include "instruction-handler.h"
 
 // How many pulses in one 360 rotation, must be measured manually!!!!
 #define ENC_COUNT_REV 235
@@ -12,12 +13,17 @@
 #define CALL_INTERVAL 100
 
 enum WheelState : byte {
-  IDLE, MOVING, STOPED
+  IDLE, MOVING, STOPPED
+};
+
+enum HaltMode : byte {
+  WITH_STOP, NEUTRAL
 };
 
 class Wheel {
   public:
     Wheel(uint8_t forward_pin, uint8_t backward_pin, uint8_t speed_sensor, uint8_t direction_sensor, void (*pulse_interupt)());
+    WheelState wheel_state = IDLE;
     void set_PID(float kp, float ki, float kd);
     void tick(); // Must be called every CALL_INTERVAL milliseconds
     void move(float distanse_sm, uint32_t speed, bool with_break, bool forward);
@@ -33,11 +39,27 @@ class Wheel {
     volatile bool _direction_is_forward;
     uint64_t _pulses_to_move = 0;
     float _speed_setpoint = 0; // sm per minute
-    WheelState _wheel_state = IDLE;
     bool _with_break = false;
     bool _forward_direction_to_move = false;
     void _measure_speed();
     void _measure_pid_and_set_speed();
+    void _halt(bool disable = false);
+};
+
+class Wheels {
+  public:
+    Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel &right_wheel);
+    void tick();
+    void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode);
+
+  private:
+    InstructionHandler* _instruction_handler;
+    Wheel* _left_wheel;
+    Wheel* _right_wheel;
+    bool _is_moving = false;
+    uint16_t _request_id;
+    
+    
 };
 
 #endif

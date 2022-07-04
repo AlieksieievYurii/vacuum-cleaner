@@ -17,20 +17,17 @@ void Wheel::set_PID(float kp, float ki, float kd) {
 void Wheel::tick() {
   _measure_speed();
 
-  if (_wheel_state == MOVING && _wheel_pulses_count >= _pulses_to_move)
-    _wheel_state = STOPED;
+  if (wheel_state == MOVING && _wheel_pulses_count >= _pulses_to_move)
+    wheel_state = STOPPED;
 
-  if (_wheel_state == MOVING)
+  if (wheel_state == MOVING)
     _measure_pid_and_set_speed();
-  else if (_wheel_state == STOPED) {
-    if(_with_break) {
-       digitalWrite(_forward_pin, HIGH);
-    digitalWrite(_backward_pin, HIGH);
-    }
-    _wheel_state = IDLE;
+  else if (wheel_state == STOPPED) {
+    if (_with_break) _halt();
+
+    wheel_state = IDLE;
   } else {
-    digitalWrite(_forward_pin, LOW);
-    digitalWrite(_backward_pin, LOW);
+    _halt(true);
   }
 }
 
@@ -46,10 +43,14 @@ void Wheel::pulse() {
   _direction_is_forward = digitalRead(_direction_sensor);
 }
 
+void Wheel::_halt(bool disable) {
+  digitalWrite(_forward_pin, disable ? LOW : HIGH);
+  digitalWrite(_backward_pin, disable ? LOW : HIGH);
+}
+
 void Wheel::move(float distanse_sm, uint32_t speed, bool with_break, bool forward) {
-  digitalWrite(_forward_pin, LOW);
-  digitalWrite(_backward_pin, LOW);
-  _wheel_state = MOVING;
+  _halt(true);
+  wheel_state = MOVING;
   _forward_direction_to_move = forward;
   _speed_setpoint = speed;
   _with_break = with_break;
@@ -66,4 +67,25 @@ void Wheel::_measure_pid_and_set_speed() {
   prevErr = err;
   uint8_t res = constrain(err * _kp + integral + D * _kd, 0, 255);
   analogWrite(_forward_direction_to_move ? _forward_pin : _backward_pin, res);
+}
+
+Wheels::Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel &right_wheel) {
+  _instruction_handler = &instruction_handler;
+  _left_wheel = &left_wheel;
+  _right_wheel = &right_wheel;
+}
+
+void Wheels::tick() {
+  if (_is_moving && _left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == IDLE) {
+    _instruction_handler->on_finished(_request_id);
+    _request_id = 0;
+    _is_moving = false;
+  }
+}
+
+void Wheels::move(uint16_t request_id, uint32_t  distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode) {
+  _request_id = request_id;
+  _is_moving = true;
+  _left_wheel->move(distance_sm, speed_sm_per_minute, halt_mode == WITH_STOP, forward);
+  _right_wheel->move(distance_sm, speed_sm_per_minute, halt_mode == WITH_STOP, forward);
 }
