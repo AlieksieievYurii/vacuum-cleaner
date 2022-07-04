@@ -168,7 +168,7 @@ void on_turn(uint16_t id, char* input) {
     instruction_handler.on_failed(id, 0x1);
     return;
   }
-
+  
   const int16_t speed = fetch_unsigned_hex_number(input, 2);
   if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
     instruction_handler.on_failed(id, 0x1);

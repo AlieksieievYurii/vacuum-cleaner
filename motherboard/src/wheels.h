@@ -14,8 +14,6 @@
 
 #define WHEELS_BASE_LINE_DIAMETER_MM 290
 
-#define CALCULATE_ANGLE_DISTANCE(ANGLE) (3.14 * (WHEELS_BASE_LINE_DIAMETER_MM/2 / 10.0) * ANGLE) / 180
-
 enum WheelState : byte {
   IDLE, MOVING, STOPPED
 };
@@ -58,7 +56,7 @@ class Wheels {
     Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel &right_wheel);
     void tick();
     void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode);
-    void turn(uint16_t request_id, SideDirection side_direction, uint8_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode);
+    void turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode);
 
   private:
     InstructionHandler* _instruction_handler;

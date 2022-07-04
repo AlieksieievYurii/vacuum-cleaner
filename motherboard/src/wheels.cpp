@@ -75,7 +75,7 @@ Wheels::Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel
 }
 
 void Wheels::tick() {
-  if(_is_moving && _left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == IDLE) {
+  if (_is_moving && _left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == IDLE) {
     _instruction_handler->on_finished(_request_id);
     _request_id = 0;
     _is_moving = false;
@@ -89,14 +89,23 @@ void Wheels::move(uint16_t request_id, uint32_t  distance_sm, uint32_t speed_sm_
   _right_wheel->move(distance_sm, speed_sm_per_minute, halt_mode == WITH_STOP, forward);
 }
 
-void Wheels::turn(uint16_t request_id, SideDirection side_direction, uint8_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode) {
+uint32_t calculate_angle_distance_in_sm(uint16_t angle) {
+  float radius_in_sm = WHEELS_BASE_LINE_DIAMETER_MM / 2 / 10.0;
+  
+  if (angle >= 360) {
+    uint16_t full_turns = angle / 360;
+    return ((angle - full_turns * 360) * PI * radius_in_sm) / 180 + full_turns * (2 * PI * radius_in_sm);
+  } else {
+    return (PI * radius_in_sm * angle) / 180;
+  }
+}
+
+void Wheels::turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode) {
   _request_id = request_id;
   _is_moving = true;
 
-  uint16_t l = CALCULATE_ANGLE_DISTANCE(degree);
+  uint32_t distance = calculate_angle_distance_in_sm(degree);
 
-  _left_wheel->move(l, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == RIGHT);
-  _right_wheel->move(l, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == LEFT);
+  _left_wheel->move(distance, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == RIGHT);
+  _right_wheel->move(distance, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == LEFT);
 }
-
-  
