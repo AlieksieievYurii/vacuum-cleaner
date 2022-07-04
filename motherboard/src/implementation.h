@@ -5,6 +5,7 @@
 #include "led.h"
 #include "button.h"
 #include "buzzer.h"
+#include "wheels.h"
 
 Led led_wifi(LED_WIFI);
 Led led_error(LED_ERR);
@@ -17,6 +18,15 @@ Button btn_down(BUT_DOWN);
 #define IS_PRESSED(pin) !digitalRead(pin)
 
 Buzzer buzzer(BUZZER, instruction_handler);
+
+Wheel wheel_left(LEFT_FORWARD, LEFT_BACKWARD, LEFT_WHEEL_SPEED_SENSOR, LEFT_WHEEL_DIRECTION_SENSOR, []() {
+  wheel_left.pulse();
+});
+Wheel wheel_right(RIGHT_FORWARD, RIGHT_BACKWARD, RIGHT_WHEEL_SPEED_SENSOR, RIGHT_WHEEL_DIRECTION_SENSOR, []() {
+  wheel_right.pulse();
+});
+
+Wheels wheels(instruction_handler, wheel_left, wheel_right);
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -102,6 +112,51 @@ uint8_t get_ends_state() {
   return state;
 }
 
+void on_move(uint16_t id, char* input) {
+  const int8_t direction = fetch_unsigned_hex_number(input, 0);
+  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+  const int32_t distance_in_sm = fetch_unsigned_hex_number(input, 1);
+  if (distance_in_sm == PARSING_ERROR || distance_in_sm == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+  const int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 2);
+  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  const int8_t halt_mode_id = fetch_unsigned_hex_number(input, 3);
+  if (halt_mode_id == PARSING_ERROR || halt_mode_id == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  bool forward = false;
+  switch (direction) {
+    case 0x1: forward = true; break;
+    case 0x2: forward = false; break;
+    default:
+      instruction_handler.on_failed(id, 0x2);
+      return;
+  }
+
+  HaltMode halt_mode;
+  switch (halt_mode_id) {
+    case 0x1: halt_mode = WITH_STOP; break;
+    case 0x2: halt_mode = NEUTRAL; break;
+    default:
+      instruction_handler.on_failed(id, 0x3);
+      return;
+  }
+  
+  wheels.move(id, distance_in_sm, speed_sm_per_minute, forward, halt_mode);
+
+}
+
 void propagandate_tick_signal() {
   led_wifi.tick();
   led_error.tick();
@@ -112,6 +167,13 @@ void propagandate_tick_signal() {
   btn_down.tick();
 
   buzzer.tick();
+
+  wheels.tick();
+}
+
+ISR(TIMER5_A) {
+  wheel_right.tick();
+  wheel_left.tick();
 }
 
 #endif

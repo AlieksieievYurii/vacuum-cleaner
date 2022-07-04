@@ -1,5 +1,6 @@
 #include "config.h"
 #include "instruction-handler.h"
+#include "utils.h"
 
 InstructionHandler instruction_handler(Serial);
 
@@ -12,14 +13,19 @@ void setup() {
   instruction_handler.add(0x03, on_led_err);
   instruction_handler.add(0x04, on_led_st);
   instruction_handler.add(0x05, on_beep);
+  instruction_handler.add(0x06, on_move);
+  enable_Timer5(10, CHANNEL_A);
+
+  wheel_left.set_PID(0.1, 0.1, 0);
+  wheel_right.set_PID(0.1, 0.1, 0);
 }
 
 void loop() {
   instruction_handler.perform();
-  propagandate_tick_signal();
-  
-  instruction_handler.reset_sensors_output_buffer();
-  instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
-  instruction_handler.add_sensor_output(0x02, get_ends_state());
-  instruction_handler.send_sensors_output();
+    propagandate_tick_signal();
+  //
+  //  instruction_handler.reset_sensors_output_buffer();
+  //  instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
+  //  instruction_handler.add_sensor_output(0x02, get_ends_state());
+  //  instruction_handler.send_sensors_output();
 }
