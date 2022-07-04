@@ -8,9 +8,13 @@
 #define ENC_COUNT_REV 235
 
 // Distance made by a full rotation. Diameter of the wheel: 67.5 mm -> Pi * 67.5 => 212 mm
-#define FULL_ROTATION_DISTANCE 212 
+#define FULL_ROTATION_DISTANCE 212
 
 #define CALL_INTERVAL 100
+
+#define WHEELS_BASE_LINE_DIAMETER_MM 290
+
+#define CALCULATE_ANGLE_DISTANCE(ANGLE) (3.14 * (WHEELS_BASE_LINE_DIAMETER_MM/2 / 10.0) * ANGLE) / 180
 
 enum WheelState : byte {
   IDLE, MOVING, STOPPED
@@ -18,6 +22,10 @@ enum WheelState : byte {
 
 enum HaltMode : byte {
   WITH_STOP, NEUTRAL
+};
+
+enum SideDirection : byte {
+  LEFT, RIGHT
 };
 
 class Wheel {
@@ -43,7 +51,6 @@ class Wheel {
     bool _forward_direction_to_move = false;
     void _measure_speed();
     void _measure_pid_and_set_speed();
-    void _halt(bool disable = false);
 };
 
 class Wheels {
@@ -51,6 +58,7 @@ class Wheels {
     Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel &right_wheel);
     void tick();
     void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode);
+    void turn(uint16_t request_id, SideDirection side_direction, uint8_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode);
 
   private:
     InstructionHandler* _instruction_handler;
@@ -58,8 +66,7 @@ class Wheels {
     Wheel* _right_wheel;
     bool _is_moving = false;
     uint16_t _request_id;
-    
-    
+
 };
 
 #endif

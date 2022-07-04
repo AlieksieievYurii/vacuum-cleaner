@@ -152,8 +152,51 @@ void on_move(uint16_t id, char* input) {
       instruction_handler.on_failed(id, 0x3);
       return;
   }
-  
+
   wheels.move(id, distance_in_sm, speed_sm_per_minute, forward, halt_mode);
+
+}
+//<1 - left, 2 - right>;<degree>;<speed>;<halt mode>
+void on_turn(uint16_t id, char* input) {
+  const int8_t side = fetch_unsigned_hex_number(input, 0);
+  if (side == PARSING_ERROR || side == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+  const int16_t degree = fetch_unsigned_hex_number(input, 1);
+  if (degree == PARSING_ERROR || degree == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  const int16_t speed = fetch_unsigned_hex_number(input, 2);
+  if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  const int16_t halt_mode_id = fetch_unsigned_hex_number(input, 3);
+  if (halt_mode_id == PARSING_ERROR || halt_mode_id == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  HaltMode halt_mode;
+  switch (halt_mode_id) {
+    case 0x1: halt_mode = WITH_STOP; break;
+    case 0x2: halt_mode = NEUTRAL; break;
+    default:
+      instruction_handler.on_failed(id, 0x3);
+      return;
+  }
+
+  switch (side) {
+    case 0x1: wheels.turn(id, LEFT, degree, speed, halt_mode); break;
+    case 0x2:  wheels.turn(id, RIGHT, degree, speed, halt_mode); break;
+    default:
+      instruction_handler.on_failed(id, 0x5);
+      return;
+  }
 
 }
 

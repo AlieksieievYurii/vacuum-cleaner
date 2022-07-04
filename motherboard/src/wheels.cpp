@@ -23,11 +23,14 @@ void Wheel::tick() {
   if (wheel_state == MOVING)
     _measure_pid_and_set_speed();
   else if (wheel_state == STOPPED) {
-    if (_with_break) _halt();
-
+    if (_with_break) {
+      digitalWrite(_forward_pin, HIGH);
+      digitalWrite(_backward_pin, HIGH);
+    }
     wheel_state = IDLE;
   } else {
-    _halt(true);
+    digitalWrite(_forward_pin, LOW);
+    digitalWrite(_backward_pin, LOW);
   }
 }
 
@@ -43,13 +46,9 @@ void Wheel::pulse() {
   _direction_is_forward = digitalRead(_direction_sensor);
 }
 
-void Wheel::_halt(bool disable) {
-  digitalWrite(_forward_pin, disable ? LOW : HIGH);
-  digitalWrite(_backward_pin, disable ? LOW : HIGH);
-}
-
 void Wheel::move(float distanse_sm, uint32_t speed, bool with_break, bool forward) {
-  _halt(true);
+  digitalWrite(_forward_pin, LOW);
+  digitalWrite(_backward_pin, LOW);
   wheel_state = MOVING;
   _forward_direction_to_move = forward;
   _speed_setpoint = speed;
@@ -76,7 +75,7 @@ Wheels::Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel
 }
 
 void Wheels::tick() {
-  if (_is_moving && _left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == IDLE) {
+  if(_is_moving && _left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == IDLE) {
     _instruction_handler->on_finished(_request_id);
     _request_id = 0;
     _is_moving = false;
@@ -89,3 +88,15 @@ void Wheels::move(uint16_t request_id, uint32_t  distance_sm, uint32_t speed_sm_
   _left_wheel->move(distance_sm, speed_sm_per_minute, halt_mode == WITH_STOP, forward);
   _right_wheel->move(distance_sm, speed_sm_per_minute, halt_mode == WITH_STOP, forward);
 }
+
+void Wheels::turn(uint16_t request_id, SideDirection side_direction, uint8_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode) {
+  _request_id = request_id;
+  _is_moving = true;
+
+  uint16_t l = CALCULATE_ANGLE_DISTANCE(degree);
+
+  _left_wheel->move(l, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == RIGHT);
+  _right_wheel->move(l, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == LEFT);
+}
+
+  

@@ -16,6 +16,7 @@ void setup() {
   instruction_handler.add(0x04, on_led_st);
   instruction_handler.add(0x05, on_beep);
   instruction_handler.add(0x06, on_move);
+  instruction_handler.add(0x07, on_turn);
   enable_Timer5(10, CHANNEL_A);
 
   wheel_left.set_PID(0.1, 0.1, 0);
