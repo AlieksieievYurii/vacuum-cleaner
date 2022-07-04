@@ -20,15 +20,17 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. Th
 
 
 # Instructions table
-| Instruction  |      parameters      |    Error Codes    |    Description      |
+| Instruction ID  |      parameters      |    Error Codes    |    Description      |
 |--------------|:--------------------:|:-----------------:|--------------------:|
-| 0x01 | 0 - initialization is succsessful; 1 - something wrong| 0x1 - wrong parameter | Initialize and inform that the core has been initialized |
-| 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Wifi led |
-| 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Error led |
-| 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | 0x1 - wrong parameter | Turns on, off or blink the Status led |
-| 0x05 | `<beep count(max 2 bytes of hex)>;<period(max 4 bytes of hex)>` | 0x1 - Wrong parameters | Makes beeps |
+| 0x01 | 0 - initialization is succsessful; 1 - something wrong| `0x1` - wrong parameter | Initialize and inform that the core has been initialized |
+| 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Wifi led |
+| 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Error led |
+| 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Status led |
+| 0x05 | `<beep count(max 2 bytes of hex)>;<period(max 4 bytes of hex)>` | `0x1` - Wrong parameters | Makes beeps |
+| 0x06 | `<direction(1 byte of hex): 0x1 - forward or 0x2 - backward>;<distance(4 bytes of hex) in SM>;<speed(3 bytes of hex) sm\s>;<halt mode(1 byte of hex) where 0x1 - no halt, 0x2 - halt, 0x3 - halt and neutral (TODO)>`, | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag, `0x03` - wrong halt mode | Move the robot forward or backward |
 
 # Output table
 |  Id  |              Value            |                     Description                    |
 |------|:-----------------------------:|:--------------------------------------------------:|
 | 0x01 | Bits `**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Up, Second - OK, third - Down. | Reads click events of controll panel(Up, Ok, Down buttons) |
+| 0x02 | 4 bits where 1st - Right End, 2nd - Left End, 3rd - Lid End, 4th - Dust Box End. __Couting starts from the right__ | The state of ends |
