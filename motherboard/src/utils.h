@@ -13,12 +13,66 @@
 #define TIMER5_C  TIMER5_COMPC_vect
 
 
-int32_t find_character_index(char* input, char character, uint8_t limit) {
+int32_t find_character_index(char* input, char character, uint8_t limit, const uint32_t from = 0) {
   for (uint32_t i = 0; i <= limit; i++) {
-    if (input[i] == character)
+    if (input[from + i] == character)
       return i;
   }
   return -1;
+}
+
+#define PARSING_ERROR -1
+#define CANNOT_PARSE_NUMBER -2
+int32_t fetch_unsigned_hex_number(char* input, uint8_t group) {
+#define MAX_VALUE_SIZE 4
+#define SEPARATOR ';'
+  char buffer[MAX_VALUE_SIZE] = {0};
+  uint16_t start_index = 0;
+  uint16_t end_index = 0;
+  uint16_t separator_count = 0;
+  bool is_found = false;
+  char* endptr = NULL;
+
+  //======Find start index======
+  if (group > 0) {
+    for (uint16_t i = 0; i < 100; i++) {
+      if (input[i] == SEPARATOR)
+        separator_count++;
+
+      if (separator_count == group) {
+        start_index = i;
+        is_found = true;
+        break;
+      }
+    }
+    if (!is_found)
+      return PARSING_ERROR;
+
+    start_index += 1; // Skip the separator
+  }
+  //==============================
+
+  //=====Find end index=======
+  is_found = false;
+  for (uint16_t i = start_index; i <= start_index + MAX_VALUE_SIZE; i++) {
+    if (input[i] == SEPARATOR || input[i] == '\n') {
+      end_index = i;
+      is_found = true;
+      break;
+    }
+  }
+
+  if (!is_found)
+    return PARSING_ERROR;
+  //==============================
+
+  strncpy(buffer, &input[start_index], end_index - start_index);
+  int32_t result = (int32_t)strtol(buffer, &endptr, 16);
+
+  if (endptr == buffer)
+    return CANNOT_PARSE_NUMBER;
+  
+  return result;
 }
 
 uint32_t enable_Timer5_with_period(uint32_t period, uint8_t source) {
@@ -51,7 +105,7 @@ uint32_t enable_Timer5_with_period(uint32_t period, uint8_t source) {
   TCCR5B = ((1 << WGM53) | (1 << WGM52) | _timer5_prescaler);   // CTC mode + set prescaler
   ICR5 = _timer5_top - 1;             // Set timer top
 
-   switch (source) {
+  switch (source) {
     case CHANNEL_A: TIMSK5 |= (1 << OCIE5A); break;
     case CHANNEL_B: TIMSK5 |= (1 << OCIE5B); break;
     case CHANNEL_C: TIMSK5 |= (1 << OCIE5C); break;
