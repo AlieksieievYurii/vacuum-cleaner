@@ -16,7 +16,6 @@ Little reverse enginering has been done. The following input pins are revealed:
 A few experiments have been done to figure out the suitable voltages(motor and hall sensors) for the wheel module.</br>
 The hall sensors(Vcc) - *3.3..5 V*</br>
 The motor - *3..8 V* -> 40 mA - 100 mA</br>
-The entire turn -> 240 pulses;
 
 ## Integration with Arduino
 This section describes how to connect the wheel module to Arduino in order to measure rotation velocity(RPM). As an example Arduino Nano has been chosen, so connection should be as follows:</br>
