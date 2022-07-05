@@ -16,6 +16,7 @@ Little reverse enginering has been done. The following input pins are revealed:
 A few experiments have been done to figure out the suitable voltages(motor and hall sensors) for the wheel module.</br>
 The hall sensors(Vcc) - *3.3..5 V*</br>
 The motor - *3..8 V* -> 40 mA - 100 mA</br>
+The entire turn -> 240 pulses;
 
 ## Integration with Arduino
 This section describes how to connect the wheel module to Arduino in order to measure rotation velocity(RPM). As an example Arduino Nano has been chosen, so connection should be as follows:</br>
@@ -42,13 +43,13 @@ void right_wheel_pulse() {
   wheel_pulse_count++;
 }
 ```
-A few measurements showed that in this Wheel Module, full rotation equals `235` pulses! This value is needed to calculate RPM. The following script measures the speed and direction:
+A few measurements showed that in this Wheel Module, full rotation equals `240` pulses! This value is needed to calculate RPM. The following script measures the speed and direction:
 
 ``` 
 #define INTERVAL 1000
 
 // How many pulses in one 360 rotation, must be measured manually!!!!
-#define ENC_COUNT_REV 235
+#define ENC_COUNT_REV 240
 
 // Distance made by a full rotation. Diameter of the wheel: 67.5 mm -> Pi * 67.5 => 212 mm
 #define FULL_ROTATION_DISTANCE 212 
