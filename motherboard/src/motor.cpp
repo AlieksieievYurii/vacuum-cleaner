@@ -14,6 +14,7 @@ void Motor::set(uint16_t request_id, uint8_t value /*0..100*/) {
 
 void Motor::tick() {
   if (!_is_set and millis() - _last_tick > TICK_INTERVAL) {
+    
     if (_signal > _setpoint)
       _signal -= _signal - _setpoint < SIGNAL_TICK_STEP ? _signal - _setpoint : SIGNAL_TICK_STEP;
     else if (_signal < _setpoint)
