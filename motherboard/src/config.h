@@ -34,6 +34,8 @@
 
 #define BUZZER 46
 
+#define VACUUM_MOTOR 10
+
 void init_hardware(void) {
   pinMode(LEFT_END, INPUT_PULLUP);
   pinMode(RIGHT_END, INPUT_PULLUP);
@@ -57,6 +59,7 @@ void init_hardware(void) {
   pinMode(LEFT_FORWARD, OUTPUT);
   pinMode(LEFT_BACKWARD, OUTPUT);
   pinMode(BUZZER, OUTPUT);
+  pinMode(VACUUM_MOTOR, OUTPUT);
 }
 
 #endif
