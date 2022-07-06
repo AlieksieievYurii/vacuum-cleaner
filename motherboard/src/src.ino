@@ -19,6 +19,7 @@ void setup() {
   instruction_handler.add(0x07, on_turn);
   instruction_handler.add(0x08, on_vacuum_motor);
   instruction_handler.add(0x09, on_left_brush_motor);
+  instruction_handler.add(0x0A, on_right_brush_motor);
   enable_Timer5(20, CHANNEL_A);
 
   wheel_left.set_PID(0.1, 0.1, 0);

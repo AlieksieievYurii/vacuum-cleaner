@@ -30,7 +30,8 @@ Wheel wheel_right(RIGHT_FORWARD, RIGHT_BACKWARD, RIGHT_WHEEL_SPEED_SENSOR, RIGHT
 Wheels wheels(instruction_handler, wheel_left, wheel_right);
 
 Motor vacuum_motor(instruction_handler, VACUUM_MOTOR);
-Motor left_brush_motor(instruction_handler, LEFT_BRUSH_MOTOR);
+Motor left_brush_motor(instruction_handler, LEFT_BRUSH_MOTOR); 
+Motor right_brush_motor(instruction_handler, RIGHT_BRUSH_MOTOR);
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -172,7 +173,7 @@ void on_turn(uint16_t id, char* input) {
     instruction_handler.on_failed(id, 0x1);
     return;
   }
-  
+
   const int16_t speed = fetch_unsigned_hex_number(input, 2);
   if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
     instruction_handler.on_failed(id, 0x1);
@@ -204,24 +205,26 @@ void on_turn(uint16_t id, char* input) {
 
 }
 
-void on_vacuum_motor(uint16_t id, char* input) {
+void set_motor_signal(Motor &motor, uint16_t id, char* input) {
   uint8_t value = fetch_unsigned_hex_number(input, 0);
-  if(value > 100) {
+  if (value > 100) {
     instruction_handler.on_failed(id, 0x1);
     return;
   }
 
-  vacuum_motor.set(id, value);
+  motor.set(id, value);
+}
+
+void on_vacuum_motor(uint16_t id, char* input) {
+  set_motor_signal(vacuum_motor, id, input);
 }
 
 void on_left_brush_motor(uint16_t id, char* input) {
-  uint8_t value = fetch_unsigned_hex_number(input, 0);
-  if(value > 100) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  set_motor_signal(left_brush_motor, id, input);
+}
 
-  left_brush_motor.set(id, value);
+void on_right_brush_motor(uint16_t id, char* input) {
+  set_motor_signal(right_brush_motor, id, input);
 }
 
 void propagandate_tick_signal() {
@@ -239,6 +242,7 @@ void propagandate_tick_signal() {
 
   vacuum_motor.tick();
   left_brush_motor.tick();
+  right_brush_motor.tick();
 }
 
 ISR(TIMER5_A) {
