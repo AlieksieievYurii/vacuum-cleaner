@@ -70,6 +70,7 @@ This iteration is about buying\getting initial stuff, including:
 - [x] Create a 3d model
 - [x] Add controll buttons
 - [x] Make an experiment with voltage regulator
+
 ## Iteration 5:
 - [X] Get started with EasyEDA
 - [X] Connect Motor Drivers
