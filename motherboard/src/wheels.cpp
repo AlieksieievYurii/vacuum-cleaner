@@ -1,5 +1,13 @@
 #include "wheels.h"
 
+#define STOP_MOTOR \
+  digitalWrite(_forward_pin, HIGH); \
+  digitalWrite(_backward_pin, HIGH);
+
+#define NETRAL_MOTOR \
+  digitalWrite(_forward_pin, LOW); \
+  digitalWrite(_backward_pin, LOW);
+
 Wheel::Wheel(uint8_t forward_pin, uint8_t backward_pin, uint8_t speed_sensor, uint8_t direction_sensor, void (*pulse_interupt)()) {
   _forward_pin = forward_pin;
   _backward_pin = backward_pin;
@@ -15,22 +23,20 @@ void Wheel::set_PID(float kp, float ki, float kd) {
 }
 
 void Wheel::tick() {
-  _measure_speed();
-
   if (wheel_state == MOVING && _wheel_pulses_count >= _pulses_to_move)
     wheel_state = STOPPED;
 
-  if (wheel_state == MOVING)
+  if (wheel_state == MOVING) {
+    _measure_speed();
     _measure_pid_and_set_speed();
+  }
   else if (wheel_state == STOPPED) {
     if (_with_break) {
-      digitalWrite(_forward_pin, HIGH);
-      digitalWrite(_backward_pin, HIGH);
+      STOP_MOTOR
+    } else {
+      NETRAL_MOTOR
     }
     wheel_state = IDLE;
-  } else {
-    digitalWrite(_forward_pin, LOW);
-    digitalWrite(_backward_pin, LOW);
   }
 }
 
@@ -46,25 +52,26 @@ void Wheel::pulse() {
   _direction_is_forward = digitalRead(_direction_sensor);
 }
 
-void Wheel::move(float distanse_sm, uint32_t speed, bool with_break, bool forward) {
-  digitalWrite(_forward_pin, LOW);
-  digitalWrite(_backward_pin, LOW);
-  wheel_state = MOVING;
+void Wheel::move(uint32_t distanse_sm, uint32_t speed, bool with_break, bool forward) {
+  NETRAL_MOTOR
+
   _forward_direction_to_move = forward;
   _speed_setpoint = speed;
   _with_break = with_break;
   _wheel_pulses_count = 0;
-  _pulses_to_move = distanse_sm * 10 / FULL_ROTATION_DISTANCE * ENC_COUNT_REV;
+  _integral = 0;
+  _prev_err = 0;
+  _pulses_to_move = (float)(distanse_sm * 10) / FULL_ROTATION_DISTANCE * ENC_COUNT_REV;
+
+  wheel_state = MOVING;
 }
 
 void Wheel::_measure_pid_and_set_speed() {
   float err = _speed_setpoint - _speed;
-  float dt = 0.1;
-  static float integral = 0, prevErr = 0;
-  integral = constrain(integral + (float)err * dt * _ki, 0, 255);
-  float D = (err - prevErr) / dt;
-  prevErr = err;
-  uint8_t res = constrain(err * _kp + integral + D * _kd, 0, 255);
+  _integral = constrain(_integral + (float)err * CALL_INTERVAL_IN_SECONDS * _ki, 0, 255);
+  float D = (err - _prev_err) / CALL_INTERVAL_IN_SECONDS;
+  _prev_err = err;
+  uint8_t res = constrain(err * _kp + _integral + D * _kd, 0, 255);
   analogWrite(_forward_direction_to_move ? _forward_pin : _backward_pin, res);
 }
 
@@ -75,6 +82,12 @@ Wheels::Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel
 }
 
 void Wheels::tick() {
+  if (_left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == MOVING) {
+    _right_wheel->wheel_state = STOPPED;
+  }else if (_right_wheel->wheel_state == IDLE && _left_wheel->wheel_state == MOVING) {
+    _left_wheel->wheel_state = STOPPED;
+  }
+
   if (_is_moving && _left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == IDLE) {
     _instruction_handler->on_finished(_request_id);
     _request_id = 0;
@@ -91,7 +104,7 @@ void Wheels::move(uint16_t request_id, uint32_t  distance_sm, uint32_t speed_sm_
 
 uint32_t calculate_angle_distance_in_sm(uint16_t angle) {
   float radius_in_sm = WHEELS_BASE_LINE_DIAMETER_MM / 2 / 10.0;
-  
+
   if (angle >= 360) {
     uint16_t full_turns = angle / 360;
     return ((angle - full_turns * 360) * PI * radius_in_sm) / 180 + full_turns * (2 * PI * radius_in_sm);
