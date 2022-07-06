@@ -27,7 +27,7 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. Th
 | 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Error led |
 | 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Status led |
 | 0x05 | `<beep count(max 2 bytes of hex)>;<period(max 4 bytes of hex)>` | `0x1` - Wrong parameters | Makes beeps |
-| 0x06 | `<direction(1 byte of hex): 0x1 - forward or 0x2 - backward>;<distance(4 bytes of hex) in SM>;<speed(3 bytes of hex) sm\s>;<halt mode(1 byte of hex) where 0x1 - no halt, 0x2 - halt, 0x3 - halt and neutral (TODO)>`, | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag, `0x03` - wrong halt mode | Move the robot forward or backward |
+| 0x06 | `<direction(1 byte of hex): 0x1 - forward or 0x2 - backward>;<distance(4 bytes of hex) in SM>;<speed(3 bytes of hex) sm\s>;<halt mode(1 byte of hex) where 0x1 - stop, 0x2 - neutral, 0x3 - halt and neutral (TODO)>`, | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag, `0x03` - wrong halt mode | Move the robot forward or backward |
 
 # Output table
 |  Id  |              Value            |                     Description                    |
