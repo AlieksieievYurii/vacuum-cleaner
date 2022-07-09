@@ -24,16 +24,19 @@ void setup() {
 
   wheel_left.set_PID(0.1, 0.1, 0);
   wheel_right.set_PID(0.1, 0.1, 0);
+
+  Serial.println("a:,b:,c");
 }
 
 void loop() {
   instruction_handler.perform();
   propagandate_tick_signal();
-
+get_rangefinder_value();
 #ifdef __ENABLE_SENSOR_READING__
   instruction_handler.reset_sensors_output_buffer();
   instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
   instruction_handler.add_sensor_output(0x02, get_ends_state());
+  instruction_handler.add_sensor_output(0x03, get_rangefinder_value());
   instruction_handler.send_sensors_output();
 #endif
 }

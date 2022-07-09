@@ -7,6 +7,7 @@
 #include "buzzer.h"
 #include "wheels.h"
 #include "motor.h"
+#include "range-finder.h"
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
@@ -30,8 +31,14 @@ Wheel wheel_right(RIGHT_FORWARD, RIGHT_BACKWARD, RIGHT_WHEEL_SPEED_SENSOR, RIGHT
 Wheels wheels(instruction_handler, wheel_left, wheel_right);
 
 Motor vacuum_motor(instruction_handler, VACUUM_MOTOR);
-Motor left_brush_motor(instruction_handler, LEFT_BRUSH_MOTOR); 
+Motor left_brush_motor(instruction_handler, LEFT_BRUSH_MOTOR);
 Motor right_brush_motor(instruction_handler, RIGHT_BRUSH_MOTOR);
+
+RangeFinder range_finder(
+  LEFT_RF_TRIG, LEFT_RF_ECHO,
+  CENTER_RF_TRIG, CENTER_RF_ECHO,
+  RIGHT_RF_TRIG, RIGHT_RF_ECHO
+);
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -115,6 +122,14 @@ uint8_t get_ends_state() {
     state |= 0x8;
 
   return state;
+}
+
+uint32_t get_rangefinder_value() {
+  uint32_t result = 0;
+  result |= range_finder.get_left_range_in_mm();
+  result |= (uint16_t)range_finder.get_center_range_in_mm() << 8;
+  result |= (uint32_t)range_finder.get_right_range_in_mm() << 16;
+  return result;
 }
 
 void on_move(uint16_t id, char* input) {
@@ -243,6 +258,8 @@ void propagandate_tick_signal() {
   vacuum_motor.tick();
   left_brush_motor.tick();
   right_brush_motor.tick();
+
+  range_finder.tick();
 }
 
 ISR(TIMER5_A) {
