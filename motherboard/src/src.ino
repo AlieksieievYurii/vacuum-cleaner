@@ -31,7 +31,7 @@ void setup() {
 void loop() {
   instruction_handler.perform();
   propagandate_tick_signal();
-get_rangefinder_value();
+
 #ifdef __ENABLE_SENSOR_READING__
   instruction_handler.reset_sensors_output_buffer();
   instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
