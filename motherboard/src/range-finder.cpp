@@ -52,7 +52,7 @@ void RangeFinder::_measure_right_range() {
   if (_right_buf_index >= AVERAGE_BUFFER_SIZE) _right_buf_index = 0;
 }
 
-uint16_t count_sum(uint16_t* ar) {
+uint8_t count_sum(uint16_t* ar) {
   uint16_t sum = 0;
   for (uint8_t i = 0; i < AVERAGE_BUFFER_SIZE; i++)
     sum += ar[i];
@@ -60,12 +60,12 @@ uint16_t count_sum(uint16_t* ar) {
   return sum / AVERAGE_BUFFER_SIZE;
 }
 
-uint16_t RangeFinder::get_left_range_in_mm() {
+uint8_t RangeFinder::get_left_range_in_mm() {
   return count_sum(_left_average_buffer);
 }
-uint16_t RangeFinder::get_center_range_in_mm() {
+uint8_t RangeFinder::get_center_range_in_mm() {
   return count_sum(_center_average_buffer);
 }
-uint16_t RangeFinder::get_right_range_in_mm() {
+uint8_t RangeFinder::get_right_range_in_mm() {
   return count_sum(_right_average_buffer);
 }

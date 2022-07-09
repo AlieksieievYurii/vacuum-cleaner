@@ -13,9 +13,9 @@ class RangeFinder {
   public:
     RangeFinder(uint8_t left_t, uint8_t left_e, uint8_t center_t, uint8_t center_e, uint8_t right_t, uint8_t right_e);
     void tick();
-    uint16_t get_left_range_in_mm();
-    uint16_t get_center_range_in_mm();
-    uint16_t get_right_range_in_mm();
+    uint8_t get_left_range_in_mm();
+    uint8_t get_center_range_in_mm();
+    uint8_t get_right_range_in_mm();
 
   private:
     uint8_t _left_t, _left_e, _center_t, _center_e, _right_t, _right_e;
