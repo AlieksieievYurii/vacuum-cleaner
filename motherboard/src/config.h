@@ -38,6 +38,18 @@
 #define LEFT_BRUSH_MOTOR 9
 #define RIGHT_BRUSH_MOTOR 8
 
+//=======Range Finder Pins=========
+#define LEFT_RF_TRIG 32
+#define LEFT_RF_ECHO 29
+
+#define CENTER_RF_TRIG 33
+#define CENTER_RF_ECHO 30
+
+
+#define RIGHT_RF_TRIG 34
+#define RIGHT_RF_ECHO 31
+//=================================
+
 void init_hardware(void) {
   pinMode(LEFT_END, INPUT_PULLUP);
   pinMode(RIGHT_END, INPUT_PULLUP);
@@ -64,6 +76,12 @@ void init_hardware(void) {
   pinMode(VACUUM_MOTOR, OUTPUT);
   pinMode(LEFT_BRUSH_MOTOR, OUTPUT);
   pinMode(RIGHT_BRUSH_MOTOR, OUTPUT);
+  pinMode(LEFT_RF_TRIG, OUTPUT);
+  pinMode(LEFT_RF_ECHO, INPUT);
+  pinMode(CENTER_RF_TRIG, OUTPUT);
+  pinMode(CENTER_RF_ECHO, INPUT);
+  pinMode(RIGHT_RF_TRIG, OUTPUT);
+  pinMode(RIGHT_RF_ECHO, INPUT);
 }
 
 #endif

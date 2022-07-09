@@ -37,7 +37,7 @@ class InstructionHandler {
     void perform();
     void on_finished(uint16_t request_id);
     void on_failed(uint16_t request_id, uint8_t error_code);
-    void add_sensor_output(uint8_t id, uint16_t value);
+    void add_sensor_output(uint8_t id, uint32_t value);
     void send_sensors_output();
     void reset_sensors_output_buffer();
 
