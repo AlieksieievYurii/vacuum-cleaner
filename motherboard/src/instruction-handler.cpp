@@ -118,7 +118,7 @@ InstructionStatus InstructionHandler::_handle(char* input) {
   return UNDEFINED_COMMAND;
 }
 
-void InstructionHandler::add_sensor_output(uint8_t id, uint16_t value) {
+void InstructionHandler::add_sensor_output(uint8_t id, uint32_t value) {
   _sensors_output += id;
   _sensors_output += ":";
   _sensors_output += value;
