@@ -20,12 +20,11 @@ void setup() {
   instruction_handler.add(0x08, on_vacuum_motor);
   instruction_handler.add(0x09, on_left_brush_motor);
   instruction_handler.add(0x0A, on_right_brush_motor);
+  instruction_handler.add(0x0B, on_request_battery_status);
   enable_Timer5(20, CHANNEL_A);
 
   wheel_left.set_PID(0.1, 0.1, 0);
   wheel_right.set_PID(0.1, 0.1, 0);
-
-  Serial.println("a:,b:,c");
 }
 
 void loop() {
