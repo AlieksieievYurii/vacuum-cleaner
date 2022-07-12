@@ -36,6 +36,7 @@ class InstructionHandler {
     void add(int command, void (*callback)(uint16_t id, char* input));
     void perform();
     void on_finished(uint16_t request_id);
+    void on_result(uint16_t request_id, char* result);
     void on_failed(uint16_t request_id, uint8_t error_code);
     void add_sensor_output(uint8_t id, uint32_t value);
     void send_sensors_output();
