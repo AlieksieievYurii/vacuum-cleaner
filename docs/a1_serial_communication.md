@@ -30,11 +30,13 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x08 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the vacuum motor |
 | 0x09 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the left brush motor |
 | 0x0A | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the right brush motor |
+| 0x0D | `<year(4 bytes of hex)>;<month(1 byte of hex)>;<day(2 bytes of hex)>;<hour(2 bytes of hex)>;<minute(2 bytes of hex)>;<second(2 bytes of hex)>` | `0x01` - wrong format | Sets Data Time |
 
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
 |-----------------|:--------------------:|:------------------:|------------------:|--------------------:|
 |       0x0B      |         None         | `<cell A(0.0...5.0)>;<cell B(0.0...5.0)>;<cell C(0.0...5.0)>;<cell D(0.0...5.0)>;<capacity (0...100)>` | None | Request battery status(cells voltage, capacity in percentage) |
+|       0x0C      |  Data Time format, e.g `d-m-Y H:i:s`, `d F Y H:i:s` etc | According to the data time format | None | Returns Data Time according to the given format |
 
 # Output
 A1 reads the states of the sensors(ends, buttons, etc) and sends them out. The following format is made of key and value:
