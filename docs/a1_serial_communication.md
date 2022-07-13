@@ -23,9 +23,9 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends them out. The f
 `@<id(2 bytes if hex)>:<value(4 bytes of hex)>;<id(2 bytes if hex)>:<value(4 bytes of hex)>\n`
 
 
-# Instructions table
-| Instruction ID  |      parameters      |    Error Codes    |    Description      |
-|--------------|:--------------------:|:-----------------:|--------------------:|
+# Instructions table(Executive)
+| Instruction ID  |      parameters      |    Error Codes    |     Description      |
+|-----------------|:--------------------:|:-----------------:|---------------------:|
 | 0x01 | 0 - initialization is succsessful; 1 - something wrong| `0x1` - wrong parameter | Initialize and inform that the core has been initialized |
 | 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Wifi led |
 | 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Error led |
@@ -36,7 +36,12 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends them out. The f
 | 0x08 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the vacuum motor |
 | 0x09 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the left brush motor |
 | 0x0A | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the right brush motor |
-| 0x0B | None | None | Request battery status(cells voltage, capacity in percentage) |
+
+# Instructions table(Demandable)
+| Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
+|-----------------|:--------------------:|:------------------:|------------------:|--------------------:|
+|       0x0B      |         None         | `ff;fff;fff` | None | Request battery status(cells voltage, capacity in percentage) |
+
 
 # Output table
 |  Id  |              Value            |                     Description                    |
