@@ -3,20 +3,22 @@ The comunication between A1 and Core modules is done throught UART protocol. The
 
 # Input
 The format of the instruction to send to A1:
-`#<instruction number(2 bytes of hex)>:<id(4 bytes of hex)>:<parameters>\n`
+`#<instruction number(2 bytes of hex)>:<ID(4 bytes of hex)>:<parameters>\n`
 
-The whole instruction must start with `#`. After that, there always must be 2 bytes of instruction number e.g 01, f1 etc. UID must be always 4 bytes. `parameters` 
-- is a sequence of char elements(max length should be: 54 bytes). The whole instruction must end with `\n` character.
+The whole instruction must start with `#`. After that, there always must be 2 bytes of instruction number e.g 01, f1 etc. ID - unique number representing id of the request, must be always 4 bytes. The id is used in the responses. `parameters` - is a sequence of char elements(max length should be: 54 bytes). The whole instruction must end with `\n` character.
 
-Each command supposed to return a response containing the status `S` or `F`:
-
-  * `$S:<id(4 bytes of hex)>\n` - if the command is executed successfuly
-  * `$F:<id(4 bytes of hex)>:<code error>\n` - if the command has failed. Also it contains error code
+There two types of requests: 
+* **executive** - after instruction execution, simple callback with the status is send. Reponse format:</br>
+   `$S:<Id(4 bytes of hex)>\n` - if the command is executed successfuly</br>
+   `$F:<Id(4 bytes of hex)>:<code error(one byte of hex)>\n` - if the command has failed. The response also it contains error code
+* **demandable** - after instruction execution, response callback with some data is send. Reponse format:</br>
+  `$R:<Id(4 bytes of hex)>:<reponse data(char array, max should be 54 bytes)>\n` - if the command is executed successfuly</br>
+  `$F:<Id(4 bytes of hex)>:<code error(one byte of hex)>\n` - if the command has failed. The response also it contains error code
 
 Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 
 # Output
-A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. The following format is made of key and value:
+A1 reads the states of all sensors(ends, buttons, etc) and sends them out. The following format is made of key and value:
 
 `@<id(2 bytes if hex)>:<value(4 bytes of hex)>;<id(2 bytes if hex)>:<value(4 bytes of hex)>\n`
 
