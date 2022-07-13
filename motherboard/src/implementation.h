@@ -9,6 +9,7 @@
 #include "motor.h"
 #include "range-finder.h"
 #include "battery-inspector.h"
+#include "ds3231.h"
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
@@ -42,6 +43,8 @@ RangeFinder range_finder(
 );
 
 BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
+
+DS3231 ds3231_clock;
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -259,6 +262,38 @@ void on_request_battery_status(uint16_t id, char*) {
   char result[25] = {0};
   res.toCharArray(result, 25);
   instruction_handler.on_result(id, result);
+}
+
+void on_get_current_time(uint16_t id, char* input) {
+  //Input has newline in the end, so we need to get rid of it
+  for (uint8_t i = 0; i < MAX_INPUT_SIZE; i++) {
+    if (input[i] == '\n') {
+      input[i] = '\0';
+      break;
+    }
+  }
+
+  RTCDateTime current_data_time = ds3231_clock.getDateTime();
+  char *result = ds3231_clock.dateFormat(input, current_data_time);
+  instruction_handler.on_result(id, result);
+}
+
+//Example of input: 2014;1;13;14;34;32
+void on_set_data_time(uint16_t id, char* input) {
+  const int16_t year = fetch_unsigned_hex_number(input, 0);
+  const int8_t month = fetch_unsigned_hex_number(input, 1);
+  const int8_t day = fetch_unsigned_hex_number(input, 2);
+  const int8_t hour = fetch_unsigned_hex_number(input, 3);
+  const int8_t minute = fetch_unsigned_hex_number(input, 4);
+  const int8_t second = fetch_unsigned_hex_number(input, 5);
+
+  if (year == PARSING_ERROR || month == PARSING_ERROR || day == PARSING_ERROR || hour == PARSING_ERROR || minute == PARSING_ERROR || second == PARSING_ERROR) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  ds3231_clock.setDateTime(year, month, day, hour, minute, second);
+  instruction_handler.on_finished(id);
 }
 
 void propagandate_tick_signal() {
