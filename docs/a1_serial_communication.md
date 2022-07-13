@@ -2,9 +2,12 @@
 The comunication between A1 and Core modules is done throught UART protocol. The following document describes the format of the commands.
 
 # Input
-To send the command to A1:
+The format of the instruction to send to A1:
 
-`#<command number(2 bytes of hex)>:<id(4 bytes of hex)>:<parameters>\n`
+`#<instruction number(2 bytes of hex)>:<id(4 bytes of hex)>:<parameters>\n`
+
+The whole instruction must start with `#`. After that, there always must be 2 bytes of instruction number e.g 01, f1 etc. UID must be always 4 bytes. `parameters` 
+- is a sequence of char elements(max length should be: 54 bytes). The whole instruction must end with `\n` character.
 
 Each command supposed to return a response containing the status `S` or `F`:
 
@@ -32,6 +35,7 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends to the core. Th
 | 0x08 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the vacuum motor |
 | 0x09 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the left brush motor |
 | 0x0A | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the right brush motor |
+| 0x0B | None | None | Request battery status(cells voltage, capacity in percentage) |
 
 # Output table
 |  Id  |              Value            |                     Description                    |
