@@ -24,14 +24,6 @@ struct RTCDateTime
   uint8_t dayOfWeek;
   uint32_t unixtime;
 };
-
-struct RTCAlarmTime
-{
-  uint8_t day;
-  uint8_t hour;
-  uint8_t minute;
-  uint8_t second;
-};
 #endif
 
 typedef enum

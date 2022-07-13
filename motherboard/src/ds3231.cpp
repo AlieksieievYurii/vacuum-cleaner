@@ -42,8 +42,7 @@ void DS3231::setDateTime(uint16_t year, uint8_t month, uint8_t day, uint8_t hour
   Wire.endTransmission();
 }
 
-char* DS3231::dateFormat(const char* dateFormat, RTCDateTime dt)
-{
+char* DS3231::dateFormat(const char* dateFormat, RTCDateTime dt) {
   static char buffer[255];
   buffer[0] = 0;
   char helper[11];
@@ -168,8 +167,7 @@ char* DS3231::dateFormat(const char* dateFormat, RTCDateTime dt)
   return buffer;
 }
 
-RTCDateTime DS3231::getDateTime(void)
-{
+RTCDateTime DS3231::getDateTime(void){
   int values[7];
 
   Wire.beginTransmission(DS3231_ADDRESS);
