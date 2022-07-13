@@ -266,7 +266,7 @@ void on_request_battery_status(uint16_t id, char*) {
 
 void on_get_current_time(uint16_t id, char* input) {
   //Input has newline in the end, so we need to get rid of it
-  for (uint8_t i = 0; i < 64; i++) {
+  for (uint8_t i = 0; i < MAX_INPUT_SIZE; i++) {
     if (input[i] == '\n') {
       input[i] = '\0';
       break;
@@ -278,7 +278,7 @@ void on_get_current_time(uint16_t id, char* input) {
   instruction_handler.on_result(id, result);
 }
 
-//2014;1;13;14;34;32
+//Example of input: 2014;1;13;14;34;32
 void on_set_data_time(uint16_t id, char* input) {
   const int16_t year = fetch_unsigned_hex_number(input, 0);
   const int8_t month = fetch_unsigned_hex_number(input, 1);
