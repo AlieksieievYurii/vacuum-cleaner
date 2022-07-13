@@ -3,7 +3,6 @@ The comunication between A1 and Core modules is done throught UART protocol. The
 
 # Input
 The format of the instruction to send to A1:
-
 `#<instruction number(2 bytes of hex)>:<id(4 bytes of hex)>:<parameters>\n`
 
 The whole instruction must start with `#`. After that, there always must be 2 bytes of instruction number e.g 01, f1 etc. UID must be always 4 bytes. `parameters` 
