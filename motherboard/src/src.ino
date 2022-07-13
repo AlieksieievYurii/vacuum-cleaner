@@ -22,6 +22,7 @@ void setup() {
   instruction_handler.add(0x0A, on_right_brush_motor);
   instruction_handler.add(0x0B, on_request_battery_status);
   instruction_handler.add(0x0C, on_get_current_time);
+  instruction_handler.add(0x0D, on_set_data_time);
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
 

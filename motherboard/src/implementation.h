@@ -278,6 +278,24 @@ void on_get_current_time(uint16_t id, char* input) {
   instruction_handler.on_result(id, result);
 }
 
+//2014;1;13;14;34;32
+void on_set_data_time(uint16_t id, char* input) {
+  const int16_t year = fetch_unsigned_hex_number(input, 0);
+  const int8_t month = fetch_unsigned_hex_number(input, 1);
+  const int8_t day = fetch_unsigned_hex_number(input, 2);
+  const int8_t hour = fetch_unsigned_hex_number(input, 3);
+  const int8_t minute = fetch_unsigned_hex_number(input, 4);
+  const int8_t second = fetch_unsigned_hex_number(input, 5);
+
+  if (year == PARSING_ERROR || month == PARSING_ERROR || day == PARSING_ERROR || hour == PARSING_ERROR || minute == PARSING_ERROR || second == PARSING_ERROR) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  ds3231_clock.setDateTime(year, month, day, hour, minute, second);
+  instruction_handler.on_finished(id);
+}
+
 void propagandate_tick_signal() {
   led_wifi.tick();
   led_error.tick();
