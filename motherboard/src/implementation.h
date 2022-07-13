@@ -8,6 +8,7 @@
 #include "wheels.h"
 #include "motor.h"
 #include "range-finder.h"
+#include "battery-inspector.h"
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
@@ -39,6 +40,8 @@ RangeFinder range_finder(
   CENTER_RF_TRIG, CENTER_RF_ECHO,
   RIGHT_RF_TRIG, RIGHT_RF_ECHO
 );
+
+BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -242,6 +245,22 @@ void on_right_brush_motor(uint16_t id, char* input) {
   set_motor_signal(right_brush_motor, id, input);
 }
 
+void on_request_battery_status(uint16_t id, char*) {
+  String res = "";
+  res += battery_inspector.a_cell_voltage;
+  res += ";";
+  res += battery_inspector.b_cell_voltage;
+  res += ";";
+  res += battery_inspector.c_cell_voltage;
+  res += ";";
+  res += battery_inspector.d_cell_voltage;
+  res += ";";
+  res += battery_inspector.charged;
+  char result[25] = {0};
+  res.toCharArray(result, 25);
+  instruction_handler.on_result(id, result);
+}
+
 void propagandate_tick_signal() {
   led_wifi.tick();
   led_error.tick();
@@ -260,6 +279,8 @@ void propagandate_tick_signal() {
   right_brush_motor.tick();
 
   range_finder.tick();
+
+  battery_inspector.tick();
 }
 
 ISR(TIMER5_A) {

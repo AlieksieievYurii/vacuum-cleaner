@@ -50,6 +50,14 @@
 #define RIGHT_RF_ECHO 31
 //=================================
 
+
+//=========Battery Cells===========
+#define CELL_A A3
+#define CELL_B A2
+#define CELL_C A1
+#define CELL_D A0
+//=================================
+
 void init_hardware(void) {
   pinMode(LEFT_END, INPUT_PULLUP);
   pinMode(RIGHT_END, INPUT_PULLUP);
@@ -82,6 +90,10 @@ void init_hardware(void) {
   pinMode(CENTER_RF_ECHO, INPUT);
   pinMode(RIGHT_RF_TRIG, OUTPUT);
   pinMode(RIGHT_RF_ECHO, INPUT);
+  pinMode(CELL_A, INPUT);
+  pinMode(CELL_B, INPUT);
+  pinMode(CELL_C, INPUT);
+  pinMode(CELL_D, INPUT);
 }
 
 #endif

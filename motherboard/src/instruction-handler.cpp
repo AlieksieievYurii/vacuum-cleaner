@@ -87,6 +87,14 @@ void  InstructionHandler::on_finished(uint16_t request_id) {
   _send(message_buffer);
 }
 
+void InstructionHandler::on_result(uint16_t request_id, char* result) {
+  char message[] = "$R:%X:%s";
+  char message_buffer[RESPONSE_RESULT_BUFFER_SIZE] = {0};
+  sprintf(message_buffer, message, request_id, result);
+
+  _send(message_buffer);
+}
+
 void InstructionHandler::on_failed(uint16_t request_id, uint8_t error_code) {
   char message[] = "$F:%X:%X";
   char message_buffer[RESPONSE_BUFFER_SIZE] = {0};
