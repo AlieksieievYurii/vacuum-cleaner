@@ -9,6 +9,7 @@
 #include "motor.h"
 #include "range-finder.h"
 #include "battery-inspector.h"
+#include "ds3231.h"
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
@@ -42,6 +43,8 @@ RangeFinder range_finder(
 );
 
 BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
+
+DS3231 ds3231_clock;
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -258,6 +261,20 @@ void on_request_battery_status(uint16_t id, char*) {
   res += battery_inspector.charged;
   char result[25] = {0};
   res.toCharArray(result, 25);
+  instruction_handler.on_result(id, result);
+}
+
+void on_get_current_time(uint16_t id, char* input) {
+  //Input has newline in the end, so we need to get rid of it
+  for (uint8_t i = 0; i < 64; i++) {
+    if (input[i] == '\n') {
+      input[i] = '\0';
+      break;
+    }
+  }
+
+  RTCDateTime current_data_time = ds3231_clock.getDateTime();
+  char *result = ds3231_clock.dateFormat(input, current_data_time);
   instruction_handler.on_result(id, result);
 }
 
