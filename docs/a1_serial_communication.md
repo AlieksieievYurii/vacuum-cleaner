@@ -17,12 +17,6 @@ There two types of requests:
 
 Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 
-# Output
-A1 reads the states of all sensors(ends, buttons, etc) and sends them out. The following format is made of key and value:
-
-`@<id(2 bytes if hex)>:<value(4 bytes of hex)>;<id(2 bytes if hex)>:<value(4 bytes of hex)>\n`
-
-
 # Instructions table(Executive)
 | Instruction ID  |      parameters      |    Error Codes    |     Description      |
 |-----------------|:--------------------:|:-----------------:|---------------------:|
@@ -40,8 +34,12 @@ A1 reads the states of all sensors(ends, buttons, etc) and sends them out. The f
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
 |-----------------|:--------------------:|:------------------:|------------------:|--------------------:|
-|       0x0B      |         None         | `ff;fff;fff` | None | Request battery status(cells voltage, capacity in percentage) |
+|       0x0B      |         None         | `<cell A(0.0...5.0)>;<cell B(0.0...5.0)>;<cell C(0.0...5.0)>;<cell D(0.0...5.0)>;<capacity (0...100)>` | None | Request battery status(cells voltage, capacity in percentage) |
 
+# Output
+A1 reads the states of the sensors(ends, buttons, etc) and sends them out. The following format is made of key and value:
+
+`@<id(2 bytes if hex)>:<value(4 bytes of hex)>;<id(2 bytes if hex)>:<value(4 bytes of hex)>\n`
 
 # Output table
 |  Id  |              Value            |                     Description                    |
