@@ -321,6 +321,19 @@ void on_get_temp_and_humid(uint16_t id, char*) {
   instruction_handler.on_result(id, result);
 }
 
+uint8_t get_cliffs_status() {
+  uint8_t res = 0;
+
+  res |= digitalRead(BACK_RIGHT_CLIFF) << 0;
+  res |= digitalRead(BACK_CENTER_CLIFF) << 1;
+  res |= digitalRead(BACK_LEFT_CLIFF) << 2;
+  res |= digitalRead(FRONT_RIGHT_CLIFF) << 3;
+  res |= digitalRead(FRONT_CENTER_CLIFF) << 4;
+  res |= digitalRead(FRONT_LEFT_CLIFF) << 5;
+
+  return res;
+}
+
 void propagandate_tick_signal() {
   led_wifi.tick();
   led_error.tick();
