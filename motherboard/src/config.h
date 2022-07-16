@@ -58,6 +58,8 @@
 #define CELL_D A0
 //=================================
 
+#define TEMP_HUMIDITY_SENSOR 35
+
 void init_hardware(void) {
   pinMode(LEFT_END, INPUT_PULLUP);
   pinMode(RIGHT_END, INPUT_PULLUP);
@@ -94,6 +96,7 @@ void init_hardware(void) {
   pinMode(CELL_B, INPUT);
   pinMode(CELL_C, INPUT);
   pinMode(CELL_D, INPUT);
+  pinMode(TEMP_HUMIDITY_SENSOR, INPUT_PULLUP);
 }
 
 #endif
