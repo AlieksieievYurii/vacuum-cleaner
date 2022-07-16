@@ -10,6 +10,7 @@
 #include "range-finder.h"
 #include "battery-inspector.h"
 #include "ds3231.h"
+#include "DHT11.h"
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
@@ -45,6 +46,8 @@ RangeFinder range_finder(
 BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
 
 DS3231 ds3231_clock;
+
+DHT dht(TEMP_HUMIDITY_SENSOR);
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -294,6 +297,28 @@ void on_set_data_time(uint16_t id, char* input) {
 
   ds3231_clock.setDateTime(year, month, day, hour, minute, second);
   instruction_handler.on_finished(id);
+}
+
+void on_get_temp_and_humid(uint16_t id, char*) {
+  float t = dht.readTemperature();
+  float h = dht.readHumidity();
+
+  if (isnan(h) || isnan(t)) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+  
+  float hi = dht.computeHeatIndex(t, h);
+  
+  String res = "";
+  res += t;
+  res += ";";
+  res += h;
+  res += ";";
+  res += hi;
+  char result[25] = {0};
+  res.toCharArray(result, 25);
+  instruction_handler.on_result(id, result);
 }
 
 void propagandate_tick_signal() {

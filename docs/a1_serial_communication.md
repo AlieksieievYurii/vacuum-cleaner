@@ -37,6 +37,7 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 |-----------------|:--------------------:|:------------------:|------------------:|--------------------:|
 |       0x0B      |         None         | `<cell A(0.0...5.0)>;<cell B(0.0...5.0)>;<cell C(0.0...5.0)>;<cell D(0.0...5.0)>;<capacity (0...100)>` | None | Request battery status(cells voltage, capacity in percentage) |
 |       0x0C      |  Data Time format, e.g `d-m-Y H:i:s`, `d F Y H:i:s` etc | According to the data time format | None | Returns Data Time according to the given format |
+|       0x0E      |         None         | `<temperature(float number) in celsius>;<humidity(float number)>;<heat index(float number) in celsius>` | 0x01 - can not read the data from the sensor | Gets temperature in celsius, humidity in percentege and heat index in celsius |
 
 # Output
 A1 reads the states of the sensors(ends, buttons, etc) and sends them out. The following format is made of key and value:
