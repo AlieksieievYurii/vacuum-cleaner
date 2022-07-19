@@ -316,9 +316,9 @@ void on_get_temp_and_humid(uint16_t id, char*) {
     instruction_handler.on_failed(id, 0x1);
     return;
   }
-  
+
   float hi = dht.computeHeatIndex(t, h);
-  
+
   String res = "";
   res += t;
   res += ";";
@@ -337,6 +337,18 @@ void on_set_shutting_down_state(uint16_t id, char*) {
 
 void on_cut_off_the_power(uint16_t id, char*) {
   power_controller.set_state_TURNED_OFF();
+  instruction_handler.on_finished(id);
+}
+
+void on_set_error_state_in_power_controller(uint16_t id, char* input) {
+  switch(input[0]) {
+  case 'T': power_controller.set_error_state(); break;
+  case 'F': power_controller.reset_error_state(); break;
+  default:
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
   instruction_handler.on_finished(id);
 }
 
