@@ -31,6 +31,8 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x09 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the left brush motor |
 | 0x0A | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the right brush motor |
 | 0x0D | `<year(4 bytes of hex)>;<month(1 byte of hex)>;<day(2 bytes of hex)>;<hour(2 bytes of hex)>;<minute(2 bytes of hex)>;<second(2 bytes of hex)>` | `0x01` - wrong format | Sets Data Time |
+| 0x0F | None | None | Sets shutting down state |
+| 0x10 | None | None | Cut off the power |
 
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
