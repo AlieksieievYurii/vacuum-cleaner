@@ -53,8 +53,14 @@ DHT dht(TEMP_HUMIDITY_SENSOR);
 PowerController power_controller;
 
 void on_has_been_initialized(uint16_t id, char* input) {
-  // TODO add handling state
-  power_controller.set_state_TURNED_ON();
+  switch(input[0]) {
+    case 'S': power_controller.set_state_TURNED_ON(); break;
+    case 'F': power_controller.set_error_state(); break;
+    default: 
+      instruction_handler.on_failed(id, 0x1);
+      return;
+  }
+ 
   instruction_handler.on_finished(id);
 }
 
