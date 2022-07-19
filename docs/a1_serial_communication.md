@@ -20,7 +20,7 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 # Instructions table(Executive)
 | Instruction ID  |      parameters      |    Error Codes    |     Description      |
 |-----------------|:--------------------:|:-----------------:|---------------------:|
-| 0x01 | 0 - initialization is succsessful; 1 - something wrong| `0x1` - wrong parameter | Initialize and inform that the core has been initialized |
+| 0x01 | `S` - initialization is succsessful; `F` - something went wrong(power controller button starts blinking with red and green colors) | `0x1` - wrong parameter | Initialize and inform that the core has been initialized |
 | 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Wifi led |
 | 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Error led |
 | 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Status led |
@@ -33,6 +33,7 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x0D | `<year(4 bytes of hex)>;<month(1 byte of hex)>;<day(2 bytes of hex)>;<hour(2 bytes of hex)>;<minute(2 bytes of hex)>;<second(2 bytes of hex)>` | `0x01` - wrong format | Sets Data Time |
 | 0x0F | None | None | Sets shutting down state |
 | 0x10 | None | None | Cuts off the power |
+| 0x11 | `T` - sets error state for Power Controller; `F` - resets the error state } | `0x1` - wrong parameter | Sets error state in Power Controller |
 
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
