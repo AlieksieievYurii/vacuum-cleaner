@@ -49,18 +49,18 @@ void receiveEvent(int) {
 
 void loop(void) {
   if (but_is_pressed()) {
-    switch (current_status) {
-      case TURNED_OFF:
-        SET_RELAY(HIGH);
-        current_status = BOOTING_UP;
-        break;
-      case TURNED_ON:
-        current_status = SHUTTING_DOWN;
-        break;
-      default:
-        // Nothing
-        break;
+    if (current_status == TURNED_OFF) {
+      current_status = BOOTING_UP;
+    } else if (current_status == TURNED_ON) {
+      current_status = SHUTTING_DOWN;
     }
+  }
+
+  if (current_status == TURNED_OFF) {
+    SET_RELAY(LOW);
+  }
+  else if (current_status == TURNED_ON || current_status == BOOTING_UP) {
+    SET_RELAY(HIGH);
   }
 
   but_leds_handler();
