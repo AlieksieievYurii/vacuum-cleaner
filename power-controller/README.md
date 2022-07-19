@@ -9,6 +9,8 @@ and the user pushes the button, then it switches on the main power. At that poin
 |      0x01        |  Set state: TURN_ON. It will work only if the current state is BOOTING_UP |
 |      0x02        |  Set state: SHUTTING_DOWN. It will work only if the current state is TURNED_ON | 
 |      0x03        |  Set state: TURNED_OFF. It will work only if the current state is SHUTTING_DOWN |
+|      0x06        |  Sets error state; the button starts blinking with red and green colors undepentently on the power state |
+|      0x07        |  Reset error state |
 
 
 # Responses
@@ -31,4 +33,4 @@ The response consist of two bytes where the first byte represents power state an
 |   0x2   | Charging, however the voltage is higher then acceptable |
 |   0x3   | Charging, however the voltage is lower then acceptable |
 
-When the charged is connected the led starts fading in and out undepentently on power state.
+When the charged is connected the led starts fading in and out undepentently on the power state.
