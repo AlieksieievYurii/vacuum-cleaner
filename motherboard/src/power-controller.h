@@ -24,6 +24,8 @@ class PowerController {
     void set_state_TURNED_ON();
     void set_state_SHUTTING_DOWN();
     void set_state_TURNED_OFF();
+    void set_error_state();
+    void reset_error_state();
 
   private:
     bool _data_is_requested = false;

@@ -32,3 +32,11 @@ void PowerController::set_state_SHUTTING_DOWN() {
 void PowerController::set_state_TURNED_OFF() {
   _send_byte(SET_TURNED_OFF_STATE);
 }
+
+void PowerController::set_error_state() {
+  _send_byte(SET_ERROR_STATE);
+}
+
+void PowerController::reset_error_state() {
+  _send_byte(RESET_ERROR_STATE);
+}
