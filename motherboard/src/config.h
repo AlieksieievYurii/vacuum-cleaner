@@ -60,6 +60,14 @@
 
 #define TEMP_HUMIDITY_SENSOR 35
 
+//=========Cliff ends==============
+#define FRONT_LEFT_CLIFF 36
+#define FRONT_CENTER_CLIFF 37
+#define FRONT_RIGHT_CLIFF 38
+#define BACK_LEFT_CLIFF 40
+#define BACK_CENTER_CLIFF 39
+#define BACK_RIGHT_CLIFF 41
+
 void init_hardware(void) {
   pinMode(LEFT_END, INPUT_PULLUP);
   pinMode(RIGHT_END, INPUT_PULLUP);
@@ -97,6 +105,12 @@ void init_hardware(void) {
   pinMode(CELL_C, INPUT);
   pinMode(CELL_D, INPUT);
   pinMode(TEMP_HUMIDITY_SENSOR, INPUT_PULLUP);
+  pinMode(BACK_RIGHT_CLIFF, INPUT);
+  pinMode(BACK_CENTER_CLIFF, INPUT);
+  pinMode(BACK_LEFT_CLIFF, INPUT);
+  pinMode(FRONT_RIGHT_CLIFF, INPUT);
+  pinMode(FRONT_CENTER_CLIFF, INPUT);
+  pinMode(FRONT_LEFT_CLIFF, INPUT);
 }
 
 #endif

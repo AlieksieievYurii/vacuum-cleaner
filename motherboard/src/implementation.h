@@ -53,14 +53,14 @@ DHT dht(TEMP_HUMIDITY_SENSOR);
 PowerController power_controller;
 
 void on_has_been_initialized(uint16_t id, char* input) {
-  switch(input[0]) {
+  switch (input[0]) {
     case 'S': power_controller.set_state_TURNED_ON(); break;
     case 'F': power_controller.set_error_state(); break;
-    default: 
+    default:
       instruction_handler.on_failed(id, 0x1);
       return;
   }
- 
+
   instruction_handler.on_finished(id);
 }
 
@@ -133,17 +133,10 @@ uint8_t get_controll_buttons_state() {
 uint8_t get_ends_state() {
   uint8_t state = 0;
 
-  if (IS_PRESSED(RIGHT_END ))
-    state |= 0x1;
-
-  if (IS_PRESSED(LEFT_END))
-    state |= 0x2;
-
-  if (IS_PRESSED(LID_END))
-    state |= 0x4;
-
-  if (IS_PRESSED(DUST_BOX_END))
-    state |= 0x8;
+  state |= IS_PRESSED(RIGHT_END) << 0;
+  state |= IS_PRESSED(LEFT_END) << 1;
+  state |= IS_PRESSED(LID_END) << 2;
+  state |= IS_PRESSED(DUST_BOX_END) << 3;
 
   return state;
 }
@@ -336,6 +329,7 @@ void on_get_temp_and_humid(uint16_t id, char*) {
   instruction_handler.on_result(id, result);
 }
 
+
 void on_set_shutting_down_state(uint16_t id, char*) {
   power_controller.set_state_SHUTTING_DOWN();
   instruction_handler.on_finished(id);
@@ -347,12 +341,12 @@ void on_cut_off_the_power(uint16_t id, char*) {
 }
 
 void on_set_error_state_in_power_controller(uint16_t id, char* input) {
-  switch(input[0]) {
-  case 'T': power_controller.set_error_state(); break;
-  case 'F': power_controller.reset_error_state(); break;
-  default:
-    instruction_handler.on_failed(id, 0x1);
-    return;
+  switch (input[0]) {
+    case 'T': power_controller.set_error_state(); break;
+    case 'F': power_controller.reset_error_state(); break;
+    default:
+      instruction_handler.on_failed(id, 0x1);
+      return;
   }
 
   instruction_handler.on_finished(id);
@@ -362,6 +356,20 @@ uint8_t get_power_controller_state() {
   uint8_t res = 0;
   res |= power_controller.power_state;
   res |= power_controller.battery_state << 2;
+
+  return res;
+}
+
+uint8_t get_cliffs_status() {
+  uint8_t res = 0;
+
+  res |= digitalRead(BACK_RIGHT_CLIFF) << 0;
+  res |= digitalRead(BACK_CENTER_CLIFF) << 1;
+  res |= digitalRead(BACK_LEFT_CLIFF) << 2;
+  res |= digitalRead(FRONT_RIGHT_CLIFF) << 3;
+  res |= digitalRead(FRONT_CENTER_CLIFF) << 4;
+  res |= digitalRead(FRONT_LEFT_CLIFF) << 5;
+
   return res;
 }
 

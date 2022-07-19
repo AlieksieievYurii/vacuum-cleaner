@@ -7,8 +7,6 @@ InstructionHandler instruction_handler(Serial);
 
 #include "implementation.h"
 
-#include <Wire.h>
-
 #define __ENABLE_SENSOR_READING__
 
 void setup() {
@@ -42,7 +40,7 @@ void setup() {
 void loop() {  
   instruction_handler.perform();
   propagandate_tick_signal();
-  
+ 
 #ifdef __ENABLE_SENSOR_READING__
   instruction_handler.reset_sensors_output_buffer();
   instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
