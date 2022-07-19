@@ -11,6 +11,7 @@
 #include "battery-inspector.h"
 #include "ds3231.h"
 #include "DHT11.h"
+#include "power-controller.h"
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
@@ -48,6 +49,14 @@ BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
 DS3231 ds3231_clock;
 
 DHT dht(TEMP_HUMIDITY_SENSOR);
+
+PowerController power_controller;
+
+void on_has_been_initialized(uint16_t id, char* input) {
+  // TODO add handling state
+  power_controller.set_state_TURNED_ON();
+  instruction_handler.on_finished(id);
+}
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -319,6 +328,16 @@ void on_get_temp_and_humid(uint16_t id, char*) {
   char result[25] = {0};
   res.toCharArray(result, 25);
   instruction_handler.on_result(id, result);
+}
+
+void on_set_shutting_down_state(uint16_t id, char*) {
+  power_controller.set_state_SHUTTING_DOWN();
+  instruction_handler.on_finished(id);
+}
+
+void on_cut_off_the_power(uint16_t id, char*) {
+  power_controller.set_state_TURNED_OFF();
+  instruction_handler.on_finished(id);
 }
 
 void propagandate_tick_signal() {

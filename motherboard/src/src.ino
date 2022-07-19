@@ -7,11 +7,14 @@ InstructionHandler instruction_handler(Serial);
 
 #include "implementation.h"
 
-//#define __ENABLE_SENSOR_READING__
+#include <Wire.h>
+
+#define __ENABLE_SENSOR_READING__
 
 void setup() {
   init_hardware();
   instruction_handler.begin(9600);
+  instruction_handler.add(0x01, on_has_been_initialized);
   instruction_handler.add(0x02, on_led_wifi);
   instruction_handler.add(0x03, on_led_err);
   instruction_handler.add(0x04, on_led_st);
@@ -25,6 +28,8 @@ void setup() {
   instruction_handler.add(0x0C, on_get_current_time);
   instruction_handler.add(0x0D, on_set_data_time);
   instruction_handler.add(0x0E, on_get_temp_and_humid);
+  instruction_handler.add(0x0F, on_set_shutting_down_state);
+  instruction_handler.add(0x10, on_cut_off_the_power);
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
 
@@ -32,15 +37,19 @@ void setup() {
   wheel_right.set_PID(0.1, 0.1, 0);
 }
 
-void loop() {
+void loop() {  
   instruction_handler.perform();
   propagandate_tick_signal();
-
-#ifdef __ENABLE_SENSOR_READING__
-  instruction_handler.reset_sensors_output_buffer();
-  instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
-  instruction_handler.add_sensor_output(0x02, get_ends_state());
-  instruction_handler.add_sensor_output(0x03, get_rangefinder_value());
-  instruction_handler.send_sensors_output();
-#endif
+  power_controller.tick();
+  Serial.print(power_controller.power_state);
+  Serial.println(power_controller.battery_state);
+  
+//#ifdef __ENABLE_SENSOR_READING__
+//  instruction_handler.reset_sensors_output_buffer();
+//  instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
+//  instruction_handler.add_sensor_output(0x02, get_ends_state());
+//  instruction_handler.add_sensor_output(0x03, get_rangefinder_value());
+//  instruction_handler.add_sensor_output(0x04, get_cliffs_status());
+//  instruction_handler.send_sensors_output();
+//#endif
 }
