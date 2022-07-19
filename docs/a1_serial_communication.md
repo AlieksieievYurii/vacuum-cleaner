@@ -20,7 +20,7 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 # Instructions table(Executive)
 | Instruction ID  |      parameters      |    Error Codes    |     Description      |
 |-----------------|:--------------------:|:-----------------:|---------------------:|
-| 0x01 | 0 - initialization is succsessful; 1 - something wrong| `0x1` - wrong parameter | Initialize and inform that the core has been initialized |
+| 0x01 | `S` - initialization is succsessful; `F` - something went wrong(power controller button starts blinking with red and green colors) | `0x1` - wrong parameter | Initialize and inform that the core has been initialized |
 | 0x02 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Wifi led |
 | 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Error led |
 | 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Status led |
@@ -31,6 +31,9 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x09 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the left brush motor |
 | 0x0A | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the right brush motor |
 | 0x0D | `<year(4 bytes of hex)>;<month(1 byte of hex)>;<day(2 bytes of hex)>;<hour(2 bytes of hex)>;<minute(2 bytes of hex)>;<second(2 bytes of hex)>` | `0x01` - wrong format | Sets Data Time |
+| 0x0F | None | None | Sets shutting down state |
+| 0x10 | None | None | Cuts off the power |
+| 0x11 | `T` - sets error state for Power Controller; `F` - resets the error state } | `0x1` - wrong parameter | Sets error state in Power Controller |
 
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
@@ -50,4 +53,5 @@ A1 reads the states of the sensors(ends, buttons, etc) and sends them out. The f
 | 0x01 | Bits `**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Up, Second - OK, third - Down. | Reads click events of controll panel(Up, Ok, Down buttons) |
 | 0x02 | 4 bits where 1st - Right End, 2nd - Left End, 3rd - Lid End, 4th - Dust Box End. __Couting starts from the right__ | The state of ends |
 | 0x03 | 3 bytes where 1st byte represents - Left Rangefinder(0..250 mm), 2nd - Center Rangefinder, 3rd - Right Rangefinder | Reads the distance of Right, Left and Center rangefinders. The range is 0..250 milimeters |
-| 0x04 | 6 bits where(one if breakage): 1 - back right, 2 - back center, 3 - back left, 4 - front right, 5 - front center, 6 - front left | Reads cliff sensors. If the siganl is high - then there is a breakage | 
+| 0x04 | 6 bits where(one if breakage): 1 - back right, 2 - back center, 3 - back left, 4 - front right, 5 - front center, 6 - front left | Reads cliff sensors. If the siganl is high - then there is a breakage |
+| 0x05 | 6 bits where the first three represents the robot state, and next three - charging state | Powering state and charging state |

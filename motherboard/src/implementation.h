@@ -11,6 +11,7 @@
 #include "battery-inspector.h"
 #include "ds3231.h"
 #include "DHT11.h"
+#include "power-controller.h"
 
 #define IS_PRESSED(pin) !digitalRead(pin)
 
@@ -48,6 +49,20 @@ BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
 DS3231 ds3231_clock;
 
 DHT dht(TEMP_HUMIDITY_SENSOR);
+
+PowerController power_controller;
+
+void on_has_been_initialized(uint16_t id, char* input) {
+  switch (input[0]) {
+    case 'S': power_controller.set_state_TURNED_ON(); break;
+    case 'F': power_controller.set_error_state(); break;
+    default:
+      instruction_handler.on_failed(id, 0x1);
+      return;
+  }
+
+  instruction_handler.on_finished(id);
+}
 
 void _handle_led(uint16_t id, Led &led, char* input) {
   switch (input[0]) {
@@ -314,6 +329,37 @@ void on_get_temp_and_humid(uint16_t id, char*) {
   instruction_handler.on_result(id, result);
 }
 
+
+void on_set_shutting_down_state(uint16_t id, char*) {
+  power_controller.set_state_SHUTTING_DOWN();
+  instruction_handler.on_finished(id);
+}
+
+void on_cut_off_the_power(uint16_t id, char*) {
+  power_controller.set_state_TURNED_OFF();
+  instruction_handler.on_finished(id);
+}
+
+void on_set_error_state_in_power_controller(uint16_t id, char* input) {
+  switch (input[0]) {
+    case 'T': power_controller.set_error_state(); break;
+    case 'F': power_controller.reset_error_state(); break;
+    default:
+      instruction_handler.on_failed(id, 0x1);
+      return;
+  }
+
+  instruction_handler.on_finished(id);
+}
+
+uint8_t get_power_controller_state() {
+  uint8_t res = 0;
+  res |= power_controller.power_state;
+  res |= power_controller.battery_state << 2;
+
+  return res;
+}
+
 uint8_t get_cliffs_status() {
   uint8_t res = 0;
 
@@ -347,6 +393,8 @@ void propagandate_tick_signal() {
   range_finder.tick();
 
   battery_inspector.tick();
+
+  power_controller.tick();
 }
 
 ISR(TIMER5_A) {
