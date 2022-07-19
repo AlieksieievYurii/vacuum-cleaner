@@ -358,6 +358,13 @@ void on_set_error_state_in_power_controller(uint16_t id, char* input) {
   instruction_handler.on_finished(id);
 }
 
+uint8_t get_power_controller_state() {
+  uint8_t res = 0;
+  res |= power_controller.power_state;
+  res |= power_controller.battery_state << 2;
+  return res;
+}
+
 void propagandate_tick_signal() {
   led_wifi.tick();
   led_error.tick();
@@ -378,6 +385,8 @@ void propagandate_tick_signal() {
   range_finder.tick();
 
   battery_inspector.tick();
+
+  power_controller.tick();
 }
 
 ISR(TIMER5_A) {
