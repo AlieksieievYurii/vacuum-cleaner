@@ -13,7 +13,7 @@ Assembled model:
 
 Advantages:
 * Simple constuction
-* Not bad pulling power
+* Enough pulling power
 
 Disadvantages:
 * Big size -> height: 130 mm, weight: 103 mm, lenght: 107 mm
