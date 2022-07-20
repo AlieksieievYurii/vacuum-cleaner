@@ -19,10 +19,10 @@ network={
 }
 ```
 Where:
-* `<SSID>` - your wifi
-* `<PASSWORD>` - wifi password
+* `<SSID>` - your Wi-Fi SSID.
+* `<PASSWORD>` - and its password.
 
-**Note:** Raspberry Pi Zero W does not connect to 5GHz Wifi
+**Note:** Raspberry Pi Zero W does not connect to 5GHz Wi-Fi
 
 5. Since the Pixel version of Raspbian in December 2016, the SSH connection is disabled by default. To enable SSH, just create a file **ssh** (no file extension needed).
 
@@ -33,7 +33,7 @@ Where:
     * Default password is `raspberry`
     * **Note:** if you have already tried to connect to Rasbperry Py, you may meet the following error while connecting via SSH: ![image](https://user-images.githubusercontent.com/39415360/133641502-f27d22b7-791f-4bd4-b71c-384008f68f1a.png) 
 
-To solve the issue, go to the .ssh folder, usually it is located in the user’s home directory -> `C:\Users\newgo\.ssh` and open the file `known_hosts`. In that file you should delete line with raspberrypi.
+To solve the issue, go to the .ssh folder, usually it is located in the user’s home directory -> `C:\Users\newgo\.ssh` and open the file `known_hosts`. In that file, you should delete line with raspberrypi.
 
 8. It's highly recommended to update your device and change the default password:
     * To update the Pi: `sudo apt-get update && sudo apt-get upgrade -y`
