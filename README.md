@@ -16,10 +16,11 @@ This project is about how to create a simple vacuum cleaner robot. The following
 * Brushes: 2 side brushed and one main.
 * Working time: approximately 30 minutes
 * Wireless connection: Wifi and Bluetooth
-* Making noise: high
 
 ## Architecture 
 ![image](https://user-images.githubusercontent.com/39415360/179946342-a393f9e0-408d-4760-a70b-cfd9a5e10395.png)
+
+Generally, the robot's electonic part consists of two PCB: motherboard and power controller. Power Controller is responsible for switching on and off the powet by pushing button or programically e.g by mobile phone or after the cleaning. Also the controller is responsible for safety shutting down (when a user wants to shut down the robot by pushing the button, firstly it waits for shutting down the core and afterwards it cuts the power). Motherboard constists of two major units: A1 and Core. Technikally A1 is an electonic interface between the Core and ECUs. It excepts instructions to execute, e.g move forward on 50 CM or turn on the vacuum motor. Moreover, it reads the sensors and sends their states to the Core imidiately. The Core itself is a brain that controlls the robot's behavior, e.g where to move, have to react when the robot faces abstacles etc. Also the Core is responsible for Bluetooth and Wifi communication with smartphone. Bluetooth comunication is needed for initial configuration of the robot, for example, providing Wifi credentials. Wifi communication is needed for manual controlling, review history of cleaning atc.
 
 
 
