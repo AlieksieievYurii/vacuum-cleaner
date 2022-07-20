@@ -33,4 +33,4 @@ The response consist of two bytes where the first byte represents power state an
 |   0x2   | Charging, however the voltage is higher then acceptable |
 |   0x3   | Charging, however the voltage is lower then acceptable |
 
-When the charged is connected the led starts fading in and out undepentently on the power state.
+When the charged is connected the led starts fading in and out undepentently on the power state and error state.
