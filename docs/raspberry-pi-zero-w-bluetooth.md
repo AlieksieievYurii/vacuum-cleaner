@@ -1,6 +1,6 @@
 # Raspberry Pi Zero W - Bluethooth Connection 
 
-This document describes how to connect custom Android Application to Raspberry Pi Zero W. Android Application is supposed to be a **Client**, and Raspberry Pi as **Server**. However, the server can send requests to the Android App too. The final purpose of the document is guide how to create communication beetwen Android Application and Raspberry Pi Zero W and sending custom data.
+This document describes how to connect custom Android Application to Raspberry Pi Zero W. Android Application is supposed to be a **Client**, and Raspberry Pi as **Server**. However, the server can send requests to the Android App too. The final purpose of the document is guideline how to create communication beetwen Android Application and Raspberry Pi Zero W and sending custom data.
 
 ## Rasperry Bluetooth
 1. Set up bluetooth in compatibility mode. Just modify `/etc/systemd/system/dbus-org.bluez.service`, add `-C` or `--compat` to `ExecStart=/usr/lib/bluetooth/bluetoothd`.
@@ -28,13 +28,13 @@ default-agent
 The configuration of Bluetooth is done, however if you want to pair some devices, you do not have to close bluetoothctl tool because you will get a confirmation.
 I have written [Python Script](https://github.com/AlieksieievYurii/vacuum-cleaner/blob/main/script/pi_scripts/pairing.py) that waits for incoming Bluetooth pairing requests.
 
-2. For RFCOMM communication special Python library is used: [pybluez](https://github.com/pybluez/pybluez). There you can find how to install it
+2. For RFCOMM communication, a special Python library is used: [pybluez](https://github.com/pybluez/pybluez). There you can find how to install it
 3. For an experiment the following example was used: [example](https://github.com/pybluez/pybluez/blob/master/examples/simple/rfcomm-server.py).
 4. Just run the script. It will wait for connection. It the error `_bluetooth.error: no advertisable device` is thrown, type the following `sudo hciconfig hci0 piscan`
 
 
 ### Create Android Application
-To create an Android Application that comunicats with Raspberry Pi Zero via Bluetooth:
+To create an Android Application that communicates with Raspberry Pi Zero via Bluetooth:
 1. Following this guide to create Android App with Bluetooth -> [link](https://developer.android.com/guide/topics/connectivity/bluetooth)
-2. To pair device programically, just call `BluetoothDeviceItem.createBond`. To get status of it, register Broadcast receiver with an action `BluetoothDevice.ACTION_BOND_STATE_CHANGED`.![image](https://user-images.githubusercontent.com/39415360/134776029-af0e1dc7-866d-4bc4-bdc7-96516fdda8d9.png)
+2. To pair the device pragmatically, just call `BluetoothDeviceItem.createBond`. To get status of it, register Broadcast receiver with an action `BluetoothDevice.ACTION_BOND_STATE_CHANGED`.![image](https://user-images.githubusercontent.com/39415360/134776029-af0e1dc7-866d-4bc4-bdc7-96516fdda8d9.png)
 

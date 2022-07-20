@@ -1,17 +1,17 @@
 # Wheel motor
 This document describes the integration of wheel motor. The module from Xiaomi Vacuum cleaner was chosen because it perfectly suits for the current purpose.
 
-The motor wheel are from XIAOMI MIJIA STYTJ02HZM 1T.
+The motor wheels are from XIAOMI MIJIA STYTJ02HZM 1T.
 ![image](https://user-images.githubusercontent.com/39415360/140542558-f65f8d80-ed7f-4747-baa6-fe30600e59d4.png)
 
 
-Little reverse enginering has been done. The following input pins are revealed:
+Little reverse engineering has been done. The following input pins are revealed:
 ![image](https://user-images.githubusercontent.com/39415360/140587418-a47e9df6-952d-4b95-ab0b-c5e2ae16635b.png)
 
-**MA** and **MB** - are wires connected to DC mottor.</br>
-**Vcc** - is connected to bouth hall sensors.</br>
-**GND** - is connected to bouth hall sensors.</br>
-**H1** and **H2** - first and second hall sensors. Together works as an encoder, so the direction and speed can be measured.</br>
+**MA** and **MB** - are wires connected to DC motor.</br>
+**Vcc** - is connected to both hall sensors.</br>
+**GND** - is connected to both hall sensors.</br>
+**H1** and **H2** - they are hall sensors(encoders). So the direction and speed can be measured.</br>
 
 A few experiments have been done to figure out the suitable voltages(motor and hall sensors) for the wheel module.</br>
 The hall sensors(Vcc) - *3.3..5 V*</br>
@@ -24,7 +24,7 @@ This section describes how to connect the wheel module to Arduino in order to me
 **H1** - to pin 3.</br>
 **H2** - to pin 2.</br>
 
-The following code is used to measure number of pulses in one 360 rotation:
+The following code is used to measure the number of pulses in one 360 rotation:
 
 ``` 
 #define HALL_ENCODER_H2 2
@@ -42,7 +42,7 @@ void right_wheel_pulse() {
   wheel_pulse_count++;
 }
 ```
-A few measurements showed that in this Wheel Module, full rotation equals `237` pulses! This value is needed to calculate RPM. The following script measures the speed and direction:
+A few measurements showed that, in this Wheel Module, the full rotation equals `237` pulses! This value is needed to calculate RPM (Revolutions per minute). The following script measures the speed and direction:
 
 ``` 
 #define INTERVAL 1000

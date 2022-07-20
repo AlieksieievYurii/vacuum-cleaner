@@ -1,90 +1,23 @@
-# vacuum-cleanervacuum-cleaner
+# Vacuum Cleaner Robot 
 The main aim of the project is to try to create a good DIY vacuum cleaner robot.
 
-A few days ago, while I was sweeping the apartment, I started thinking of automatization becuase this process takes too much time in spite of my little apartment. There are many
-vacuum cleaner robots, like Xiaomi. I thought about purchasing one. However, I would like to try to build my own :)
+A few days ago, while I was sweeping the apartment, I started thinking of automatization because this process takes too much time in spite of my little apartment. There are many vacuum cleaner robots, like Xiaomi. I thought about purchasing one. However, I would like to try to build my own :)
 
-This project is about how to create a simple vacuum cleaner robot.
+This project is about how to create a simple vacuum cleaner robot. The following stuff is using:
+* Arduino Mega 2560 - this part is called A1. It is responsible for hardware operations e.g managing motors, reading sensors etc.
+* Arduino Nano - is responsible for power control.
+* Raspberry Pi Zero W - core. It communicates with A1 module and sends instructions what to do. Basically, the core is a brain. Moreover, it is responsible for Bluetooth and Wi-Fi connection.
+* Android Native App (SDK level >= 22) - is responsible for different configurations, analyzing, manual controlling etc.
+* 3D printing - the entire model is printed by 3D printer with PLA plastic. [Fusion 360](https://www.autodesk.com/products/fusion-360/overview) is used for parametric modeling and [Cura](https://ultimaker.com/software/ultimaker-cura) for slicing.
 
-## Requirements
-* The robot must be a rounded shape
-* The robot must be with the following sizes. H.Max - 100 mm, L.Max - 345 mm, W.Max - 345 mm
-* Must be able to connect to Wifi
-* Must be able to be configurable(e.g set up Wifi credentials) bia Bluetooth
+## Overview
+* The robot is a rounded shape with the following sizes:
+* Weight: 3 KG
+* Brushes: 2 side brushed and one main.
+* Working time: approximately 30 minutes
+* Wireless connection: Wifi and Bluetooth
 
-## Stuff
-* Raspberry Pi Zero W
-* Arduino Mega
-* 3D printing
-* Android Mobile Phone
+## Architecture 
+![image](https://user-images.githubusercontent.com/39415360/179946342-a393f9e0-408d-4760-a70b-cfd9a5e10395.png)
 
-# Preparation
-## Iteration 0:
-### Purpose:
-This iteration is about preparing environments, including:
-- [X] Install Fusion 360
-- [X] Install Arduino IDEA
-- [X] Install Cura
-- [X] Get initial experiance with Fusion 360
-- [X] Get initial experiance with Cura & 3D printing
-- [X] Buy & assemble 3D printer. ([Ender 3 Pro](https://www.creality3dofficial.com/products/creality-ender-3-pro-3d-printer))
-- [X] Print some 3D models to get experience with it
-- [X] Run any test program on Arduino Mega
-
-## Iteration 1:
-### Purpose:
-This iteration is about buying\getting initial stuff, including:
-- [X] Purchase Raspberry Pi Zero W
-- [X] Buy a mottor
-- [x] Install OS on Rasperry Pi
-- [x] Connect Wifi on Raspberry Pi
-- [x] Connect to Raspberry Pi via SHH
-- [X] Set up a remotable Python Interpreter in PyCharm. (This is imposible) Come up with a workaround / e.g create python script
-- [x] Create script that automatically enable pairing and discovering process on the Pi
-- [x] Try to connect Raspberty Pi to Android smartphone via Bluetooth
-- [x] Create a standarazied communication between Android App and Raspberry Pi via Bluetooth. [Link](https://github.com/AlieksieievYurii/vacuum-cleaner/blob/main/docs/bluetooth_communication.md)
-- [x] Create a Python Service and Android Service to communicate via BL
-- [x] Implement setting up Wifi connection via BL communication
-
-## Iteration 2:
-- [x] Create an experimental model of vaccum fan 
-- [x] Build A1 based on Arduino Mega so that it sends information(values from sensors) and accept some action commands
-- [ ] Measure Voltage FAILED
-- [ ] Measure Current FAILED
-- [x] Connect Mosfet
-- [x] Connect a temperature sensor
-- [x] Start some electronic circuit of A1
-
-## Iteration 3:
-- [x] Purchase already implemente chassis of some robot vaccum cleaner
-- [x] Learn some basics of C++
-- [x] Learn good basics of Arduino Framework
-- [x] Learn about PID
-- [x] Connect the chassis, just run them
-- [x] Measures the speed of the chass motor
-- [x] Create a PID regulator to maintain given speed of motors
-- [x] Create a new model of vacuum motor
-- [x] Create a clear roll
-
-## Iteration 4:
-- [x] Create a 3d model
-- [x] Add controll buttons
-- [x] Make an experiment with voltage regulator
-
-## Iteration 5:
-- [X] Get started with EasyEDA
-- [X] Connect Motor Drivers
-- [X] Connect Distanses Sensors
-- [X] Connect the display
-- [X] Connect Acceleromenter
-- [x] Connect and test PNP transistor for Powel Button Led[FAILED]
-- [x] Connect Voltage Stabilizator for 12v
-- [x] Buy Radiators
-- [x] Connect Raspberry and Arduino via UART
-- [x] Connect amplifier & speaker to Raspberry Pi Zero
-
-What I've learnt?
-- Modeling with Fusion 360
-- Improving C Embedded
-- Programming Raspberry PI
-- Android BL
+Generally, the robot's electronic part consists of two PCB: [motherboard](https://github.com/AlieksieievYurii/vacuum-cleaner/tree/clean-up/motherboard) and [power controller](https://github.com/AlieksieievYurii/vacuum-cleaner/tree/main/power-controller). Power Controller is responsible for switching on and off the power by pushing button or pragmatically e.g. by mobile phone or after the cleaning. Also, the controller is responsible for safety shutting down (when a user wants to shut down the robot by pushing the button, firstly it waits for shutting down the core and afterwards it cuts the power). Motherboard consists of two major units: [A1](https://github.com/AlieksieievYurii/vacuum-cleaner/tree/clean-up/motherboard/a1) and [Core](https://github.com/AlieksieievYurii/vacuum-cleaner/tree/clean-up/motherboard/core). Technically, A1 is an electronic interface between the Core and ECUs. It excepts instructions to execute, e.g. move forward on 50 CM or turn on the vacuum motor. Moreover, it reads the sensors and sends their states to the Core immediately. The Core itself is a brain that controls the robot's behavior, e.g. where to move, have to react when the robot faces obstacles etc. Also, the Core is responsible for Bluetooth and Wi-Fi communication with smartphone. Bluetooth's communication is needed for initial configuration of the robot, for example, providing Wi-Fi credentials. Wi-Fi communication is needed for manual controlling, review history of cleaning etc.
