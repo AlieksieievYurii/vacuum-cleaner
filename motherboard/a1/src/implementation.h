@@ -37,6 +37,7 @@ Wheels wheels(instruction_handler, wheel_left, wheel_right);
 Motor vacuum_motor(instruction_handler, VACUUM_MOTOR);
 Motor left_brush_motor(instruction_handler, LEFT_BRUSH_MOTOR);
 Motor right_brush_motor(instruction_handler, RIGHT_BRUSH_MOTOR);
+Motor main_brush_motor(instruction_handler, MAIN_BRUSH_MOTOR);
 
 RangeFinder range_finder(
   LEFT_RF_TRIG, LEFT_RF_ECHO,
@@ -259,6 +260,10 @@ void on_right_brush_motor(uint16_t id, char* input) {
   set_motor_signal(right_brush_motor, id, input);
 }
 
+void on_main_brush_motor(uint16_t id, char* input) {
+  set_motor_signal(main_brush_motor, id, input);
+}
+
 void on_request_battery_status(uint16_t id, char*) {
   String res = "";
   res += battery_inspector.a_cell_voltage;
@@ -389,6 +394,7 @@ void propagandate_tick_signal() {
   vacuum_motor.tick();
   left_brush_motor.tick();
   right_brush_motor.tick();
+  main_brush_motor.tick();
 
   range_finder.tick();
 

@@ -29,6 +29,7 @@ void setup() {
   instruction_handler.add(0x0F, on_set_shutting_down_state);
   instruction_handler.add(0x10, on_cut_off_the_power);
   instruction_handler.add(0x11, on_set_error_state_in_power_controller);
+  instruction_handler.add(0x12, on_main_brush_motor);
   
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
