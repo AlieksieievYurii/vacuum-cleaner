@@ -34,6 +34,7 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x0F | None | None | Sets shutting down state. This state must be set before sending the instruction (0x10) to cut off the power |
 | 0x10 | None | None | Cuts off the power. Before sending this instruttion, the power state must be shutting down |
 | 0x11 | `T` - sets error state for Power Controller; `F` - resets the error state | `0x1` - wrong parameter | Sets error state in Power Controller |
+| 0x12 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the main brush motor |
 
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
