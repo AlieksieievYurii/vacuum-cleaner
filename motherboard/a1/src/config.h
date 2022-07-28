@@ -37,6 +37,7 @@
 #define VACUUM_MOTOR 10
 #define LEFT_BRUSH_MOTOR 9
 #define RIGHT_BRUSH_MOTOR 8
+#define MAIN_BRUSH_MOTOR 11
 
 //=======Range Finder Pins=========
 #define LEFT_RF_TRIG 32
@@ -94,6 +95,7 @@ void init_hardware(void) {
   pinMode(VACUUM_MOTOR, OUTPUT);
   pinMode(LEFT_BRUSH_MOTOR, OUTPUT);
   pinMode(RIGHT_BRUSH_MOTOR, OUTPUT);
+  pinMode(MAIN_BRUSH_MOTOR, OUTPUT);
   pinMode(LEFT_RF_TRIG, OUTPUT);
   pinMode(LEFT_RF_ECHO, INPUT);
   pinMode(CENTER_RF_TRIG, OUTPUT);
