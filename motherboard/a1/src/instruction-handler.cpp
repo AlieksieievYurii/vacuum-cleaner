@@ -80,7 +80,7 @@ uint16_t fetch_request_id(char* input) {
 }
 
 void  InstructionHandler::on_finished(uint16_t request_id) {
-  char message[] = "$S:%X";
+  char message[] = "$S:%04X";
   char message_buffer[RESPONSE_BUFFER_SIZE] = {0};
   sprintf(message_buffer, message, request_id);
 
@@ -88,7 +88,7 @@ void  InstructionHandler::on_finished(uint16_t request_id) {
 }
 
 void InstructionHandler::on_result(uint16_t request_id, char* result) {
-  char message[] = "$R:%X:%s";
+  char message[] = "$R:%04X:%s";
   char message_buffer[RESPONSE_RESULT_BUFFER_SIZE] = {0};
   sprintf(message_buffer, message, request_id, result);
 
