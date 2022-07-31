@@ -1,23 +1,80 @@
 import re
-from typing import List
+from dataclasses import dataclass
+from typing import List, Optional
+
+from a1.exceptions import CannotParse, InstructionTimeout
+from utils import millis
 
 
+@dataclass
+class Request(object):
+    """
+    Class represents request model for A1 module.
+    """
+    id: int
+    instruction_id: int
+    parameters: str
+
+
+@dataclass
 class Response(object):
-    id: str
+    """
+    Class represents response module from A1 module. There is a factory function which parses the line response
+    """
+    id: int
+    is_successful: bool
+    timestamp: int
+    _data: Optional[str] = None
+
+    __REGEX = re.compile(r'\$([SFR]):([\dABCDEF]{1,4})(:(.*))?')
+
+    @property
+    def data(self) -> str:
+        if not self._data:
+            raise Exception('This response is not supposed to have data')
+        return self._data
+
+    @classmethod
+    def parse(cls, string: str) -> 'Response':
+        parsed_groups = cls.__REGEX.match(string)
+        if not parsed_groups:
+            raise CannotParse(f"Cannot parse the response from A1: {string}")
+
+        return cls(
+            id=int(parsed_groups.group(2), 16),
+            is_successful=parsed_groups.group(1) in ('S', 'R'),
+            _data=parsed_groups.group(4),
+            timestamp=millis()
+        )
 
 
 class Job(object):
-    def __init__(self, request_id: str, responses: List, timeout: int):
-        self._request_id = request_id
+    def __init__(self, request: Request, responses: List, timeout: Optional[int] = None):
+        self._request = request
         self._responses = responses
-        self._timeout = timeout
+        self._timeout: Optional[int] = timeout
+        self._time = millis()
+        self._response: Optional[Response] = None
+
+    def expect(self) -> Response:
+        while True:
+            if self.response:
+                return self.response
 
     @property
-    def is_finished(self) -> bool:
-        for resp in self._responses:
-            if resp.id == self._request_id:
-                return True
-        return False
+    def response(self) -> Optional[Response]:
+        if self._response:
+            return self._response
+
+        if self._timeout and millis() - self._time >= self._timeout:
+            raise InstructionTimeout(self._request, self._timeout)
+        else:
+            self._time = millis()
+
+        for index, resp in enumerate(self._responses):
+            if resp.id == self._request.id:
+                self._response = self._responses.pop(index)
+                return self._response
 
 
 class A1Data(object):
