@@ -358,14 +358,7 @@ void on_set_error_state_in_power_controller(uint16_t id, char* input) {
 }
 
 void on_walk(uint16_t id, char* input) {
-  int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 0);
-
-  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
-  int8_t direction = fetch_unsigned_hex_number(input, 1);
+  int8_t direction = fetch_unsigned_hex_number(input, 0);
 
   if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
     instruction_handler.on_failed(id, 0x1);
@@ -381,6 +374,12 @@ void on_walk(uint16_t id, char* input) {
       return;
   }
 
+  int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 1);
+
+  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
 
   wheels.walk(id, speed_sm_per_minute, forward);
 
