@@ -25,8 +25,8 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x03 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Error led |
 | 0x04 |  Values: `H` - turn on the led, `L` - turn off the led, `B` - blinking the led | `0x1` - wrong parameter | Turns on, off or blink the Status led |
 | 0x05 | `<beep count(max 2 bytes of hex)>;<period(max 4 bytes of hex)>` | `0x1` - Wrong parameters | Makes beeps |
-| 0x06 | `<direction(1 byte of hex): 0x1 - forward or 0x2 - backward>;<distance(4 bytes of hex) in CM>;<speed(4 bytes of hex) cm per minute>;<halt mode(1 byte of hex) where 0x1 - stop, 0x2 - neutral`, | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag, `0x03` - wrong halt mode | Move the robot forward or backward |
-| 0x07 | `<direction(1 byte of hex): 0x1-Left or 0x2-right>;<angle(4 bytes of hex)>;<speed(4 bytes of hex) cm per minute>;<halt mode(1 byte of hex) where 0x1 - stop, 0x2 - neutral` | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag, `0x03` - wrong halt mode | Turns left or right the robot |
+| 0x06 | `<direction(1 byte of hex): 0x1 - forward or 0x2 - backward>;<distance(4 bytes of hex) in CM>;<speed(4 bytes of hex) cm per minute>;<halt mode(1 byte of hex) where 0x1 - stop, 0x2 - neutral>`, | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag, `0x03` - wrong halt mode | Move the robot forward or backward |
+| 0x07 | `<direction(1 byte of hex): 0x1-Left or 0x2-right>;<angle(4 bytes of hex)>;<speed(4 bytes of hex) cm per minute>;<halt mode(1 byte of hex) where 0x1 - stop, 0x2 - neutral>` | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag, `0x03` - wrong halt mode | Turns left or right the robot |
 | 0x08 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the vacuum motor |
 | 0x09 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the left brush motor |
 | 0x0A | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the right brush motor |
