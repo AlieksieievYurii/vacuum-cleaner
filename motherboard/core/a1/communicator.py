@@ -108,6 +108,9 @@ class A1(object):
 
 class Robot(A1):
 
+    def beep(self, count: int = 3, period: int = 100) -> Job:
+        return self._handler.send_instruction(0x05, f'{count:x};{period:x}')
+
     def walk_forward(self, speed: int) -> Job:
         return self._walk(forward=True, speed=speed)
 
@@ -143,7 +146,7 @@ if __name__ == '__main__':
     a1.open()
     flag = False
     input('Press enter to start...')
-    a1.walk_forward(2000).expect()
+    a1.beep().expect()
     # while True:
     #     a1.turn_left(90, 2000, False).expect()
     #     a1.turn_right(90, 1000, False).expect()
