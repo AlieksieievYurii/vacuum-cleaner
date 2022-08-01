@@ -16,7 +16,7 @@
 #define WHEELS_BASE_LINE_DIAMETER_MM 290
 
 enum WheelState : byte {
-  IDLE, MOVING, STOPPED
+  IDLE, MOVING, ENDLESS_WALKING, STOPPED
 };
 
 enum HaltMode : byte {
@@ -34,6 +34,7 @@ class Wheel {
     void set_PID(float kp, float ki, float kd);
     void tick(); // Must be called every CALL_INTERVAL milliseconds
     void move(uint32_t distanse_sm, uint32_t speed, bool with_break, bool forward);
+    void walk(uint32_t speed_sm_per_minute, bool forward);
     void pulse();
 
 
@@ -58,6 +59,7 @@ class Wheels {
     Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel &right_wheel);
     void tick(); //Must be called from the main loop
     void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode);
+    void walk(uint16_t request_id, uint32_t speed_sm_per_minute, bool forward);
     void turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode);
 
   private:
