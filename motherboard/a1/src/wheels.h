@@ -19,10 +19,6 @@ enum WheelState : byte {
   IDLE, MOVING, ENDLESS_WALKING, STOPPED
 };
 
-enum HaltMode : byte {
-  WITH_STOP, NEUTRAL
-};
-
 enum SideDirection : byte {
   LEFT, RIGHT
 };
@@ -58,9 +54,9 @@ class Wheels {
   public:
     Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel &right_wheel);
     void tick(); //Must be called from the main loop
-    void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode);
+    void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, bool with_break);
     void walk(uint16_t request_id, uint32_t speed_sm_per_minute, bool forward);
-    void turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode);
+    void turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, bool with_break);
 
   private:
     InstructionHandler* _instruction_handler;
