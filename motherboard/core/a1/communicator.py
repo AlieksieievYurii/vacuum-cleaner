@@ -40,7 +40,7 @@ class Handler(LineReader):
         logging.debug(f'Send Instruction:{line}')
 
         self.write_line(line)
-        request = Request(int(request_id, 16), instruction_id, parameters)
+        request = Request(int(request_id, 16), int(instruction_id, 16), parameters)
 
         return Job(request, self._responses, timeout)
 
@@ -65,27 +65,86 @@ class A1(object):
         self._reader_thread.setDaemon(False)
 
     def open(self):
-        self._serial_con.close()
-        sleep(5)
-        self._serial_con.open()
+        self._serial_con.setDTR(False)
+        sleep(2)
         self._serial_con.reset_input_buffer()
-        self._serial_con.reset_output_buffer()
+        self._serial_con.setDTR(True)
         self._reader_thread.start()
-        sleep(3)
+        sleep(1)
+        # self._serial_con.close()
+        # sleep(5)
+        # self._serial_con.open()
+        # self._serial_con.reset_input_buffer()
+        # self._serial_con.reset_output_buffer()
+        #
+        # sleep(3)
 
     def led_wifi(self, on: bool) -> Job:
         return self._handler.send_instruction(0x02, 'H' if on else 'L', timeout=100)
+
+    def walk(self) -> Job:
+        return self._handler.send_instruction(0x13, "ff;1")
+
+    def move_back(self):
+        return self._handler.send_instruction(0x06, "2;32;2ff;2")
+
+    def turn_vacuum(self):
+        return self._handler.send_instruction(0x08, "40")
+
+    def main_brush(self):
+        return self._handler.send_instruction(0x12, "1b")
+
+    def left_brush(self):
+        return self._handler.send_instruction(0x09, "1f")
 
     @property
     def _handler(self) -> Handler:
         return self._reader_thread.protocol
 
+    @property
+    def input(self) -> A1Data:
+        return self._handler.data
+
+
+class Robot(A1):
+
+    def walk_forward(self, speed: int) -> Job:
+        return self._walk(forward=True, speed=speed)
+
+    def walk_backward(self, speed: int) -> Job:
+        return self._walk(forward=False, speed=speed)
+
+    def move_forward(self, distance: int, speed: int, with_break: bool = True) -> Job:
+        return self._move(distance, speed, forward=True, with_break=with_break)
+
+    def move_backward(self, distance: int, speed: int, with_break: bool = True):
+        return self._move(distance, speed, forward=True, with_break=with_break)
+
+    def turn_left(self, angle: int, speed: int, with_break: bool = True) -> Job:
+        return self._turn(left=True, angle=angle, speed=speed, with_break=with_break)
+
+    def turn_right(self, angle: int, speed: int, with_break: bool = True) -> Job:
+        return self._turn(left=False, angle=angle, speed=speed, with_break=with_break)
+
+    def _move(self, distance: int, speed: int, forward: bool, with_break: bool) -> Job:
+        parameters = f'{"1" if forward else "2"};{distance:x};{speed:x};{"1" if with_break else "2"}'
+        return self._handler.send_instruction(0x06, parameters)
+
+    def _turn(self, left: bool, angle: int, speed: int, with_break: bool) -> Job:
+        parameters = f"{'1' if left else '2'};{angle:x};{speed:x};{'1' if with_break else '2'}"
+        return self._handler.send_instruction(0x07, parameters)
+
+    def _walk(self, forward: bool, speed: int) -> Job:
+        return self._handler.send_instruction(0x13, f"{'1' if forward else '2'};{speed:x}")
+
 
 if __name__ == '__main__':
-    a1 = A1()
+    a1 = Robot()
     a1.open()
     flag = False
-    while True:
-        r = a1.led_wifi(flag).expect()
-        print(r)
-        flag = flag is False
+    input('Press enter to start...')
+    a1.walk_forward(2000).expect()
+    # while True:
+    #     a1.turn_left(90, 2000, False).expect()
+    #     a1.turn_right(90, 1000, False).expect()
+    #     print('f')
