@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass
 from typing import List, Optional
 
-from a1.exceptions import CannotParse, InstructionTimeout
+from a1.exceptions import CannotParse, InstructionTimeout, InstructionFailureException
 from utils import millis
 
 
@@ -24,6 +24,7 @@ class Response(object):
     id: int
     is_successful: bool
     timestamp: int
+    _error_code: Optional[int] = None
     _data: Optional[str] = None
 
     __REGEX = re.compile(r'\$([SFR]):([\dABCDEF]{1,4})(:(.*))?')
@@ -34,15 +35,29 @@ class Response(object):
             raise Exception('This response is not supposed to have data')
         return self._data
 
+    @property
+    def error_code(self):
+        if self.is_successful:
+            raise Exception('The response is successful. So it does not have error code')
+        return self._error_code
+
     @classmethod
     def parse(cls, string: str) -> 'Response':
         parsed_groups = cls.__REGEX.match(string)
         if not parsed_groups:
             raise CannotParse(f"Cannot parse the response from A1: {string}")
 
+        if parsed_groups.group(1) in ('S', 'R'):
+            is_successful = True
+            error_code = None
+        else:
+            is_successful = False
+            error_code = parsed_groups.group(4)
+
         return cls(
             id=int(parsed_groups.group(2), 16),
-            is_successful=parsed_groups.group(1) in ('S', 'R'),
+            is_successful=is_successful,
+            _error_code=error_code,
             _data=parsed_groups.group(4),
             timestamp=millis()
         )
@@ -74,6 +89,8 @@ class Job(object):
         for index, resp in enumerate(self._responses):
             if resp.id == self._request.id:
                 self._response = self._responses.pop(index)
+                if not self._response.is_successful:
+                    raise InstructionFailureException(self._request, self._response.error_code)
                 return self._response
 
 
