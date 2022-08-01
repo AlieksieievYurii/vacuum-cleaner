@@ -71,31 +71,6 @@ class A1(object):
         self._serial_con.setDTR(True)
         self._reader_thread.start()
         sleep(1)
-        # self._serial_con.close()
-        # sleep(5)
-        # self._serial_con.open()
-        # self._serial_con.reset_input_buffer()
-        # self._serial_con.reset_output_buffer()
-        #
-        # sleep(3)
-
-    def led_wifi(self, on: bool) -> Job:
-        return self._handler.send_instruction(0x02, 'H' if on else 'L', timeout=100)
-
-    def walk(self) -> Job:
-        return self._handler.send_instruction(0x13, "ff;1")
-
-    def move_back(self):
-        return self._handler.send_instruction(0x06, "2;32;2ff;2")
-
-    def turn_vacuum(self):
-        return self._handler.send_instruction(0x08, "40")
-
-    def main_brush(self):
-        return self._handler.send_instruction(0x12, "1b")
-
-    def left_brush(self):
-        return self._handler.send_instruction(0x09, "1f")
 
     @property
     def _handler(self) -> Handler:
@@ -110,6 +85,15 @@ class Robot(A1):
 
     def beep(self, count: int = 3, period: int = 100) -> Job:
         return self._handler.send_instruction(0x05, f'{count:x};{period:x}')
+
+    def set_vacuum_motor(self, value: int) -> Job:
+        return self._handler.send_instruction(0x08, f'{value:x}')
+
+    def set_left_brush_motor(self, value: int) -> Job:
+        return self._handler.send_instruction(0x09, f'{value:x}')
+
+    def set_main_brush_motor(self, value: int) -> Job:
+        return self._handler.send_instruction(0x12, f'{value:x}')
 
     def walk_forward(self, speed: int) -> Job:
         return self._walk(forward=True, speed=speed)
@@ -145,8 +129,10 @@ if __name__ == '__main__':
     a1 = Robot()
     a1.open()
     flag = False
+    a1.beep(count=1, period=1000).expect()
     input('Press enter to start...')
     a1.beep().expect()
+
     # while True:
     #     a1.turn_left(90, 2000, False).expect()
     #     a1.turn_right(90, 1000, False).expect()
