@@ -6,9 +6,7 @@ from serial.threaded import LineReader, ReaderThread
 
 from a1.models import A1Data, Job, Response, Request
 
-import logging
-
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s:%(message)s')
+from logger import a1_logger
 
 
 class Handler(LineReader):
@@ -20,24 +18,24 @@ class Handler(LineReader):
 
     def connection_made(self, transport):
         super().connection_made(transport)
-        logging.debug('Connected')
+        a1_logger.debug('Connected')
 
     def handle_line(self, line: str):
         initial_byte = line[0]
         if initial_byte == '@':
             self.data.parse_and_refresh(line)
-            # logging.debug(f'Received Data: {self.data}')
+        # a1_logger.debug(f'Received Data: {self.data}')
         elif initial_byte == '$':
             self._handle_request_response(line)
         else:
-            logging.debug(f'Unknown: {line}')
+            a1_logger.debug(f'Unknown: {line}')
 
     def send_instruction(self, instruction_id: int, parameters: str, timeout: Optional[int] = None) -> Job:
         instruction_id = f'{instruction_id:x}'.rjust(2, '0')
         request_id = self._generate_uid()
         line = f'#{instruction_id}:{request_id}:{parameters if parameters else ""}'
 
-        logging.debug(f'Send Instruction:{line}')
+        a1_logger.debug(f'Send Instruction:{line}')
 
         self.write_line(line)
         request = Request(int(request_id, 16), int(instruction_id, 16), parameters)
@@ -54,7 +52,7 @@ class Handler(LineReader):
 
     def _handle_request_response(self, line):
         response = Response.parse(line)
-        logging.debug(f'Receive Response: {line}')
+        a1_logger.debug(f'Receive Response: {line}')
         self._responses.append(response)
 
 
@@ -114,14 +112,17 @@ class Robot(A1):
         return self._turn(left=False, angle=angle, speed=speed, with_break=with_break)
 
     def _move(self, distance: int, speed: int, forward: bool, with_break: bool) -> Job:
+        a1_logger.print_movement(forward, speed, distance, with_break)
         parameters = f'{"1" if forward else "2"};{distance:x};{speed:x};{"1" if with_break else "2"}'
         return self._handler.send_instruction(0x06, parameters)
 
     def _turn(self, left: bool, angle: int, speed: int, with_break: bool) -> Job:
+        a1_logger.print_turn(left, speed, angle, with_break)
         parameters = f"{'1' if left else '2'};{angle:x};{speed:x};{'1' if with_break else '2'}"
         return self._handler.send_instruction(0x07, parameters)
 
     def _walk(self, forward: bool, speed: int) -> Job:
+        a1_logger.print_movement(forward, speed, distance=None, with_stop=False)
         return self._handler.send_instruction(0x13, f"{'1' if forward else '2'};{speed:x}")
 
 
@@ -129,16 +130,28 @@ if __name__ == '__main__':
     a1 = Robot()
     a1.open()
     flag = False
-    a1.beep(count=1, period=1000).expect()
-    input('Press enter to start...')
-    a1.beep().expect()
-    a1.set_left_brush_motor(10).expect()
-    a1.set_main_brush_motor(20).expect()
-    a1.set_vacuum_motor(60)
 
+    # a1.beep(count=1, period=1000).expect()
+    input('Press enter to start...')
+    # a1.beep().expect()
+    # a1.set_left_brush_motor(10).expect()
+    # a1.set_main_brush_motor(20).expect()
+    # a1.set_vacuum_motor(60)
+    low_speed = False
+    sleep(3)
     while True:
-        a1.walk_forward(1000).expect()
+        a1.walk_forward(2000).expect()
         while True:
+            if a1.input.rangefinder_center_value < 240 or \
+                    a1.input.rangefinder_left_value < 240 or \
+                    a1.input.rangefinder_right_value < 240:
+                if not low_speed:
+                    a1.walk_forward(500).expect()
+                    low_speed = True
+            elif low_speed:
+                    a1.walk_forward(2000).expect()
+                    low_speed = False
+
             if a1.input.end_left_trig:
                 a1.move_backward(10, 1000).expect()
                 a1.turn_right(45, 1000).expect()
