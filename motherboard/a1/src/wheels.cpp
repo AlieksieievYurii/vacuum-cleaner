@@ -26,7 +26,7 @@ void Wheel::tick() {
   if (wheel_state == MOVING && _wheel_pulses_count >= _pulses_to_move)
     wheel_state = STOPPED;
 
-  if (wheel_state == MOVING) {
+  if (wheel_state == MOVING || wheel_state == ENDLESS_WALKING) {
     _measure_speed();
     _measure_pid_and_set_speed();
   }
@@ -66,6 +66,17 @@ void Wheel::move(uint32_t distanse_sm, uint32_t speed, bool with_break, bool for
   wheel_state = MOVING;
 }
 
+void Wheel::walk(uint32_t speed_sm_per_minute, bool forward) {
+  NETRAL_MOTOR
+
+  _forward_direction_to_move = forward;
+  _speed_setpoint = speed_sm_per_minute;
+  _integral = 0;
+  _prev_err = 0;
+
+  wheel_state = ENDLESS_WALKING;
+}
+
 void Wheel::_measure_pid_and_set_speed() {
   float err = _speed_setpoint - _speed;
   _integral = constrain(_integral + (float)err * CALL_INTERVAL_IN_SECONDS * _ki, 0, 255);
@@ -84,7 +95,7 @@ Wheels::Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel
 void Wheels::tick() {
   if (_left_wheel->wheel_state == IDLE && _right_wheel->wheel_state == MOVING) {
     _right_wheel->wheel_state = STOPPED;
-  }else if (_right_wheel->wheel_state == IDLE && _left_wheel->wheel_state == MOVING) {
+  } else if (_right_wheel->wheel_state == IDLE && _left_wheel->wheel_state == MOVING) {
     _left_wheel->wheel_state = STOPPED;
   }
 
@@ -95,11 +106,19 @@ void Wheels::tick() {
   }
 }
 
-void Wheels::move(uint16_t request_id, uint32_t  distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode) {
+void Wheels::move(uint16_t request_id, uint32_t  distance_sm, uint32_t speed_sm_per_minute, bool forward, bool with_break) {
   _request_id = request_id;
   _is_moving = true;
-  _left_wheel->move(distance_sm, speed_sm_per_minute, halt_mode == WITH_STOP, forward);
-  _right_wheel->move(distance_sm, speed_sm_per_minute, halt_mode == WITH_STOP, forward);
+  _left_wheel->move(distance_sm, speed_sm_per_minute, with_break, forward);
+  _right_wheel->move(distance_sm, speed_sm_per_minute, with_break, forward);
+}
+
+void Wheels::walk(uint16_t request_id, uint32_t speed_sm_per_minute, bool forward) {
+  _is_moving = true;
+  _left_wheel->walk(speed_sm_per_minute, forward);
+  _right_wheel->walk(speed_sm_per_minute, forward);
+
+  _instruction_handler->on_finished(request_id);
 }
 
 uint32_t calculate_angle_distance_in_sm(uint16_t angle) {
@@ -113,12 +132,12 @@ uint32_t calculate_angle_distance_in_sm(uint16_t angle) {
   }
 }
 
-void Wheels::turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode) {
+void Wheels::turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, bool with_break) {
   _request_id = request_id;
   _is_moving = true;
 
   uint32_t distance = calculate_angle_distance_in_sm(degree);
 
-  _left_wheel->move(distance, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == RIGHT);
-  _right_wheel->move(distance, speed_sm_per_minute, halt_mode == WITH_STOP, side_direction == LEFT);
+  _left_wheel->move(distance, speed_sm_per_minute, with_break, side_direction == RIGHT);
+  _right_wheel->move(distance, speed_sm_per_minute, with_break, side_direction == LEFT);
 }

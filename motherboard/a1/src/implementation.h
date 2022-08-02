@@ -167,8 +167,8 @@ void on_move(uint16_t id, char* input) {
     return;
   }
 
-  const int8_t halt_mode_id = fetch_unsigned_hex_number(input, 3);
-  if (halt_mode_id == PARSING_ERROR || halt_mode_id == CANNOT_PARSE_NUMBER) {
+  const int8_t n_with_break = fetch_unsigned_hex_number(input, 3);
+  if (n_with_break == PARSING_ERROR || n_with_break == CANNOT_PARSE_NUMBER) {
     instruction_handler.on_failed(id, 0x1);
     return;
   }
@@ -182,16 +182,16 @@ void on_move(uint16_t id, char* input) {
       return;
   }
 
-  HaltMode halt_mode;
-  switch (halt_mode_id) {
-    case 0x1: halt_mode = WITH_STOP; break;
-    case 0x2: halt_mode = NEUTRAL; break;
+  bool with_break;
+  switch (n_with_break) {
+    case 0x1: with_break = true; break;
+    case 0x2: with_break = false; break;
     default:
       instruction_handler.on_failed(id, 0x3);
       return;
   }
 
-  wheels.move(id, distance_in_sm, speed_sm_per_minute, forward, halt_mode);
+  wheels.move(id, distance_in_sm, speed_sm_per_minute, forward, with_break);
 
 }
 //<1 - left, 2 - right>;<degree>;<speed>;<halt mode>
@@ -213,24 +213,24 @@ void on_turn(uint16_t id, char* input) {
     return;
   }
 
-  const int16_t halt_mode_id = fetch_unsigned_hex_number(input, 3);
-  if (halt_mode_id == PARSING_ERROR || halt_mode_id == CANNOT_PARSE_NUMBER) {
+  const int8_t n_with_break = fetch_unsigned_hex_number(input, 3);
+  if (n_with_break == PARSING_ERROR || n_with_break == CANNOT_PARSE_NUMBER) {
     instruction_handler.on_failed(id, 0x1);
     return;
   }
 
-  HaltMode halt_mode;
-  switch (halt_mode_id) {
-    case 0x1: halt_mode = WITH_STOP; break;
-    case 0x2: halt_mode = NEUTRAL; break;
+  bool with_break;
+  switch (n_with_break) {
+    case 0x1: with_break = true; break;
+    case 0x2: with_break = false; break;
     default:
       instruction_handler.on_failed(id, 0x3);
       return;
   }
 
   switch (side) {
-    case 0x1: wheels.turn(id, LEFT, degree, speed, halt_mode); break;
-    case 0x2:  wheels.turn(id, RIGHT, degree, speed, halt_mode); break;
+    case 0x1: wheels.turn(id, LEFT, degree, speed, with_break); break;
+    case 0x2:  wheels.turn(id, RIGHT, degree, speed, with_break); break;
     default:
       instruction_handler.on_failed(id, 0x5);
       return;
@@ -355,6 +355,34 @@ void on_set_error_state_in_power_controller(uint16_t id, char* input) {
   }
 
   instruction_handler.on_finished(id);
+}
+
+void on_walk(uint16_t id, char* input) {
+  int8_t direction = fetch_unsigned_hex_number(input, 0);
+
+  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  bool forward = false;
+  switch (direction) {
+    case 0x1: forward = true; break;
+    case 0x2: forward = false; break;
+    default:
+      instruction_handler.on_failed(id, 0x2);
+      return;
+  }
+
+  int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 1);
+
+  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  wheels.walk(id, speed_sm_per_minute, forward);
+
 }
 
 uint8_t get_power_controller_state() {

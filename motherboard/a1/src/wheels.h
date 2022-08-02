@@ -16,11 +16,7 @@
 #define WHEELS_BASE_LINE_DIAMETER_MM 290
 
 enum WheelState : byte {
-  IDLE, MOVING, STOPPED
-};
-
-enum HaltMode : byte {
-  WITH_STOP, NEUTRAL
+  IDLE, MOVING, ENDLESS_WALKING, STOPPED
 };
 
 enum SideDirection : byte {
@@ -34,6 +30,7 @@ class Wheel {
     void set_PID(float kp, float ki, float kd);
     void tick(); // Must be called every CALL_INTERVAL milliseconds
     void move(uint32_t distanse_sm, uint32_t speed, bool with_break, bool forward);
+    void walk(uint32_t speed_sm_per_minute, bool forward);
     void pulse();
 
 
@@ -57,8 +54,9 @@ class Wheels {
   public:
     Wheels(InstructionHandler &instruction_handler, Wheel &left_wheel, Wheel &right_wheel);
     void tick(); //Must be called from the main loop
-    void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, HaltMode halt_mode);
-    void turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, HaltMode halt_mode);
+    void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, bool with_break);
+    void walk(uint16_t request_id, uint32_t speed_sm_per_minute, bool forward);
+    void turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, bool with_break);
 
   private:
     InstructionHandler* _instruction_handler;
