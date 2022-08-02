@@ -110,14 +110,17 @@ class A1Data(object):
         self.rangefinder_right_value: int = 0
 
     def parse_and_refresh(self, string: str):
+        parsers = {
+            0x1: self._parse_and_set_buttons_state,
+            0x2: self._parse_and_set_ends_state,
+            0x3: self._parse_dis_values
+        }
         for result in self.__PATTERN.findall(string):
-            sensor_id = result[0]
-            if sensor_id == '1':
-                self._parse_and_set_buttons_state(int(result[1]))
-            elif sensor_id == '2':
-                self._parse_and_set_ends_state(int(result[1]))
-            elif sensor_id == '3':
-                self._parse_dis_values(int(result[1]))
+            sensor_id = int(result[0], 16)
+            value = int(result[1])
+            f = parsers.get(sensor_id)
+            if f:
+                f(value)
 
     def _parse_and_set_buttons_state(self, value: int) -> None:
         # TODO implement
