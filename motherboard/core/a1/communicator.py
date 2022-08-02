@@ -105,7 +105,7 @@ class Robot(A1):
         return self._move(distance, speed, forward=True, with_break=with_break)
 
     def move_backward(self, distance: int, speed: int, with_break: bool = True):
-        return self._move(distance, speed, forward=True, with_break=with_break)
+        return self._move(distance, speed, forward=False, with_break=with_break)
 
     def turn_left(self, angle: int, speed: int, with_break: bool = True) -> Job:
         return self._turn(left=True, angle=angle, speed=speed, with_break=with_break)
@@ -132,8 +132,18 @@ if __name__ == '__main__':
     a1.beep(count=1, period=1000).expect()
     input('Press enter to start...')
     a1.beep().expect()
+    a1.set_left_brush_motor(10).expect()
+    a1.set_main_brush_motor(20).expect()
+    a1.set_vacuum_motor(60)
 
-    # while True:
-    #     a1.turn_left(90, 2000, False).expect()
-    #     a1.turn_right(90, 1000, False).expect()
-    #     print('f')
+    while True:
+        a1.walk_forward(1000).expect()
+        while True:
+            if a1.input.end_left_trig:
+                a1.move_backward(10, 1000).expect()
+                a1.turn_right(45, 1000).expect()
+                break
+            elif a1.input.end_right_trig:
+                a1.move_backward(10, 1000).expect()
+                a1.turn_left(45, 1000).expect()
+                break
