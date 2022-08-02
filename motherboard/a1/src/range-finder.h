@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 
-#define AVERAGE_BUFFER_SIZE 10
+#define AVERAGE_BUFFER_SIZE 5
 
 #define PULSE_TIMEOUT 6000
 #define CM_PER_US 29.1
