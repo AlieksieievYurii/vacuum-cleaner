@@ -32,6 +32,7 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
             val savedIp = Preferences.getRobotIpAddress(context)
             if (savedIp != null) {
                 if (robotSocketDiscovery.tryConnect(savedIp)) {
+                    delay(2000)
                     _state.value = State.Connected(savedIp)
                     delay(3000)
                     navigateToControlPanel()
