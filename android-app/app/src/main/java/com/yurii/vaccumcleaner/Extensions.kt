@@ -57,3 +57,11 @@ val String.Companion.Empty
 
 val <T> ObservableField<T>.value: T
     get() = this.get()!!
+
+fun Int.reverseBytes(): Int {
+    val v0 = ((this ushr 0) and 0xFF)
+    val v1 = ((this ushr 8) and 0xFF)
+    val v2 = ((this ushr 16) and 0xFF)
+    val v3 = ((this ushr 24) and 0xFF)
+    return (v0 shl 24) or (v1 shl 16) or (v2 shl 8) or (v3 shl 0)
+}
