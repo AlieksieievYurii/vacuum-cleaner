@@ -22,6 +22,10 @@ class RobotSocketDiscovery(context: Context) {
         val ips = getAllAvailableIPs().toMutableList()
         val bufferIps = mutableListOf<String>()
         val listOfJobs = mutableListOf<Deferred<List<String>>>()
+        val res = mutableListOf<String>()
+
+        if (ips.isEmpty())
+            return res
 
         while (true) {
             val ip = ips.removeFirst()
@@ -31,7 +35,7 @@ class RobotSocketDiscovery(context: Context) {
                 listOfJobs.add(scope.async { scanIps(newBufferedList) })
                 bufferIps.clear()
                 k = 0
-            }else {
+            } else {
                 bufferIps.add(ip)
                 k++
             }
@@ -43,7 +47,7 @@ class RobotSocketDiscovery(context: Context) {
             }
         }
 
-        val res = mutableListOf<String>()
+
         listOfJobs.awaitAll().forEach { it.forEach { ips -> res.add(ips) } }
         return res
     }
