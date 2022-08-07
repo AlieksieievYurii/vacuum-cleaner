@@ -8,11 +8,10 @@ import com.yurii.vaccumcleaner.R
 import android.viewbinding.library.fragment.viewBinding
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.databinding.FragmentInitialBinding
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import com.yurii.vaccumcleaner.observeOnLifecycle
+
 
 
 class InitialFragment : Fragment(R.layout.fragment_initial) {
@@ -22,13 +21,11 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.viewModel = viewModel
-        lifecycleScope.launchWhenCreated {
-            launch { observeDiscoveryState() }
-        }
+        observeDiscoveryState()
     }
 
-    private suspend fun observeDiscoveryState() {
-        viewModel.state.collectLatest { state ->
+    private fun observeDiscoveryState() {
+        viewModel.state.observeOnLifecycle(viewLifecycleOwner) { state ->
             when (state) {
                 is InitialFragmentViewModel.State.NotFound -> {
                     runAnimation(R.raw.failed)
