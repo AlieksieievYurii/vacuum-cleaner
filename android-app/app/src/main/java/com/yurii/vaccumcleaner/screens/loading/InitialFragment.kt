@@ -8,10 +8,10 @@ import com.yurii.vaccumcleaner.R
 import android.viewbinding.library.fragment.viewBinding
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.databinding.FragmentInitialBinding
 import com.yurii.vaccumcleaner.observeOnLifecycle
-
 
 
 class InitialFragment : Fragment(R.layout.fragment_initial) {
@@ -22,6 +22,7 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.viewModel = viewModel
         observeDiscoveryState()
+        observeEvents()
     }
 
     private fun observeDiscoveryState() {
@@ -42,6 +43,15 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
                     viewBinding.layoutRobotIsNotFound.isVisible = false
                     runAnimation(R.raw.done)
                 }
+            }
+        }
+    }
+
+    private fun observeEvents() {
+        viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
+                InitialFragmentViewModel.Event.NavigateToBindRobot -> findNavController().navigate(R.id.action_initialFragment_to_binderFragment)
+                InitialFragmentViewModel.Event.NavigateToControlPanel -> findNavController().navigate(R.id.action_initialFragment_to_panelFragment)
             }
         }
     }

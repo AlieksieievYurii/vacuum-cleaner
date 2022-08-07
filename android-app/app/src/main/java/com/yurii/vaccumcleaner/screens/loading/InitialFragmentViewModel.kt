@@ -1,5 +1,6 @@
 package com.yurii.vaccumcleaner.screens.loading
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,11 +8,14 @@ import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.Preferences
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
+@SuppressLint("StaticFieldLeak")
 class InitialFragmentViewModel(private val context: Context, private val robotSocketDiscovery: RobotSocketDiscovery) : ViewModel() {
     sealed class Event {
         object NavigateToControlPanel : Event()
@@ -23,6 +27,9 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
         data class NotFound(val wasIpSaved: Boolean) : State()
         data class Connected(val ip: String) : State()
     }
+
+    private val _event = MutableSharedFlow<Event>()
+    val event = _event.asSharedFlow()
 
     private val _state: MutableStateFlow<State> = MutableStateFlow(State.Scanning)
     val state = _state.asStateFlow()
@@ -36,8 +43,7 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
                     _state.value = State.Connected(savedIp)
                     delay(3000)
                     navigateToControlPanel()
-                }
-                else
+                } else
                     _state.value = State.NotFound(wasIpSaved = true)
             } else
                 startDiscovering()
@@ -59,16 +65,20 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
     }
 
     private fun navigateToControlPanel() {
-
+        sendEvent(Event.NavigateToControlPanel)
     }
 
     fun navigateToBindRobot() {
-
+        sendEvent(Event.NavigateToBindRobot)
     }
 
     fun rescan() {
         _state.value = State.Scanning
         viewModelScope.launch { startDiscovering() }
+    }
+
+    private fun sendEvent(event: Event) = viewModelScope.launch {
+        _event.emit(event)
     }
 
     @Suppress("UNCHECKED_CAST")
