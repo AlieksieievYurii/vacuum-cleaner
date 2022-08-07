@@ -49,13 +49,13 @@
         android:label="InitialFragment"
         tools:layout="@layout/fragment_initial">
         <action
-            android:id="@+id/action_initialFragment_to_bluetoothDevicesFragment"
-            app:destination="@id/bluetoothDevicesFragment" />
-        <action
             android:id="@+id/action_initialFragment_to_panelFragment"
             app:destination="@id/panelFragment"
             app:popUpTo="@id/initialFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_initialFragment_to_binderFragment"
+            app:destination="@id/binderFragment" />
     </fragment>
     <fragment
         android:id="@+id/panelFragment"
@@ -73,4 +73,9 @@
         android:name="com.yurii.vaccumcleaner.screens.control.ManualControlFragment"
         android:label="ManualControlFragment"
         tools:layout="@layout/fragment_control" />
+    <fragment
+        android:id="@+id/binderFragment"
+        android:name="com.yurii.vaccumcleaner.screens.binder.BinderFragment"
+        android:label="BinderFragment"
+        tools:layout="@layout/fragment_binder" />
 </navigation>
