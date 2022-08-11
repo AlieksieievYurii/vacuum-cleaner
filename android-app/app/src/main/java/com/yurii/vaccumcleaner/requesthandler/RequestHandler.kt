@@ -2,6 +2,7 @@ package com.yurii.vaccumcleaner.requesthandler
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.yurii.vaccumcleaner.pop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,9 +42,15 @@ class RequestHandler(private val communicator: Communicator, private val scope: 
             if (System.currentTimeMillis() - startTime > timeout)
                 throw TimeoutException("No response from '${request.endpoint}'. Timeout: $timeout")
 
-            responses.find { it.requestId == request.requestId && it.endpoint == request.endpoint }?.run {
-                responses.remove(this)
-                return moshi.adapter(responseClass).fromJson(JSONObject(this.data as Map<*, *>).toString())!!
+            val response = responses.pop { it.requestId == request.requestId && it.endpoint == request.endpoint }
+            response?.run {
+                val data = if (this.data != null) JSONObject(this.data as Map<*, *>).toString() else "{}"
+                when (this.status) {
+                    ResponseStatus.OK -> return moshi.adapter(responseClass).fromJson(data)!!
+                    ResponseStatus.ERROR -> throw RequestFailed(request, this.errorMessage)
+                    ResponseStatus.BAD_REQUEST -> throw BadRequest(request, this.errorMessage)
+                }
+
             }
         }
     }
