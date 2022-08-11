@@ -65,3 +65,8 @@ fun Int.reverseBytes(): Int {
     val v3 = ((this ushr 24) and 0xFF)
     return (v0 shl 24) or (v1 shl 16) or (v2 shl 8) or (v3 shl 0)
 }
+
+fun <E> MutableList<E>.pop(predicate: (E) -> Boolean): E? {
+    val res = this.find(predicate)
+    return res?.also { remove(it) }
+}
