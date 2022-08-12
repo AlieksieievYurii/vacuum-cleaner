@@ -66,7 +66,13 @@ fun Int.reverseBytes(): Int {
     return (v0 shl 24) or (v1 shl 16) or (v2 shl 8) or (v3 shl 0)
 }
 
-fun <E> MutableList<E>.pop(predicate: (E) -> Boolean): E? {
-    val res = this.find(predicate)
-    return res?.also { remove(it) }
+fun <E> MutableList<E>.pop(lock: Any, predicate: (E) -> Boolean): E? {
+    synchronized(lock) {
+        val res = this.find(predicate)
+        return res?.also { remove(it) }
+    }
+}
+
+fun <E> MutableList<E>.synchronizedAppend(lock: Any, element: E) {
+    synchronized(lock) { this.add(element) }
 }
