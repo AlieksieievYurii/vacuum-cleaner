@@ -24,10 +24,10 @@ class RequestHandler(private val communicator: Communicator, private val scope: 
         }
     }
 
-    suspend fun <R : Any> send(endpoint: String, requestModel: Any, responseModel: Class<R>): R {
+    suspend fun <R : Any> send(endpoint: String, requestModel: Any, responseModel: Class<R>, timeout: Int = 1000): R {
         val request = Request(endpoint = endpoint, requestId = "2", parameters = requestModel)
         performRequest(request)
-        return awaitForResponse(request, responseModel, 1000)
+        return awaitForResponse(request, responseModel, timeout)
     }
 
     private suspend fun performRequest(request: Request<*>) = withContext(Dispatchers.IO) {
