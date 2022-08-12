@@ -6,7 +6,7 @@ class RequestHandlerException(Exception):
     pass
 
 
-class ParsingRequest(RequestHandlerException):
+class ParsingRequestErrorException(RequestHandlerException):
     """
     Exception representing failure parsing of request
     """
