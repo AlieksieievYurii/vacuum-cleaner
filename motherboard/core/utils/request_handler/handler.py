@@ -5,7 +5,7 @@ import threading
 from json import JSONDecodeError
 from typing import Optional, List, Dict
 
-from utils.communicator import Communicator
+from utils.communicator import Communicator, CommunicatorConnectionClosed
 from utils.request_handler.exceptions import ParsingRequestErrorException, RequiredFieldIsNotFound
 from utils.request_handler.models import Request, RequestHandler, Field, Response, Status, AttributeHolder
 
@@ -16,6 +16,7 @@ class RequestHandlerService(object):
         self._request_handlers: List[RequestHandler] = []
         self._queue = queue.Queue()
         self._logger = logger
+        self.is_connection_closed = False
 
     def register(self, request_handler: RequestHandler):
         """
@@ -33,7 +34,7 @@ class RequestHandlerService(object):
 
         :return: None
         """
-
+        self.is_connection_closed = False
         threading.Thread(target=self._keep_handling_incoming_requests, name="RequestHandler").start()
         threading.Thread(target=self._keep_reading_data, name="DataReader").start()
 
@@ -45,10 +46,16 @@ class RequestHandlerService(object):
         """
 
         while True:
-            data = self._communicator.read()
-            self._logger.debug(f'Received data: {data}')
-            request = self._parse_request(data)
-            self._queue.put(request)
+            if self.is_connection_closed:
+                break
+            try:
+                data = self._communicator.read()
+            except CommunicatorConnectionClosed:
+                self.is_connection_closed = True
+            else:
+                self._logger.debug(f'Received data: {data}')
+                request = self._parse_request(data)
+                self._queue.put(request)
 
     @staticmethod
     def _parse_request(data: str) -> Request:
@@ -75,6 +82,8 @@ class RequestHandlerService(object):
         """
 
         while True:
+            if self.is_connection_closed:
+                break
             if self._queue.qsize():
                 request: Request = self._queue.get()
                 request_handler = self._find_corresponding_handler(request)
