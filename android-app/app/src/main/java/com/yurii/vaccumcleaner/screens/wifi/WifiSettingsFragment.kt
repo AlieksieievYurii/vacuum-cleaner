@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.yurii.vaccumcleaner.MainViewModel
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentWifiSettingsBinding
-import com.yurii.vaccumcleaner.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 
 
 class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {

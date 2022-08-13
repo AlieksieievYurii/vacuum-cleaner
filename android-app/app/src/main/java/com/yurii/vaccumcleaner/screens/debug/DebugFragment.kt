@@ -11,7 +11,7 @@ import androidx.viewbinding.ViewBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.*
-import com.yurii.vaccumcleaner.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 
 class DebugFragment : Fragment(R.layout.fragment_debug) {
     private val binding: FragmentDebugBinding by viewBinding()
