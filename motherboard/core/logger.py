@@ -5,27 +5,41 @@ from typing import Optional
 formatter = logging.Formatter('%(asctime)s%(msecs)03d %(levelname)s %(message)s', '%H:%M:%S:')
 
 
+def _create_logger(name: str, console: bool, _formatter):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+    if console:
+        handler = logging.StreamHandler()
+        handler.setFormatter(_formatter)
+        logger.addHandler(handler)
+    else:
+        logs_folder = Path('logs')
+        logs = logs_folder.joinpath(f'{name}.txt')
+        logs.parent.mkdir(parents=True, exist_ok=True)
+        handler = logging.FileHandler(logs)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+    return logger
+
+
+class WifiModuleLogger(object):
+    def __init__(self, console=False):
+        self._logger = _create_logger('wifi-module', console, formatter)
+
+    def debug(self, message: str) -> None:
+        self._logger.debug(message)
+
+    def error(self, message: str) -> None:
+        self._logger.error(message)
+
+    def info(self, message: str) -> None:
+        self._logger.info(message)
+
+
 class A1Logger(object):
     def __init__(self, console=False):
-        self._robot_movement_logger = self._create_logger('robot-movement', console, formatter)
-        self._a1_logger = self._create_logger('a1', console, formatter)
-
-    @staticmethod
-    def _create_logger(name: str, console: bool, _formatter):
-        logger = logging.getLogger(name)
-        logger.setLevel(logging.DEBUG)
-        if console:
-            handler = logging.StreamHandler()
-            handler.setFormatter(_formatter)
-            logger.addHandler(handler)
-        else:
-            logs_folder = Path('logs')
-            logs = logs_folder.joinpath(f'{name}.txt')
-            logs.parent.mkdir(parents=True, exist_ok=True)
-            handler = logging.FileHandler(logs)
-            handler.setFormatter(formatter)
-            logger.addHandler(handler)
-        return logger
+        self._robot_movement_logger = _create_logger('robot-movement', console, formatter)
+        self._a1_logger = _create_logger('a1', console, formatter)
 
     def print_movement(self, forward: bool, speed: int, distance: Optional[int] = None,
                        with_stop: bool = False) -> None:
@@ -45,3 +59,4 @@ class A1Logger(object):
 
 
 a1_logger = A1Logger(True)
+wifi_module_logger = WifiModuleLogger(True)
