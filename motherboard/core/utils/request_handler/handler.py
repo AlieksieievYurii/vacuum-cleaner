@@ -1,6 +1,5 @@
 import dataclasses
 import json
-import logging
 import queue
 import threading
 from json import JSONDecodeError
@@ -10,14 +9,13 @@ from utils.communicator import Communicator
 from utils.request_handler.exceptions import ParsingRequestErrorException, RequiredFieldIsNotFound
 from utils.request_handler.models import Request, RequestHandler, Field, Response, Status, AttributeHolder
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
-
 
 class RequestHandlerService(object):
-    def __init__(self, communicator: Communicator):
+    def __init__(self, communicator: Communicator, logger):
         self._communicator = communicator
         self._request_handlers: List[RequestHandler] = []
         self._queue = queue.Queue()
+        self._logger = logger
 
     def register(self, request_handler: RequestHandler):
         """
@@ -26,7 +24,7 @@ class RequestHandlerService(object):
         :param request_handler: instance of the class extending abstract RequestHandler class
         :return: None
         """
-
+        # TODO Handle the case when trying to register with already append endpoint
         self._request_handlers.append(request_handler)
 
     def start(self) -> None:
@@ -48,7 +46,7 @@ class RequestHandlerService(object):
 
         while True:
             data = self._communicator.read()
-            logging.debug(f'Received data: {data}')
+            self._logger.debug(f'Received data: {data}')
             request = self._parse_request(data)
             self._queue.put(request)
 
@@ -132,7 +130,7 @@ class RequestHandlerService(object):
                             status=Status.OK,
                             data=response_data)
         response_json = json.dumps(dataclasses.asdict(response))
-        logging.debug(f'Response Data: {response_json}')
+        self._logger.debug(f'Response Data: {response_json}')
         self._communicator.send(response_json)
 
     def _send_error(self, request: Request, error: str, bad_request: bool = False) -> None:
@@ -141,5 +139,5 @@ class RequestHandlerService(object):
                             status=Status.BAD_REQUEST if bad_request else Status.ERROR,
                             error_message=error)
         error_response_json = json.dumps(dataclasses.asdict(response))
-        logging.debug(f'Error Response Data: {error_response_json}')
+        self._logger.error(f'Error Response Data: {error_response_json}')
         self._communicator.send(error_response_json)
