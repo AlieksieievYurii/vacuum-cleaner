@@ -66,6 +66,7 @@ class RobotSocketDiscovery(context: Context) {
         val soc = Socket()
         try {
             soc.connect(InetSocketAddress(ip, 1488), 1000)
+            soc.close()
             return@withContext true
         } catch (timeout: SocketTimeoutException) {
             Timber.d("Attempt failure(Timeout) to connect to Vacuum Robot by: $ip")
