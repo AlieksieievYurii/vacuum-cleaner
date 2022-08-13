@@ -11,7 +11,8 @@ import androidx.navigation.fragment.navArgs
 import com.yurii.vaccumcleaner.MainViewModel
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentSettingsBinding
-import com.yurii.vaccumcleaner.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
+
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {
     private val binding: FragmentSettingsBinding by viewBinding()

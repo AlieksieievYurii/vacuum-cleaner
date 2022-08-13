@@ -2,8 +2,8 @@ package com.yurii.vaccumcleaner.requesthandler
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
-import com.yurii.vaccumcleaner.pop
-import com.yurii.vaccumcleaner.synchronizedAppend
+import com.yurii.vaccumcleaner.utils.pop
+import com.yurii.vaccumcleaner.utils.synchronizedAppend
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

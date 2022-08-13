@@ -15,7 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.yurii.vaccumcleaner.Application
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.BluetoothDevicesFragmentBinding
-import com.yurii.vaccumcleaner.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 
 class BluetoothDevicesFragment : Fragment(R.layout.bluetooth_devices_fragment) {
     private val viewModel: BluetoothDevicesViewModel by viewModels { BluetoothDevicesViewModel.Factory(requireActivity().application as Application) }
@@ -42,7 +42,7 @@ class BluetoothDevicesFragment : Fragment(R.layout.bluetooth_devices_fragment) {
             when (it) {
                 BluetoothDevicesViewModel.Event.ShowMessageUnableToPair -> Snackbar.make(binding.root, "Unable to pair", Snackbar.LENGTH_LONG).show()
                 is BluetoothDevicesViewModel.Event.NavigateToSettingsFragment -> {
-                    findNavController().navigate(BluetoothDevicesFragmentDirections.actionBluetoothDevicesFragmentToSettingsFragment(it.bluetoothDevice))
+                    //findNavController().navigate(BluetoothDevicesFragmentDirections.actionBluetoothDevicesFragmentToSettingsFragment(it.bluetoothDevice))
                 }
             }
         }

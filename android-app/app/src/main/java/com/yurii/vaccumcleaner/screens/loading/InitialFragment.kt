@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.databinding.FragmentInitialBinding
-import com.yurii.vaccumcleaner.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 
 
 class InitialFragment : Fragment(R.layout.fragment_initial) {

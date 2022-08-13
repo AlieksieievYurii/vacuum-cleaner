@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
 import android.util.Log
-import com.yurii.vaccumcleaner.reverseBytes
+import com.yurii.vaccumcleaner.utils.reverseBytes
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

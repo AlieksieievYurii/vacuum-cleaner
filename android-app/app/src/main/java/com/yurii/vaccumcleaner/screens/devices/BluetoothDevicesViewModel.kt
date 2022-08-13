@@ -11,8 +11,8 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.yurii.vaccumcleaner.Application
-import com.yurii.vaccumcleaner.addUnique
-import com.yurii.vaccumcleaner.replace
+import com.yurii.vaccumcleaner.utils.addUnique
+import com.yurii.vaccumcleaner.utils.replace
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

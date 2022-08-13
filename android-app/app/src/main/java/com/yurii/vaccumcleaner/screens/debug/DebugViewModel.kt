@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import com.yurii.vaccumcleaner.addUnique
 import com.yurii.vaccumcleaner.service.*
+import com.yurii.vaccumcleaner.utils.addUnique
 import com.yurii.vaccumcleaner.screens.debug.Packet as RVPacket
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
