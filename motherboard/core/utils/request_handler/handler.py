@@ -34,8 +34,8 @@ class RequestHandlerService(object):
         :return: None
         """
 
-        threading.Thread(target=self._keep_handling_incoming_requests).start()
-        threading.Thread(target=self._keep_reading_data).start()
+        threading.Thread(target=self._keep_handling_incoming_requests, name="RequestHandler").start()
+        threading.Thread(target=self._keep_reading_data, name="DataReader").start()
 
     def _keep_reading_data(self) -> None:
         """
