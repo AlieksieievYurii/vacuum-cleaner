@@ -6,7 +6,7 @@ from serial.threaded import LineReader, ReaderThread
 
 from a1.models import A1Data, Job, Response, Request
 
-from logger import a1_logger
+from utils.logger import a1_logger
 
 
 class Handler(LineReader):
