@@ -93,7 +93,12 @@ class RequestHandlerService(object):
                     self._send_error(request, 'Wrong endpoint', True)
 
     def _perform_request(self, request: Request, request_handler: RequestHandler) -> None:
-        attrs = self._parse_fields(request_handler.request_model, request.parameters)
+        if request_handler.request_model:
+            attrs = self._parse_fields(request_handler.request_model, request.parameters)
+        else:
+            attrs = AttributeHolder()
+            if request.parameters:
+                self._send_error(request, 'This endpoint does not require parameters')
 
         try:
             response = request_handler.perform(request, attrs)
