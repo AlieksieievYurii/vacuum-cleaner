@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
+import android.widget.SeekBar
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
@@ -101,4 +102,20 @@ fun View.setPressedUnpressedListener(onPress: () -> Unit, onRelease: () -> Unit)
             else -> false
         }
     }
+}
+
+fun SeekBar.setProgressListener(onProgress: (progress: Int) -> Unit, onStop: (progress: Int) -> Unit) {
+    this.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+            onProgress(p1)
+        }
+
+        override fun onStartTrackingTouch(p0: SeekBar?) {
+            //Not used
+        }
+
+        override fun onStopTrackingTouch(p0: SeekBar) {
+            onStop(p0.progress)
+        }
+    })
 }
