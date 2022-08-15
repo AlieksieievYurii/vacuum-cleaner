@@ -1,5 +1,10 @@
 package com.yurii.vaccumcleaner.utils
 
+import android.annotation.SuppressLint
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.widget.Button
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
@@ -75,4 +80,25 @@ fun <E> MutableList<E>.pop(lock: Any, predicate: (E) -> Boolean): E? {
 
 fun <E> MutableList<E>.synchronizedAppend(lock: Any, element: E) {
     synchronized(lock) { this.add(element) }
+}
+
+fun View.setPressedUnpressedListener(onPress: () -> Unit, onRelease: () -> Unit) {
+    this.setOnTouchListener { v, motionEvent ->
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                onPress()
+                false
+            }
+            MotionEvent.ACTION_UP -> {
+                onRelease()
+                v.performClick()
+                false
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                onRelease()
+                false
+            }
+            else -> false
+        }
+    }
 }
