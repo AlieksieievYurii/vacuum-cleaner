@@ -104,7 +104,7 @@ fun View.setPressedUnpressedListener(onPress: () -> Unit, onRelease: () -> Unit)
     }
 }
 
-fun SeekBar.setProgressListener(onProgress: (progress: Int) -> Unit, onStop: (progress: Int) -> Unit) {
+fun SeekBar.setProgressListener(onProgress: (progress: Int) -> Unit) {
     this.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
             onProgress(p1)
@@ -115,7 +115,7 @@ fun SeekBar.setProgressListener(onProgress: (progress: Int) -> Unit, onStop: (pr
         }
 
         override fun onStopTrackingTouch(p0: SeekBar) {
-            onStop(p0.progress)
+            //Not used
         }
     })
 }
