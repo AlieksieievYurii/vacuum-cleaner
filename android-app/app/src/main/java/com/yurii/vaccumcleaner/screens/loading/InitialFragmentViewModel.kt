@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.Preferences
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
+import com.yurii.vaccumcleaner.robot.WifiCommunicator
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,11 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
 @SuppressLint("StaticFieldLeak")
-class InitialFragmentViewModel(private val context: Context, private val robotSocketDiscovery: RobotSocketDiscovery) : ViewModel() {
+class InitialFragmentViewModel(
+    private val context: Context,
+    private val robotSocketDiscovery: RobotSocketDiscovery,
+    private val wifiCommunicator: WifiCommunicator
+) : ViewModel() {
     sealed class Event {
         object NavigateToControlPanel : Event()
         object NavigateToBindRobot : Event()
@@ -40,9 +45,10 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
             if (savedIp != null) {
                 if (robotSocketDiscovery.tryConnect(savedIp)) {
                     delay(2000)
+                    wifiCommunicator.connect(savedIp, 1488)
                     _state.value = State.Connected(savedIp)
                     delay(3000)
-                    navigateToControlPanel()
+                    _event.emit(Event.NavigateToControlPanel)
                 } else
                     _state.value = State.NotFound(wasIpSaved = true)
             } else
@@ -58,6 +64,7 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
             if (r.isEmpty())
                 _state.value = State.NotFound(wasIpSaved = false)
             else {
+                wifiCommunicator.connect(r.first(), 1488)
                 Preferences.saveRobotIpAddress(context, r.first())
                 _state.value = State.Connected(r.first())
             }
@@ -82,10 +89,14 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
     }
 
     @Suppress("UNCHECKED_CAST")
-    class Factory(private val context: Context, private val robotSocketDiscovery: RobotSocketDiscovery) : ViewModelProvider.Factory {
+    class Factory(
+        private val context: Context,
+        private val robotSocketDiscovery: RobotSocketDiscovery,
+        private val wifiCommunicator: WifiCommunicator
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(InitialFragmentViewModel::class.java))
-                return InitialFragmentViewModel(context, robotSocketDiscovery) as T
+                return InitialFragmentViewModel(context, robotSocketDiscovery, wifiCommunicator) as T
             throw IllegalStateException("Given the model class is not assignable from SavedMusicViewModel class")
         }
     }

@@ -33,22 +33,12 @@ data class TestResponse(
 )
 
 class PanelFragment : Fragment(R.layout.fragment_panel) {
-    private val viewModel: PanelViewModel by viewModels { Injector.providePanelViewModel() }
+    private val viewModel: PanelViewModel by viewModels { Injector.providePanelViewModel(requireActivity()) }
     private val binding: FragmentPanelBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
-
-        val wifiCommunicator = WifiCommunicator()
-        val requestHandler = RequestHandler(wifiCommunicator, lifecycleScope)
-        lifecycleScope.launch(Dispatchers.IO) {
-            wifiCommunicator.connect("192.168.18.2", 1488)
-            requestHandler.start()
-            val r = requestHandler.send("/hello-world", TestRequest("aa", 1), TestResponse::class.java, 10000)
-            Timber.d(r.toString())
-        }
-
 
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
