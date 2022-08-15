@@ -1,5 +1,6 @@
 package com.yurii.vaccumcleaner.screens.control
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -37,6 +38,10 @@ class ManualControlViewModel(communicator: Communicator) : ViewModel() {
 
     fun stop() {
 
+    }
+
+    fun setWheelSpeed(cmPerMinute: Int) {
+        Log.i("TEST", cmPerMinute.toString())
     }
 
     @Suppress("UNCHECKED_CAST")

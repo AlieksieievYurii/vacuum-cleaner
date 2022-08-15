@@ -12,6 +12,7 @@ import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentControlBinding
 import com.yurii.vaccumcleaner.utils.setPressedUnpressedListener
+import com.yurii.vaccumcleaner.utils.setProgressListener
 
 class ManualControlFragment : Fragment(R.layout.fragment_control) {
     private val binding: FragmentControlBinding by viewBinding()
@@ -26,6 +27,8 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
         binding.btnLeft.setPressedUnpressedListener(onPress = viewModel::turnLeft, onRelease = viewModel::stop)
         binding.btnRight.setPressedUnpressedListener(onPress = viewModel::turnRight, onRelease = viewModel::stop)
 
-
+        binding.wheelSpeed.setProgressListener(onProgress = { speedCmPerMinute ->
+            binding.targetSpeed.text = getString(R.string.template_speed_cm_per_minute, speedCmPerMinute)
+        }, onStop = viewModel::setWheelSpeed)
     }
 }
