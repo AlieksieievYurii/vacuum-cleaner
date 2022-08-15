@@ -8,6 +8,7 @@ import com.yurii.vaccumcleaner.requesthandler.Communicator
 import com.yurii.vaccumcleaner.requesthandler.RequestHandler
 import com.yurii.vaccumcleaner.robot.Robot
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Range
 import timber.log.Timber
 
 class ManualControlViewModel(communicator: Communicator) : ViewModel() {
@@ -42,6 +43,10 @@ class ManualControlViewModel(communicator: Communicator) : ViewModel() {
 
     fun setWheelSpeed(cmPerMinute: Int) {
         Log.i("TEST", cmPerMinute.toString())
+    }
+
+    fun setVacuumMotorSpeed(speedInPercentage: Int) {
+
     }
 
     @Suppress("UNCHECKED_CAST")

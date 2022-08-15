@@ -30,5 +30,9 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
         binding.wheelSpeed.setProgressListener(onProgress = { speedCmPerMinute ->
             binding.targetSpeed.text = getString(R.string.template_speed_cm_per_minute, speedCmPerMinute)
         }, onStop = viewModel::setWheelSpeed)
+
+        binding.vacuumMotorSpeed.setProgressListener(onProgress = { speedInPercentage ->
+            binding.vacuumMotorTargetSpeed.text = getString(R.string.template_number_with_percentage, speedInPercentage)
+        }, onStop = viewModel::setVacuumMotorSpeed)
     }
 }

@@ -243,7 +243,7 @@
             app:layout_constraintTop_toBottomOf="@+id/switch3" />
 
         <SeekBar
-            android:id="@+id/vacuum_moto_speed"
+            android:id="@+id/vacuum_motor_speed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="@+id/switch1"
@@ -286,9 +286,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="50 %"
-            app:layout_constraintBottom_toBottomOf="@+id/vacuum_moto_speed"
+            app:layout_constraintBottom_toBottomOf="@+id/vacuum_motor_speed"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
-            app:layout_constraintTop_toTopOf="@+id/vacuum_moto_speed"
+            app:layout_constraintTop_toTopOf="@+id/vacuum_motor_speed"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
