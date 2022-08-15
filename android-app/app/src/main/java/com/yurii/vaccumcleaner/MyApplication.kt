@@ -4,7 +4,7 @@ import android.app.Application
 import com.yurii.vaccumcleaner.robot.WifiCommunicator
 import timber.log.Timber
 
-class Application : Application() {
+class MyApplication : Application() {
 
     val wifiCommunicator = WifiCommunicator()
 
