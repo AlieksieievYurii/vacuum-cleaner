@@ -49,6 +49,10 @@ class ManualControlViewModel(communicator: Communicator) : ViewModel() {
 
     }
 
+    fun setMainBrushMotorSpeed(speedInPercentage: Int) {
+
+    }
+
     @Suppress("UNCHECKED_CAST")
     class Factory(private val communicator: Communicator) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
