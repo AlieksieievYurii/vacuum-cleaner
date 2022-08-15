@@ -26,7 +26,7 @@ class RequestHandler(private val communicator: Communicator, private val scope: 
         }
     }
 
-    suspend fun <R : Any> send(endpoint: String, requestModel: Any, responseModel: Class<R>, timeout: Int = 1000): R {
+    suspend fun <R : Any> send(endpoint: String, requestModel: Any?, responseModel: Class<R>, timeout: Int = 1000): R {
         val request = Request(endpoint = endpoint, requestId = UUID.randomUUID().toString(), parameters = requestModel)
         performRequest(request)
         return awaitForResponse(request, responseModel, timeout)
