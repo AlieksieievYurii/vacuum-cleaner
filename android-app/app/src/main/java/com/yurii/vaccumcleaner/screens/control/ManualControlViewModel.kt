@@ -11,10 +11,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.annotations.Range
 import timber.log.Timber
 
-class ManualControlViewModel(communicator: Communicator) : ViewModel() {
-    private val robot = Robot(RequestHandler(communicator, viewModelScope).also {
-        Log.i("TEST", "OK")
-        it.start() })
+class ManualControlViewModel(private val robot: Robot) : ViewModel() {
 
     init {
         viewModelScope.launch {
@@ -64,10 +61,10 @@ class ManualControlViewModel(communicator: Communicator) : ViewModel() {
     }
 
     @Suppress("UNCHECKED_CAST")
-    class Factory(private val communicator: Communicator) : ViewModelProvider.Factory {
+    class Factory(private val robot: Robot) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ManualControlViewModel::class.java))
-                return ManualControlViewModel(communicator) as T
+                return ManualControlViewModel(robot) as T
             throw IllegalStateException("Given the model class is not assignable from ManualControlViewModel class")
         }
     }

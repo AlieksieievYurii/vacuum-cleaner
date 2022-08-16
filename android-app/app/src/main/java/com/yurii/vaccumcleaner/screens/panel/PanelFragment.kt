@@ -5,32 +5,11 @@ import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentPanelBinding
-import com.yurii.vaccumcleaner.requesthandler.RequestHandler
-import com.yurii.vaccumcleaner.robot.WifiCommunicator
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import timber.log.Timber
-
-@JsonClass(generateAdapter = true)
-data class TestRequest(
-    val name: String,
-    val age: Int
-)
-
-@JsonClass(generateAdapter = true)
-data class TestResponse(
-    @Json(name = "passport_id") val passwordId: String,
-    @Json(name = "dir_out") val dirOut: String
-)
 
 class PanelFragment : Fragment(R.layout.fragment_panel) {
     private val viewModel: PanelViewModel by viewModels { Injector.providePanelViewModel(requireActivity()) }

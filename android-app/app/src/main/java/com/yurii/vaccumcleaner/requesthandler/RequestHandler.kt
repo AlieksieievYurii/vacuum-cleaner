@@ -4,26 +4,22 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.yurii.vaccumcleaner.utils.pop
 import com.yurii.vaccumcleaner.utils.synchronizedAppend
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeoutException
+import kotlin.concurrent.thread
 
 
-class RequestHandler(private val communicator: Communicator, private val scope: CoroutineScope) {
+class RequestHandler(private val communicator: Communicator) {
     private var moshi = Moshi.Builder().build()
     private val jsonAdapter = moshi.adapter<Request<*>>(Types.newParameterizedType(Request::class.java, Any::class.java))
     private val responseAdapter = moshi.adapter(Response::class.java)
     private val responses = mutableListOf<Response>()
 
     fun start() {
-        scope.launch(Dispatchers.IO) {
-            listenForIncomingResponses()
-        }
+        thread(start = true) { listenForIncomingResponses() }
     }
 
     suspend fun <R : Any> send(endpoint: String, requestModel: Any?, responseModel: Class<R>, timeout: Int = 1000): R {

@@ -13,7 +13,7 @@ import com.yurii.vaccumcleaner.utils.setProgressListener
 
 class ManualControlFragment : Fragment(R.layout.fragment_control) {
     private val binding: FragmentControlBinding by viewBinding()
-    private val viewModel: ManualControlViewModel by viewModels { Injector.provideManualControlViewModel(requireActivity()) }
+    private val viewModel: ManualControlViewModel by viewModels { Injector.provideManualControlViewModel() }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
