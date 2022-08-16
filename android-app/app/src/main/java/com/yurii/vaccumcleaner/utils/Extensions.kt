@@ -1,11 +1,9 @@
 package com.yurii.vaccumcleaner.utils
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Button
 import android.widget.SeekBar
+import androidx.appcompat.widget.SwitchCompat
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
@@ -13,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 
 class FlowObserver<T>(
     private val lifecycleOwner: LifecycleOwner,
@@ -104,10 +101,10 @@ fun View.setPressedUnpressedListener(onPress: () -> Unit, onRelease: () -> Unit)
     }
 }
 
-fun SeekBar.setProgressListener(onProgress: (progress: Int) -> Unit) {
+fun SeekBar.setProgressListener(onProgressChanged: (progress: Int) -> Unit, onProgress: (progress: Int) -> Unit) {
     this.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
         override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
-            onProgress(p1)
+            onProgressChanged(p1)
         }
 
         override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -115,7 +112,7 @@ fun SeekBar.setProgressListener(onProgress: (progress: Int) -> Unit) {
         }
 
         override fun onStopTrackingTouch(p0: SeekBar) {
-            //Not used
+            onProgress(p0.progress)
         }
     })
 }

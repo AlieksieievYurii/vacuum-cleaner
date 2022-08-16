@@ -207,10 +207,10 @@
             android:layout_height="wrap_content"
             android:text="Wheel speed:"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/switch4" />
+            app:layout_constraintTop_toBottomOf="@+id/left_brush_motor_switch" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch1"
+            android:id="@+id/vacuum_motor_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -219,67 +219,67 @@
             app:layout_constraintTop_toBottomOf="@+id/inf_temperature" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch2"
+            android:id="@+id/main_brush_motor_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Main Brush Motor"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/switch1" />
+            app:layout_constraintTop_toBottomOf="@+id/vacuum_motor_switch" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch3"
+            android:id="@+id/right_brush_motor_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Right Brush Motor"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/switch2" />
+            app:layout_constraintTop_toBottomOf="@+id/main_brush_motor_switch" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch4"
+            android:id="@+id/left_brush_motor_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Left Brush Motor"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/switch3" />
+            app:layout_constraintTop_toBottomOf="@+id/right_brush_motor_switch" />
 
         <SeekBar
             android:id="@+id/vacuum_motor_speed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/switch1"
+            app:layout_constraintBottom_toBottomOf="@+id/vacuum_motor_switch"
             app:layout_constraintEnd_toStartOf="@+id/vacuum_motor_target_speed"
-            app:layout_constraintStart_toEndOf="@+id/switch1"
-            app:layout_constraintTop_toTopOf="@+id/switch1" />
+            app:layout_constraintStart_toEndOf="@+id/vacuum_motor_switch"
+            app:layout_constraintTop_toTopOf="@+id/vacuum_motor_switch" />
 
         <SeekBar
             android:id="@+id/main_brush_motor_speed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/switch2"
+            app:layout_constraintBottom_toBottomOf="@+id/main_brush_motor_switch"
             app:layout_constraintEnd_toStartOf="@+id/main_brush_motor_target_speed"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/switch2"
-            app:layout_constraintTop_toTopOf="@+id/switch2" />
+            app:layout_constraintStart_toEndOf="@+id/main_brush_motor_switch"
+            app:layout_constraintTop_toTopOf="@+id/main_brush_motor_switch" />
 
         <SeekBar
             android:id="@+id/right_brush_motor_speed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/switch3"
+            app:layout_constraintBottom_toBottomOf="@+id/right_brush_motor_switch"
             app:layout_constraintEnd_toStartOf="@+id/right_brush_motor_target_speed"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/switch3"
-            app:layout_constraintTop_toTopOf="@+id/switch3" />
+            app:layout_constraintStart_toEndOf="@+id/right_brush_motor_switch"
+            app:layout_constraintTop_toTopOf="@+id/right_brush_motor_switch" />
 
         <SeekBar
             android:id="@+id/left_brush_motor_speed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/switch4"
+            app:layout_constraintBottom_toBottomOf="@+id/left_brush_motor_switch"
             app:layout_constraintEnd_toStartOf="@+id/right_brush_motor_target_speed"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/switch4"
-            app:layout_constraintTop_toTopOf="@+id/switch4" />
+            app:layout_constraintStart_toEndOf="@+id/left_brush_motor_switch"
+            app:layout_constraintTop_toTopOf="@+id/left_brush_motor_switch" />
 
         <TextView
             android:id="@+id/vacuum_motor_target_speed"

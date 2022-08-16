@@ -12,7 +12,9 @@ import org.jetbrains.annotations.Range
 import timber.log.Timber
 
 class ManualControlViewModel(communicator: Communicator) : ViewModel() {
-    private val robot = Robot(RequestHandler(communicator, viewModelScope).also { it.start() })
+    private val robot = Robot(RequestHandler(communicator, viewModelScope).also {
+        Log.i("TEST", "OK")
+        it.start() })
 
     init {
         viewModelScope.launch {
@@ -42,23 +44,23 @@ class ManualControlViewModel(communicator: Communicator) : ViewModel() {
     }
 
     fun setWheelSpeed(cmPerMinute: Int) {
-        Log.i("TEST", cmPerMinute.toString())
+        Log.i("setWheelSpeed", cmPerMinute.toString())
     }
 
     fun setVacuumMotorSpeed(speedInPercentage: Int) {
-
+        Log.i("setVacuumMotorSpeed", speedInPercentage.toString())
     }
 
     fun setMainBrushMotorSpeed(speedInPercentage: Int) {
-
+        Log.i("setMainBrushMotorSpeed", speedInPercentage.toString())
     }
 
     fun setRightBrushSpeed(speedInPercentage: Int) {
-
+        Log.i("setRightBrushSpeed", speedInPercentage.toString())
     }
 
     fun setLeftBrushSpeed(speedInPercentage: Int) {
-
+        Log.i("setLeftBrushSpeed", speedInPercentage.toString())
     }
 
     @Suppress("UNCHECKED_CAST")
