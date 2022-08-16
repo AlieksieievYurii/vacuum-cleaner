@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                app:cardBackgroundColor="@color/yellow"
+                app:cardBackgroundColor="?attr/colorPrimaryVariant"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp">
 
@@ -42,6 +42,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
+                        android:textColor="@color/white"
                         android:text="Lid is opened!" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.cardview.widget.CardView>
@@ -51,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                app:cardBackgroundColor="@color/yellow"
+                app:cardBackgroundColor="?attr/colorPrimaryVariant"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp">
 
@@ -72,6 +73,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
+                        android:textColor="@color/white"
                         android:text="Dust box is not inserted!" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.cardview.widget.CardView>
@@ -130,7 +132,7 @@
             android:id="@+id/btn_left"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:backgroundTint="@color/yellow"
+            android:backgroundTint="?attr/colorPrimaryVariant"
             android:src="@drawable/ic_white_left_64"
             app:layout_constraintEnd_toStartOf="@+id/btn_forward"
             app:layout_constraintTop_toBottomOf="@+id/btn_forward"
@@ -140,7 +142,7 @@
             android:id="@+id/btn_forward"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:backgroundTint="@color/yellow"
+            android:backgroundTint="?attr/colorPrimaryVariant"
             android:src="@drawable/ic_white_up_64"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
@@ -151,7 +153,7 @@
             android:id="@+id/btn_backward"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:backgroundTint="@color/yellow"
+            android:backgroundTint="?attr/colorPrimaryVariant"
             android:src="@drawable/ic_white_down_64"
             app:layout_constraintEnd_toEndOf="@+id/btn_forward"
             app:layout_constraintStart_toStartOf="@+id/btn_forward"
@@ -162,7 +164,7 @@
             android:id="@+id/btn_right"
             android:layout_width="70dp"
             android:layout_height="70dp"
-            android:backgroundTint="@color/yellow"
+            android:backgroundTint="?attr/colorPrimaryVariant"
             android:src="@drawable/ic_white_right_64"
             app:layout_constraintStart_toEndOf="@+id/btn_forward"
             app:layout_constraintTop_toBottomOf="@+id/btn_forward"
