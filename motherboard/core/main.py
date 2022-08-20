@@ -5,11 +5,12 @@ from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.hello_world import HelloWorldRequest
 from utils.logger import wifi_module_logger
 from wifi.endpoints.motor import Motor
+from wifi.endpoints.movement import Movement, StopMovement
 from wifi.endpoints.sys_info import GetRobotSysInfo
 
 
 def main():
-    a1_socket = A1Socket()
+    a1_socket = A1Socket("COM5")
     a1_socket.open()
 
     robot = Robot(a1_socket)
@@ -19,6 +20,8 @@ def main():
     wifi_request_handler_service.register(HelloWorldRequest())
     wifi_request_handler_service.register(GetRobotSysInfo())
     wifi_request_handler_service.register(Motor(robot))
+    wifi_request_handler_service.register(Movement(robot))
+    wifi_request_handler_service.register(StopMovement(robot))
 
     wifi_communicator.accept_connection()
     wifi_request_handler_service.start()
