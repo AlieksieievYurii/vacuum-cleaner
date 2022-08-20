@@ -1,19 +1,17 @@
 package com.yurii.vaccumcleaner.screens.control
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.yurii.vaccumcleaner.requesthandler.Communicator
-import com.yurii.vaccumcleaner.requesthandler.RequestHandler
 import com.yurii.vaccumcleaner.robot.Robot
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import org.jetbrains.annotations.Range
 import timber.log.Timber
 
 class ManualControlViewModel(private val robot: Robot) : ViewModel() {
+    @JvmField
+    var wheelSpeed = 0
 
     init {
         viewModelScope.launch {
@@ -28,25 +26,25 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
 
     fun moveForward() {
         viewModelScope.launch(Dispatchers.IO) {
-            robot.walkForward(2000)
+            robot.walkForward(wheelSpeed)
         }
     }
 
     fun moveBackward() {
         viewModelScope.launch(Dispatchers.IO) {
-            robot.walkBackward(2000)
+            robot.walkBackward(wheelSpeed)
         }
     }
 
     fun turnLeft() {
         viewModelScope.launch(Dispatchers.IO) {
-            robot.rotateLeft(2000)
+            robot.rotateLeft(wheelSpeed)
         }
     }
 
     fun turnRight() {
         viewModelScope.launch(Dispatchers.IO) {
-            robot.rotateRight(2000)
+            robot.rotateRight(wheelSpeed)
         }
     }
 
@@ -57,7 +55,7 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun setWheelSpeed(cmPerMinute: Int) {
-        Log.i("setWheelSpeed", cmPerMinute.toString())
+        wheelSpeed = cmPerMinute
     }
 
     fun setVacuumMotorSpeed(speedInPercentage: Int) {
