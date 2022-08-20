@@ -40,6 +40,19 @@ class Robot(object):
     def turn_right(self, angle: int, speed: int, with_break: bool = True) -> Job:
         return self._turn(left=False, angle=angle, speed=speed, with_break=with_break)
 
+    def rotate_right(self, speed: int) -> Job:
+        return self._rotate(left=False, speed=speed)
+
+    def rotate_left(self, speed: int) -> Job:
+        return self._rotate(left=True, speed=speed)
+
+    def stop_movement(self, with_break: bool) -> Job:
+        return self.move_forward(0, 0, with_break)
+
+    def _rotate(self, left: bool, speed: int) -> Job:
+        parameters = f'{"1" if left else "2"};{speed:x}'
+        return self._socket.send_instruction(0x14, parameters)
+
     def _move(self, distance: int, speed: int, forward: bool, with_break: bool) -> Job:
         a1_logger.print_movement(forward, speed, distance, with_break)
         parameters = f'{"1" if forward else "2"};{distance:x};{speed:x};{"1" if with_break else "2"}'
