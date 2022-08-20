@@ -5,7 +5,7 @@
 #include "instruction-handler.h"
 
 #define TICK_INTERVAL 100
-#define SIGNAL_TICK_STEP 5
+#define SIGNAL_TICK_STEP 30
 
 class Motor {
   public:
