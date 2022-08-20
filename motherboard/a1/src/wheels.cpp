@@ -121,6 +121,14 @@ void Wheels::walk(uint16_t request_id, uint32_t speed_sm_per_minute, bool forwar
   _instruction_handler->on_finished(request_id);
 }
 
+void Wheels::rotate(uint16_t request_id, SideDirection direction, uint32_t speed_sm_per_minute) {
+  _is_moving = true;
+  _left_wheel->walk(speed_sm_per_minute, direction == RIGHT);
+  _right_wheel->walk(speed_sm_per_minute, direction == LEFT);
+
+  _instruction_handler->on_finished(request_id);
+}
+
 uint32_t calculate_angle_distance_in_sm(uint16_t angle) {
   float radius_in_sm = WHEELS_BASE_LINE_DIAMETER_MM / 2 / 10.0;
 
