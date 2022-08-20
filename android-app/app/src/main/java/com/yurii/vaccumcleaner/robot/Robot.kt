@@ -21,7 +21,13 @@ class Robot(private val requestHandler: RequestHandler) {
         //TODO
     }
 
+    suspend fun setVacuumMotor(value: Int) = setMotor("vacuum", value)
+
     suspend fun setMainBrushMotor(value: Int) = setMotor("main_brush", value)
+
+    suspend fun setLeftBrushMotor(value: Int) = setMotor("left_brush", value)
+
+    suspend fun setRightBrushMotor(value: Int) = setMotor("right_brush", value)
 
     private suspend fun setMotor(motorName: String, value: Int) {
         requestHandler.send<Any>("/set-motor", MotorRequestModule(motorName, value), null)

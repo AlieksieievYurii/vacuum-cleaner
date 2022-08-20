@@ -51,7 +51,9 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun setVacuumMotorSpeed(speedInPercentage: Int) {
-        Log.i("setVacuumMotorSpeed", speedInPercentage.toString())
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.setVacuumMotor(speedInPercentage)
+        }
     }
 
     fun setMainBrushMotorSpeed(speedInPercentage: Int) {
@@ -61,11 +63,15 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun setRightBrushSpeed(speedInPercentage: Int) {
-        Log.i("setRightBrushSpeed", speedInPercentage.toString())
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.setRightBrushMotor(speedInPercentage)
+        }
     }
 
     fun setLeftBrushSpeed(speedInPercentage: Int) {
-        Log.i("setLeftBrushSpeed", speedInPercentage.toString())
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.setLeftBrushMotor(speedInPercentage)
+        }
     }
 
 
