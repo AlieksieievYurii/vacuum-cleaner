@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from a1.exceptions import CannotParse, InstructionTimeout, InstructionFailureException
-from utils import millis
+from utils.utils import millis
 
 
 @dataclass
