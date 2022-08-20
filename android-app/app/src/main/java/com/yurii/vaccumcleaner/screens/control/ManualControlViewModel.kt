@@ -27,23 +27,33 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun moveForward() {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.walkForward(2000)
+        }
     }
 
     fun moveBackward() {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.walkBackward(2000)
+        }
     }
 
     fun turnLeft() {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.rotateLeft(2000)
+        }
     }
 
     fun turnRight() {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.rotateRight(2000)
+        }
     }
 
     fun stop() {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.stopMovement(true)
+        }
     }
 
     fun setWheelSpeed(cmPerMinute: Int) {
