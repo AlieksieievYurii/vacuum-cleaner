@@ -146,7 +146,7 @@
             android:src="@drawable/ic_white_up_64"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/switch5"
+            app:layout_constraintTop_toBottomOf="@+id/with_break"
             tools:ignore="ContentDescription" />
 
         <ImageButton
@@ -322,7 +322,7 @@
             app:layout_constraintTop_toTopOf="@+id/left_brush_motor_speed" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch5"
+            android:id="@+id/with_break"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="With break"

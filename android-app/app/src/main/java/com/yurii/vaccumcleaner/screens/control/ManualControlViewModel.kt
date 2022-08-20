@@ -10,8 +10,8 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ManualControlViewModel(private val robot: Robot) : ViewModel() {
-    @JvmField
     var wheelSpeed = 0
+    var withBreak = false
 
     init {
         viewModelScope.launch {
@@ -50,12 +50,8 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
 
     fun stop() {
         viewModelScope.launch(Dispatchers.IO) {
-            robot.stopMovement(true)
+            robot.stopMovement(withBreak)
         }
-    }
-
-    fun setWheelSpeed(cmPerMinute: Int) {
-        wheelSpeed = cmPerMinute
     }
 
     fun setVacuumMotorSpeed(speedInPercentage: Int) {

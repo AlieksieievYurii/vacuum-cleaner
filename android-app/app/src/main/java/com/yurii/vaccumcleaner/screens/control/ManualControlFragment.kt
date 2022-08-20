@@ -17,7 +17,6 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel
 
         binding.btnForward.setPressedUnpressedListener(onPress = viewModel::moveForward, onRelease = viewModel::stop)
         binding.btnBackward.setPressedUnpressedListener(onPress = viewModel::moveBackward, onRelease = viewModel::stop)
@@ -27,7 +26,7 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
         binding.apply {
             wheelSpeed.setProgressListener(onProgressChanged = { speedCmPerMinute ->
                 targetSpeed.text = getString(R.string.template_speed_cm_per_minute, speedCmPerMinute)
-            }, onProgress = viewModel::setWheelSpeed)
+            }, onProgress = { viewModel.wheelSpeed = it })
 
             vacuumMotorSpeed.setProgressListener(onProgressChanged = { speedInPercentage ->
                 vacuumMotorTargetSpeed.text = getString(R.string.template_number_with_percentage, speedInPercentage)
@@ -60,6 +59,8 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
             leftBrushMotorSwitch.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.setLeftBrushSpeed(if (isChecked) leftBrushMotorSpeed.progress else 0)
             }
+
+            withBreak.setOnCheckedChangeListener { _, isChecked -> viewModel.withBreak = isChecked }
         }
     }
 }
