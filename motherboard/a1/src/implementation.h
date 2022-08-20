@@ -345,6 +345,29 @@ void on_cut_off_the_power(uint16_t id, char*) {
   instruction_handler.on_finished(id);
 }
 
+void on_rotate(uint16_t id, char* input) {
+  const int8_t direction = fetch_unsigned_hex_number(input, 0);
+  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  const int16_t speed = fetch_unsigned_hex_number(input, 1);
+  if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x2);
+    return;
+  }
+
+  switch (direction) {
+    case 0x1: wheels.rotate(id, LEFT, speed); break;
+    case 0x2:  wheels.rotate(id, RIGHT, speed); break;
+    default:
+      instruction_handler.on_failed(id, 0x3);
+      return;
+  }
+  
+}
+
 void on_set_error_state_in_power_controller(uint16_t id, char* input) {
   switch (input[0]) {
     case 'T': power_controller.set_error_state(); break;

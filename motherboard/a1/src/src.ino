@@ -7,7 +7,7 @@ InstructionHandler instruction_handler(Serial);
 
 #include "implementation.h"
 
-#define __ENABLE_SENSOR_READING__
+//#define __ENABLE_SENSOR_READING__
 
 void setup() {
   init_hardware();
@@ -31,6 +31,7 @@ void setup() {
   instruction_handler.add(0x11, on_set_error_state_in_power_controller);
   instruction_handler.add(0x12, on_main_brush_motor);
   instruction_handler.add(0x13, on_walk);
+  instruction_handler.add(0x14, on_rotate);
   
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
