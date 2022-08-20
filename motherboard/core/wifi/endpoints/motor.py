@@ -17,6 +17,7 @@ class Motor(RequestHandler):
             'vacuum': robot.set_vacuum_motor,
             'main_brush': robot.set_main_brush_motor,
             'left_brush': robot.set_left_brush_motor,
+            'right_brush': robot.set_right_brush_motor
         }
 
     def perform(self, request: Request, data: AttributeHolder) -> None:
@@ -26,6 +27,6 @@ class Motor(RequestHandler):
         motor_fun_call = self._motors.get(data.motor_name)
 
         if motor_fun_call:
-            motor_fun_call(data.value).expect()
+            motor_fun_call(data.value)
         else:
             raise Exception(f'There is not such motor name "{data.motor_name}"')

@@ -16,6 +16,9 @@ class Robot(object):
     def set_left_brush_motor(self, value: int) -> Job:
         return self._socket.send_instruction(0x09, f'{value:x}')
 
+    def set_right_brush_motor(self, value: int) -> Job:
+        return self._socket.send_instruction(0x0A, f'{value:x}')
+
     def set_main_brush_motor(self, value: int) -> Job:
         return self._socket.send_instruction(0x12, f'{value:x}')
 
