@@ -57,12 +57,15 @@ class SerialA1Communicator(LineReader):
 
 
 class A1Socket(object):
-    def __init__(self):
-        self._serial_con = serial.Serial(port='COM5', baudrate=9600)
+    def __init__(self, port: str):
+        self._serial_con = serial.Serial(baudrate=9600)
+        self._serial_con.port = port
         self._reader_thread = ReaderThread(self._serial_con, SerialA1Communicator)
         self._reader_thread.setDaemon(False)
 
     def open(self):
+        self._serial_con.open()
+        sleep(2)
         self._serial_con.setDTR(False)
         sleep(2)
         self._serial_con.reset_input_buffer()
