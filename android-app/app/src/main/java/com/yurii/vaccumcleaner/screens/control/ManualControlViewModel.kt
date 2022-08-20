@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.requesthandler.Communicator
 import com.yurii.vaccumcleaner.requesthandler.RequestHandler
 import com.yurii.vaccumcleaner.robot.Robot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.Range
 import timber.log.Timber
@@ -15,8 +17,12 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            val r = robot.getSysInfo()
-            Timber.d(r.toString())
+            (0..10).forEach {
+                async {
+                    val r = robot.getSysInfo()
+                    Timber.d(r.toString())
+                }
+            }
         }
     }
 
@@ -49,7 +55,9 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun setMainBrushMotorSpeed(speedInPercentage: Int) {
-        Log.i("setMainBrushMotorSpeed", speedInPercentage.toString())
+        viewModelScope.launch(Dispatchers.IO) {
+            robot.setMainBrushMotor(speedInPercentage)
+        }
     }
 
     fun setRightBrushSpeed(speedInPercentage: Int) {
@@ -59,6 +67,7 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     fun setLeftBrushSpeed(speedInPercentage: Int) {
         Log.i("setLeftBrushSpeed", speedInPercentage.toString())
     }
+
 
     @Suppress("UNCHECKED_CAST")
     class Factory(private val robot: Robot) : ViewModelProvider.Factory {
