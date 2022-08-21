@@ -1,25 +1,37 @@
 package com.yurii.vaccumcleaner.screens.control
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.Robot
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 
 class ManualControlViewModel(private val robot: Robot) : ViewModel() {
+
+    private val _isDustBoxInserted: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isDustBoxInserted = _isDustBoxInserted.asStateFlow()
+
+    private val _isLidClosed: MutableStateFlow<Boolean> = MutableStateFlow(true)
+    val isLidClosed = _isLidClosed.asStateFlow()
+
     var wheelSpeed = 0
     var withBreak = false
 
     init {
-        viewModelScope.launch {
-            (0..10).forEach {
-                async {
-                    val r = robot.getSysInfo()
-                    Timber.d(r.toString())
-                }
+        startReadingAndHandlingRobotInputData()
+    }
+
+    private fun startReadingAndHandlingRobotInputData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            while (true) {
+                val data = robot.getRobotInputData()
+                _isDustBoxInserted.value = data.isDustBoxInserted
+                _isLidClosed.value = data.isLidClosed
+                delay(100)
             }
         }
     }

@@ -1,13 +1,16 @@
 package com.yurii.vaccumcleaner.screens.control
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.viewbinding.library.fragment.viewBinding
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentControlBinding
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.setPressedUnpressedListener
 import com.yurii.vaccumcleaner.utils.setProgressListener
 
@@ -17,6 +20,15 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.isDustBoxInserted.observeOnLifecycle(viewLifecycleOwner) { isInserted ->
+            binding.cvDustBoxPulled.isVisible = !isInserted
+        }
+
+        viewModel.isLidClosed.observeOnLifecycle(viewLifecycleOwner) { isClosed ->
+            Log.i("TEST", "TEST")
+            binding.cvLidWarning.isVisible = !isClosed
+        }
 
         binding.btnForward.setPressedUnpressedListener(onPress = viewModel::moveForward, onRelease = viewModel::stop)
         binding.btnBackward.setPressedUnpressedListener(onPress = viewModel::moveBackward, onRelease = viewModel::stop)
