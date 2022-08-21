@@ -1,4 +1,4 @@
-from a1.models import Job
+from a1.models import Job, A1Data
 from a1.socket import A1Socket
 from utils.logger import a1_logger
 
@@ -66,3 +66,7 @@ class Robot(object):
     def _walk(self, forward: bool, speed: int) -> Job:
         a1_logger.print_movement(forward, speed, distance=None, with_stop=False)
         return self._socket.send_instruction(0x13, f"{'1' if forward else '2'};{speed:x}")
+
+    @property
+    def data(self) -> A1Data:
+        return self._socket.data
