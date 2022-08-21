@@ -3,16 +3,11 @@ package com.yurii.vaccumcleaner.robot
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
-import android.util.Log
 import com.yurii.vaccumcleaner.utils.reverseBytes
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
-import java.net.ConnectException
-import java.net.InetSocketAddress
-import java.net.Socket
-import java.net.SocketTimeoutException
+import java.lang.IllegalStateException
+import java.net.*
 
 class RobotSocketDiscovery(context: Context) {
     private val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -84,21 +79,36 @@ class RobotSocketDiscovery(context: Context) {
     private fun getAllAvailableIPs(): List<String> {
         val reversedBitsIp = wifiManager.dhcpInfo.gateway.reverseBytes()
 
-        return (1 until getRangeNumberOfSubnetMask(wifiManager.dhcpInfo.netmask)).map {
+        return (1 until getHostsPerSubnet(wifiManager.dhcpInfo.netmask)).map {
             Formatter.formatIpAddress((reversedBitsIp + it).reverseBytes())
         }
     }
 
-    private fun getRangeNumberOfSubnetMask(subnetMask: Int): Int {
-        (0 until 32).forEach { bitIndex ->
-            if ((subnetMask and (1 shl bitIndex)) == 0) {
-                var sumOfBits = 0
-                (0 until 32 - bitIndex).forEach {
-                    sumOfBits = sumOfBits or (1 shl it)
-                }
-                return sumOfBits
-            }
-        }
-        return Int.MAX_VALUE
+    private fun getHostsPerSubnet(subnetMask: Int): Int =
+        when(Formatter.formatIpAddress(subnetMask)) {
+            "255.0.0.0" -> 16_277_214
+            "255.128.0.0" -> 8_388_606
+            "255.192.0.0" -> 4_194_302
+            "255.224.0.0" -> 2_097_150
+            "255.240.0.0" -> 1_048_574
+            "255.248.0.0" -> 524_286
+            "255.252.0.0" -> 262_142
+            "255.254.0.0" -> 131_070
+            "255.255.0.0" -> 65_534
+            "255.255.128.0" -> 32_766
+            "255.255.192.0" -> 16_382
+            "255.255.224.0" -> 8_190
+            "255.255.240.0" -> 4_094
+            "255.255.248.0" -> 2_046
+            "255.255.252.0" -> 1_022
+            "255.255.254.0" -> 510
+            "255.255.255.0" -> 254
+            "255.255.255.128" -> 126
+            "255.255.255.192" -> 62
+            "255.255.255.224" -> 30
+            "255.255.255.240" -> 14
+            "255.255.255.248" -> 6
+            "255.255.255.252" -> 2
+            else -> throw IllegalStateException("Unhandled network mask!")
     }
 }
