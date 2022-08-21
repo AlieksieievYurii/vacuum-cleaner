@@ -14,3 +14,14 @@ data class GeneralSystemInfo(
     @Json(name = "mac_address") val macAddress: String,
     val processor: String
 )
+
+@JsonClass(generateAdapter = true)
+data class RobotInputData(
+    @Json(name = "el") val leftBumperHit: Boolean,
+    @Json(name = "er") val rightBumperHit: Boolean,
+    @Json(name = "eb") val isDustBoxInserted: Boolean,
+    @Json(name = "ec") val isLidClosed: Boolean,
+    @Json(name = "lrs") val leftDistanceRange: Int,
+    @Json(name = "crs") val centerDistanceRange: Int,
+    @Json(name = "rrs") val rightDistanceRange: Int
+)

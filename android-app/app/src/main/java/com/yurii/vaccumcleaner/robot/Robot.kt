@@ -39,6 +39,8 @@ class Robot(private val requestHandler: RequestHandler) {
 
     suspend fun setRightBrushMotor(value: Int) = setMotor("right_brush", value)
 
+    suspend fun getRobotInputData() = requestHandler.send("/get-a1-data", null, RobotInputData::class.java)!!
+
     private suspend fun setMotor(motorName: String, value: Int) {
         requestHandler.send<Any>("/set-motor", MotorRequestModule(motorName, value), null)
     }
