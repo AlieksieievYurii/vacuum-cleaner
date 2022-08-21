@@ -2,7 +2,7 @@ package com.yurii.vaccumcleaner.robot
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import com.yurii.vaccumcleaner.requesthandler.RequestHandler
+import com.yurii.vaccumcleaner.utils.requesthandler.RequestHandler
 
 @JsonClass(generateAdapter = true)
 data class MotorRequestModule(@Json(name = "motor_name") val motorName: String, val value: Int)

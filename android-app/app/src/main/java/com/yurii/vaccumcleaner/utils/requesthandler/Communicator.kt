@@ -1,4 +1,4 @@
-package com.yurii.vaccumcleaner.requesthandler
+package com.yurii.vaccumcleaner.utils.requesthandler
 
 interface Communicator {
     fun read(): String

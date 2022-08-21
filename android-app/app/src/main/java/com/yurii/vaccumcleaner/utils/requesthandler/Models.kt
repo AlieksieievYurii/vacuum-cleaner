@@ -1,4 +1,4 @@
-package com.yurii.vaccumcleaner.requesthandler
+package com.yurii.vaccumcleaner.utils.requesthandler
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

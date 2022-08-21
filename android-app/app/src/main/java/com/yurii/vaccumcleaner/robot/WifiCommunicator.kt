@@ -1,6 +1,6 @@
 package com.yurii.vaccumcleaner.robot
 
-import com.yurii.vaccumcleaner.requesthandler.Communicator
+import com.yurii.vaccumcleaner.utils.requesthandler.Communicator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedReader
