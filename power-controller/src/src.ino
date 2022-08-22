@@ -21,6 +21,13 @@
 #define RESET_ERROR_STATE 0x07
 //===================================
 
+//======== Bettery Cells ============
+#define CELL_A A0
+#define CELL_B A3
+#define CELL_C A6
+#define CELL_D A7
+//===================================
+
 STATUS current_status = TURNED_OFF;
 CHARGING_STATE charging_state = NOT_CHARGING;
 CHARDING_WORK_STATUS charging_work_status = OK;
@@ -36,6 +43,10 @@ void setup(void) {
   pinMode(IS_CHARGED_PIN, INPUT);
   pinMode(IS_CHARGING_PIN, INPUT);
   pinMode(IS_CONSTANT_CURRENT_PIN, INPUT);
+  pinMode(CELL_A, INPUT);
+  pinMode(CELL_B, INPUT);
+  pinMode(CELL_C, INPUT);
+  pinMode(CELL_D, INPUT);
 
   Wire.onRequest(requestEvent);
   Wire.onReceive(receiveEvent);
