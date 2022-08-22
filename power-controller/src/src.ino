@@ -1,10 +1,13 @@
 #include <Wire.h>
 
-#define BUT 8
-#define BUT_G_L 10 // Button Green Led
-#define BUT_R_L 9 // Button Red Led
+#define BUTTON 8
+#define BUTTON_GREEN_LED 10 // Button Green Led
+#define BUTTON_RED_LED 9 // Button Red Led
 #define RELEY 6
-#define CH_VOL A0
+#define CHARGING_VOLTAGE_PIN A0
+#define IS_CHARGED_PIN 5
+#define IS_CHARGING_PIN 4
+#define IS_CONSTANT_CURRENT_PIN 3
 
 #include "utils.h"
 
@@ -20,15 +23,19 @@
 
 STATUS current_status = TURNED_OFF;
 CHARGING_STATE charging_state = NOT_CHARGING;
+CHARDING_WORK_STATUS charging_work_status = OK;
 
 bool is_error = false;
 
 void setup(void) {
-  pinMode(BUT, INPUT_PULLUP);
-  pinMode(BUT_G_L, OUTPUT);
-  pinMode(BUT_R_L, OUTPUT);
+  pinMode(BUTTON, INPUT_PULLUP);
+  pinMode(BUTTON_GREEN_LED, OUTPUT);
+  pinMode(BUTTON_RED_LED, OUTPUT);
   pinMode(RELEY, OUTPUT);
-  pinMode(CH_VOL, INPUT);
+  pinMode(CHARGING_VOLTAGE_PIN, INPUT);
+  pinMode(IS_CHARGED_PIN, INPUT);
+  pinMode(IS_CHARGING_PIN, INPUT);
+  pinMode(IS_CONSTANT_CURRENT_PIN, INPUT);
 
   Wire.onRequest(requestEvent);
   Wire.onReceive(receiveEvent);
@@ -40,6 +47,7 @@ void setup(void) {
 void requestEvent() {
   Wire.write(current_status);
   Wire.write(charging_state);
+  //TODO Return battery cell voltages
 }
 
 void receiveEvent(int) {
@@ -48,7 +56,7 @@ void receiveEvent(int) {
 }
 
 void loop(void) {
-  if (but_is_pressed()) {
+  if (button_is_pressed()) {
     if (current_status == TURNED_OFF) {
       current_status = BOOTING_UP;
     } else if (current_status == TURNED_ON) {
@@ -64,7 +72,12 @@ void loop(void) {
   }
 
   but_leds_handler();
-  handle_charger_status();
+  handle_chargering();
+
+//  Serial.print(charging_state);
+//  Serial.print(":");
+//  Serial.println(charging_work_status);
+
 }
 
 void on_receive_command(uint8_t command) {
@@ -90,40 +103,57 @@ void on_receive_command(uint8_t command) {
   }
 }
 
-void handle_charger_status() {
-  float v = get_charger_voltage();
-  if (v < 1) {
+
+/*
+ * Checks if the battery is charing. Moreover, it validates the voltage 
+ * and proper work status of the DC-DC charger module.
+ */
+void handle_chargering(void) {
+  float charging_voltage = CHARGING_VOLTAGE;
+
+  //If the charding voltage is less than 1 -> the charging power is unplugged
+  if (charging_voltage < 1) {
     charging_state = NOT_CHARGING;
+    charging_work_status = OK;
     return;
+  } else {
+    if (IS_CHARGING && IS_CONSTANT_CURRENT && !IS_CHARGED) {
+      charging_state = CHARGING;
+
+      if (charging_voltage > MAX_ACCEPTABLE_CHARGING_VOLTAGE)
+        charging_work_status = OVERVOLTAGE;
+      else if (charging_voltage < MIN_ACCEPTABLE_CHARGING_VOLTAGE)
+        charging_work_status = UNDERVOLTAGE;
+      else
+        charging_work_status = OK;
+
+    } else if (IS_CHARGED && !IS_CONSTANT_CURRENT && !IS_CHARGING) {
+      charging_work_status = OK;
+      charging_state = CHARGED;
+    } else {
+      charging_work_status = DISCREPANCY;
+    }
   }
-
-  if (v > MAX_ACCEPTABLE_CHARGING_VOLTAGE)
-    charging_state = OVERVOLTAGE;
-  else if (v < MIN_ACCEPTABLE_CHARGING_VOLTAGE)
-    charging_state = UNDERVOLTAGE;
-  else
-    charging_state = CHARGING;
-}
-
-float get_charger_voltage(void) {
-  return (float) analogRead(CH_VOL) * 20 / 1023;
 }
 
 void but_leds_handler() {
-  if (charging_state != NOT_CHARGING) {
-    fade_in_out_green_button_led();
-    return;
-  }
-
   if (is_error) {
     blink_red_green();
     return;
   }
+  
+  if (charging_state == CHARGED) {
+    fade_in_out_green_button_led();
+    return;
+  }else if (charging_state == CHARGING) {
+    fade_in_out_red_button_led();
+    return;
+  }
 
   switch (current_status) {
-    case BOOTING_UP: blink_but_g_l(); break;
-    case TURNED_ON: set_but_g_l(); break;
-    case SHUTTING_DOWN: blink_but_r_l(); break;
-    case TURNED_OFF: turn_off_all_but_leds(); break;
+    case BOOTING_UP: blink_button_green_led(); break;
+    case TURNED_ON: set_button_green_led(); break;
+    case SHUTTING_DOWN: blink_button_red_led(); break;
+    case TURNED_OFF: turn_off_all_button_leds(); break;
   }
 }
