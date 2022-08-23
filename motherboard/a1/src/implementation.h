@@ -147,6 +147,17 @@ uint32_t get_rangefinder_value() {
   return result;
 }
 
+
+uint32_t get_battery_cells_voltages_value() {
+  uint32_t result = 0;
+  result |= power_controller.bin_repr_voltage_cell_a;
+  result |= (uint16_t)power_controller.bin_repr_voltage_cell_b << 8;
+  result |= (uint32_t)power_controller.bin_repr_voltage_cell_c << 16;
+  result |= (uint64_t)power_controller.bin_repr_voltage_cell_d << 24;
+
+  return result;
+}
+
 void on_move(uint16_t id, char* input) {
   const int8_t direction = fetch_unsigned_hex_number(input, 0);
   if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {

@@ -50,6 +50,7 @@ void loop() {
   instruction_handler.add_sensor_output(0x03, get_rangefinder_value());
   instruction_handler.add_sensor_output(0x04, get_cliffs_status());
   instruction_handler.add_sensor_output(0x05, get_power_controller_state());
+  instruction_handler.add_sensor_output(0x06, get_battery_cells_voltages_value());
   instruction_handler.send_sensors_output();
 #endif
 }

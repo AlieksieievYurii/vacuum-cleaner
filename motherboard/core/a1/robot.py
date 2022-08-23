@@ -7,6 +7,9 @@ class Robot(object):
     def __init__(self, socket: A1Socket):
         self._socket = socket
 
+    def core_is_initialized(self, is_successful: bool):
+        return self._socket.send_instruction(0x01, 'S' if is_successful else 'F')
+
     def beep(self, count: int = 3, period: int = 100) -> Job:
         return self._socket.send_instruction(0x05, f'{count:x};{period:x}')
 
