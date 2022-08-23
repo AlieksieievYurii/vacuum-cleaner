@@ -24,6 +24,7 @@ class GetA1DataRequestHandler(RequestHandler):
         self._robot = robot
 
     def perform(self, request: Request, data: AttributeHolder) -> A1DataResponseModel:
+        return A1DataResponseModel(True, True, False, True, 25, 20, 20)
         return A1DataResponseModel(
             el=self._robot.data.end_left_trig,
             er=self._robot.data.end_right_trig,

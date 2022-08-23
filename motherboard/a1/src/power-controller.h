@@ -9,11 +9,11 @@
 
 
 //======== Comands IDs ========
-#define SET_TURNED_ON_STATE 0x01
-#define SET_SHUTTING_DOWN_STATE 0x02
-#define SET_TURNED_OFF_STATE 0x03
-#define SET_ERROR_STATE 0x06
-#define RESET_ERROR_STATE 0x07
+#define SET_TURNED_ON_STATE 0x1
+#define SET_SHUTTING_DOWN_STATE 0x2
+#define SET_TURNED_OFF_STATE 0x3
+#define SET_ERROR_STATE 0x4
+#define RESET_ERROR_STATE 0x5
 //==============================
 
 class PowerController {

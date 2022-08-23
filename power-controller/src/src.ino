@@ -31,12 +31,12 @@
 #define POWER_CONTROLLER_ADDRESS 0x01
 
 //======== Input Commands ===========
-// Commands for the board through I2C. For more information refer to the documentation
+// Commands for the board through I2C. For more information refer to the documentation(power-controller/README.md)
 #define SET_TURNED_ON_STATE 0x01
 #define SET_SHUTTING_DOWN_STATE 0x02
 #define SET_TURNED_OFF_STATE 0x03
-#define SET_ERROR_STATE 0x06
-#define RESET_ERROR_STATE 0x07
+#define SET_ERROR_STATE 0x04
+#define RESET_ERROR_STATE 0x05
 //===================================
 
 STATUS current_status = TURNED_OFF;
