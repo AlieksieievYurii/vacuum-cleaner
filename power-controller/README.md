@@ -5,11 +5,11 @@ This is simple electronic component which is responsible for proper switting on 
 # Commands
 |    Command ID    |   Description    |
 |-----------------:|:----------------:|
-|      0x01        |  Set state: TURN_ON. It will work only if the current state is BOOTING_UP |
-|      0x02        |  Set state: SHUTTING_DOWN. It will work only if the current state is TURNED_ON | 
-|      0x03        |  Set state: TURNED_OFF. It will work only if the current state is SHUTTING_DOWN |
-|      0x06        |  Sets error state; the button starts blinking with red and green colors undepentently on the power state |
-|      0x07        |  Reset error state |
+|      0x1        |  Set state: TURN_ON. It will work only if the current state is BOOTING_UP |
+|      0x2        |  Set state: SHUTTING_DOWN. It will work only if the current state is TURNED_ON | 
+|      0x3        |  Set state: TURNED_OFF. It will work only if the current state is SHUTTING_DOWN |
+|      0x4        |  Sets error state; the button starts blinking with red and green colors undepentently on the power state |
+|      0x5        |  Reset error state |
 
 
 # Responses
@@ -18,6 +18,13 @@ The response consist of 7 bytes where:
 * 1 byte -> represents id of power state. See Powet States Table
 * 2 byte -> represents id of charging state. See Charging States Table
 * 3 byte ->  represents id of charging work state(if the charging is working properly). See Charging Work States Table
+
+_The following 4 bytes represent voltages of the battery's cells. The value is integer where first 5 bytes are decimal part, and the next 3 bytes are integer part.
+The maximum value is 7.10._
+* 4 byte - cell A
+* 5 byte - cell B
+* 6 byte - cell C
+* 7 byte - cell D
 
 ## Power States
 |    ID    |   Description    |
