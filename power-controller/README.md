@@ -1,6 +1,7 @@
 # Power Controller
-This is simple electronic component which is responsible for proper switting on and off the vaccum cleaner robot. The communication with A1 is done through I2C protocol. To the board a push-button is connected, so if the robot is turned off, and the user pushes the button, then it switches on the main power. At that point the whole system is booting up. If the robot is working, and the user pushes the button, then firstly the signal is send from the component to the core. The core starts shutting down. Once it is done, A1 module sends call back signal to the power controller and then the main power is cutted off. Also Power Controller is responsible for the battery charging. It checks if the voltage is suitable, if the DC-DC charger is working properly. It also reads voltages of all battery cells. 
-
+This is simple electronic component which is responsible for proper switting on and off the vaccum cleaner robot. The communication with A1 is done through I2C protocol. To the board a push-button is connected, so if the robot is turned off, and the user pushes the button, then it switches on the main power. At that point the whole system is booting up. If the robot is working, and the user pushes the button, then firstly the signal is send from the component to the core. The core starts shutting down. Once it is done, A1 module sends call back signal to the power controller and then the main power is cutted off. Also Power Controller is responsible for the battery charging. It checks if the voltage is suitable, if the DC-DC charger is working properly. It also reads voltages of all battery cells. You can get data
+such as power state, charging state, charging work state, voltage of battery cells just by calling request. You can also send commands to the board by sending only one
+byte ID of the command. Please refer to the following table:
 
 # Commands
 |    Command ID    |   Description    |
@@ -15,8 +16,8 @@ This is simple electronic component which is responsible for proper switting on 
 # Responses
 To get data from the Power Controller, just request 7 bytes of data.
 The response consist of 7 bytes where:
-* 1 byte -> represents id of power state. See Powet States Table
-* 2 byte -> represents id of charging state. See Charging States Table
+* 1 byte -> represents id of power state. See [Powet States Table](#power_states)
+* 2 byte -> represents id of charging state. See [Charging States Table](#charging_states)
 * 3 byte ->  represents id of charging work state(if the charging is working properly). See [Charging Work States Table](#charging_work_states)
 
 _The following 4 bytes represent voltages of the battery's cells. The value is integer where first 5 bytes are decimal part, and the next 3 bytes are integer part.
@@ -26,7 +27,7 @@ The maximum value is 7.10._
 * 6 byte - cell C
 * 7 byte - cell D
 
-## Power States
+## <a name="power_states">Power States</a>
 |    ID    |   Description    |
 |-----------------:|:----------------:|
 |    **0x0** (TURNED_OFF)    |  The powet is cutted off from the motherboard |
@@ -34,7 +35,7 @@ The maximum value is 7.10._
 |    **0x2** (TURNED_ON)     |  Power is completely on |
 |    **0x3** (SHUTTING_DOWN) | The power controller is in state SHUTTING_DOWN which means that the power is going to be cutted off. It expects command (0x03) to turn cut off the power and set the state TURNED_OFF |
 
-## Charging States
+## <a name="charging_states">Charging States</a>
 |             ID          |              Description                 |
 |------------------------:|:-----------------------------------------|
 | **0x0** (NOT_CHARGING)  | The charger is not plugged in. Dispice of if the battery is charged or not         |
