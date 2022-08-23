@@ -47,6 +47,15 @@ enum CHARDING_WORK_STATUS: byte {OK, OVERVOLTAGE, UNDERVOLTAGE, DISCREPANCY};
 #define IS_CHARGING !digitalRead(IS_CHARGING_PIN) //Low signal means it is charging
 #define IS_CONSTANT_CURRENT digitalRead(IS_CONSTANT_CURRENT_PIN)
 
+//Maps given value V to K using relation 0..1023
+#define MAP_FROM_ZERO_TO(V,K) V * K / 1023.0
+
+/*
+ * Converts floating number to binary representation.
+ * The max value of number is 7.10
+ */
+#define FLOAT_TO_BINARY(X) ((uint8_t) X) << 4 | ((uint8_t)(X*10)%10)
+
 bool button_is_pressed(void) {
   static bool was_pressed = false;
   static unsigned long latest_click = 0UL;
