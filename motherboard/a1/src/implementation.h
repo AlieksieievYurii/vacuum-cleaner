@@ -8,7 +8,6 @@
 #include "wheels.h"
 #include "motor.h"
 #include "range-finder.h"
-#include "battery-inspector.h"
 #include "ds3231.h"
 #include "DHT11.h"
 #include "power-controller.h"
@@ -44,8 +43,6 @@ RangeFinder range_finder(
   CENTER_RF_TRIG, CENTER_RF_ECHO,
   RIGHT_RF_TRIG, RIGHT_RF_ECHO
 );
-
-BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
 
 DS3231 ds3231_clock;
 
@@ -264,22 +261,6 @@ void on_main_brush_motor(uint16_t id, char* input) {
   set_motor_signal(main_brush_motor, id, input);
 }
 
-void on_request_battery_status(uint16_t id, char*) {
-  String res = "";
-  res += battery_inspector.a_cell_voltage;
-  res += ";";
-  res += battery_inspector.b_cell_voltage;
-  res += ";";
-  res += battery_inspector.c_cell_voltage;
-  res += ";";
-  res += battery_inspector.d_cell_voltage;
-  res += ";";
-  res += battery_inspector.charged;
-  char result[25] = {0};
-  res.toCharArray(result, 25);
-  instruction_handler.on_result(id, result);
-}
-
 void on_get_current_time(uint16_t id, char* input) {
   //Input has newline in the end, so we need to get rid of it
   for (uint8_t i = 0; i < MAX_INPUT_SIZE; i++) {
@@ -411,7 +392,8 @@ void on_walk(uint16_t id, char* input) {
 uint8_t get_power_controller_state() {
   uint8_t res = 0;
   res |= power_controller.power_state;
-  res |= power_controller.battery_state << 2;
+  res |= power_controller.charging_state << 3;
+  res |= power_controller.charging_work_status << 5;
 
   return res;
 }
@@ -448,8 +430,6 @@ void propagandate_tick_signal() {
   main_brush_motor.tick();
 
   range_finder.tick();
-
-  battery_inspector.tick();
 
   power_controller.tick();
 }

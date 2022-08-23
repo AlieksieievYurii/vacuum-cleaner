@@ -7,7 +7,7 @@ InstructionHandler instruction_handler(Serial);
 
 #include "implementation.h"
 
-//#define __ENABLE_SENSOR_READING__
+#define __ENABLE_SENSOR_READING__
 
 void setup() {
   init_hardware();
@@ -22,7 +22,6 @@ void setup() {
   instruction_handler.add(0x08, on_vacuum_motor);
   instruction_handler.add(0x09, on_left_brush_motor);
   instruction_handler.add(0x0A, on_right_brush_motor);
-  instruction_handler.add(0x0B, on_request_battery_status);
   instruction_handler.add(0x0C, on_get_current_time);
   instruction_handler.add(0x0D, on_set_data_time);
   instruction_handler.add(0x0E, on_get_temp_and_humid);

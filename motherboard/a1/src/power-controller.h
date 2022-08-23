@@ -5,7 +5,7 @@
 
 #define POWER_CONTROLLER_ADDRESS 0x01
 
-#define REQUESTED_BYTES 2
+#define REQUESTED_BYTES 7
 
 
 //======== Comands IDs ========
@@ -19,7 +19,11 @@
 class PowerController {
   public:
     PowerController();
-    uint8_t power_state, battery_state;
+    uint8_t power_state, charging_state, charging_work_status;
+    uint8_t bin_repr_voltage_cell_a, 
+            bin_repr_voltage_cell_b, 
+            bin_repr_voltage_cell_c, 
+            bin_repr_voltage_cell_d;
     void tick();
     void set_state_TURNED_ON();
     void set_state_SHUTTING_DOWN();

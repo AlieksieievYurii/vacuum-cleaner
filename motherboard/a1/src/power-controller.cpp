@@ -9,8 +9,28 @@ PowerController::PowerController() {
 void PowerController::tick() {
   if (_data_is_requested && Wire.available() == REQUESTED_BYTES) {
     power_state = Wire.read();
-    battery_state = Wire.read();
+    charging_state = Wire.read();
+    charging_work_status = Wire.read();
+    bin_repr_voltage_cell_a = Wire.read();
+    bin_repr_voltage_cell_b = Wire.read();
+    bin_repr_voltage_cell_c = Wire.read();
+    bin_repr_voltage_cell_d = Wire.read();
     _data_is_requested = false;
+
+//    Serial.print("Power state: ");
+//    Serial.print(power_state);
+//    Serial.print("  Charging state: ");
+//    Serial.print(charging_state);
+//    Serial.print("  Charging work status: ");
+//    Serial.print(charging_work_status);
+//    Serial.print("  A: ");
+//    Serial.print(bin_repr_voltage_cell_a);
+//    Serial.print("  B: ");
+//    Serial.print(bin_repr_voltage_cell_b);
+//    Serial.print("  C: ");
+//    Serial.print(bin_repr_voltage_cell_c);
+//    Serial.print("  D: ");
+//    Serial.println(bin_repr_voltage_cell_d);
   } else {
     Wire.requestFrom(POWER_CONTROLLER_ADDRESS, REQUESTED_BYTES);
     _data_is_requested = true;
