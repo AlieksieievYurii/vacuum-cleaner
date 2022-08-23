@@ -5,11 +5,11 @@ This is simple electronic component which is responsible for proper switting on 
 # Commands
 |    Command ID    |   Description    |
 |-----------------:|:----------------:|
-|      0x1        |  Set state: TURN_ON. It will work only if the current state is BOOTING_UP |
-|      0x2        |  Set state: SHUTTING_DOWN. It will work only if the current state is TURNED_ON | 
-|      0x3        |  Set state: TURNED_OFF. It will work only if the current state is SHUTTING_DOWN |
-|      0x4        |  Sets error state; the button starts blinking with red and green colors undepentently on the power state |
-|      0x5        |  Reset error state |
+|      **0x1**        |  Set state: TURN_ON. It will work only if the current state is BOOTING_UP |
+|      **0x2**        |  Set state: SHUTTING_DOWN. It will work only if the current state is TURNED_ON | 
+|      **0x3**        |  Set state: TURNED_OFF. It will work only if the current state is SHUTTING_DOWN |
+|      **0x4**        |  Sets error state; the button starts blinking with red and green colors undepentently on the power state |
+|      **0x5**        |  Reset error state |
 
 
 # Responses
@@ -17,7 +17,7 @@ To get data from the Power Controller, just request 7 bytes of data.
 The response consist of 7 bytes where:
 * 1 byte -> represents id of power state. See Powet States Table
 * 2 byte -> represents id of charging state. See Charging States Table
-* 3 byte ->  represents id of charging work state(if the charging is working properly). See Charging Work States Table
+* 3 byte ->  represents id of charging work state(if the charging is working properly). See [Charging Work States Table](#charging_work_states)
 
 _The following 4 bytes represent voltages of the battery's cells. The value is integer where first 5 bytes are decimal part, and the next 3 bytes are integer part.
 The maximum value is 7.10._
@@ -41,13 +41,13 @@ The maximum value is 7.10._
 | **0x1** (CHARGING)      | The charger is plugged in and the battery is charging |
 | **0x2** (CHARGED)       | The charger is plugged in but the battery is charged.  |
 
-## Charging Work States Table
+## <a name="charging_work_states">Charging Work States Table</a>
 
 |    ID    |   Description    |
 |-----------------:|:----------------:|
-|   0x0 (OK)   |  Everything is fine. Charging is working properly  |
-|   0x1 (OVERVOLTAGE)  |  Charging voltage(mostly after DC-DC converter) is more then acceptable(15V +- 1) |
-|   0x2 (UNDERVOLTAGE)  | Charging voltage(mostly after DC-DC converter) is lower then acceptable(15V +- 1) |
-|   0x3 (DISCREPANCY)  | Something is wrong with DC-DC(lm2596) converter/charger |
+|   **0x0** (OK)   |  Everything is fine. Charging is working properly  |
+|   **0x1** (OVERVOLTAGE)  |  Charging voltage(mostly after DC-DC converter) is more then acceptable(15V +- 1) |
+|   **0x2** (UNDERVOLTAGE)  | Charging voltage(mostly after DC-DC converter) is lower then acceptable(15V +- 1) |
+|   **0x3** (DISCREPANCY)  | Something is wrong with DC-DC(lm2596) converter/charger |
 
 When the charged is connected the led starts fading in and out undepentently on the power state and error state.
