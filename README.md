@@ -11,7 +11,7 @@ This project is about how to create a simple vacuum cleaner robot. The following
 * 3D printing - the entire model is printed by 3D printer with PLA plastic. [Fusion 360](https://www.autodesk.com/products/fusion-360/overview) is used for parametric modeling and [Cura](https://ultimaker.com/software/ultimaker-cura) for slicing.
 
 ## Overview
-* The robot is a rounded shape with the following sizes:
+* The robot is a rounded shape with the following sizes: 385x99 mm
 * Weight: 3 KG
 * Brushes: 2 side brushed and one main.
 * Working time: approximately 30 minutes
