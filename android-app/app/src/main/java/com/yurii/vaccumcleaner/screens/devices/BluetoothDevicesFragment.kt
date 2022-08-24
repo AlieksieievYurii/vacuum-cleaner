@@ -10,15 +10,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.yurii.vaccumcleaner.Application
+import com.yurii.vaccumcleaner.MyApplication
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.BluetoothDevicesFragmentBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 
 class BluetoothDevicesFragment : Fragment(R.layout.bluetooth_devices_fragment) {
-    private val viewModel: BluetoothDevicesViewModel by viewModels { BluetoothDevicesViewModel.Factory(requireActivity().application as Application) }
+    private val viewModel: BluetoothDevicesViewModel by viewModels { BluetoothDevicesViewModel.Factory(requireActivity().application as MyApplication) }
     private val binding: BluetoothDevicesFragmentBinding by viewBinding()
     private val adapter = Adapter { viewModel.connectBluetoothDevice(it) }
 
