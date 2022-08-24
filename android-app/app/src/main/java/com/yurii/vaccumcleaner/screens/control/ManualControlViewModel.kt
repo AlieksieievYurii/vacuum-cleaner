@@ -1,22 +1,20 @@
 package com.yurii.vaccumcleaner.screens.control
 
+import android.util.FloatMath
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.Robot
+import com.yurii.vaccumcleaner.robot.RobotInputData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import timber.log.Timber
 
 class ManualControlViewModel(private val robot: Robot) : ViewModel() {
-
-    private val _isDustBoxInserted: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val isDustBoxInserted = _isDustBoxInserted.asStateFlow()
-
-    private val _isLidClosed: MutableStateFlow<Boolean> = MutableStateFlow(true)
-    val isLidClosed = _isLidClosed.asStateFlow()
+    private val _runTimeRobotData: MutableStateFlow<RobotInputData?> = MutableStateFlow(null)
+    val runTimeRobotData = _runTimeRobotData.asStateFlow()
 
     var wheelSpeed = 0
     var withBreak = false
@@ -28,10 +26,8 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     private fun startReadingAndHandlingRobotInputData() {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
-                val data = robot.getRobotInputData()
-                _isDustBoxInserted.value = data.isDustBoxInserted
-                _isLidClosed.value = data.isLidClosed
-                delay(100)
+                _runTimeRobotData.value = robot.getRobotInputData()
+                delay(500)
             }
         }
     }

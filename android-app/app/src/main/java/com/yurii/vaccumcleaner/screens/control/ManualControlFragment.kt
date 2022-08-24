@@ -20,16 +20,7 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.isDustBoxInserted.observeOnLifecycle(viewLifecycleOwner) { isInserted ->
-            binding.cvDustBoxPulled.isVisible = !isInserted
-        }
-
-        viewModel.isLidClosed.observeOnLifecycle(viewLifecycleOwner) { isClosed ->
-            Log.i("TEST", "TEST")
-            binding.cvLidWarning.isVisible = !isClosed
-        }
-
+        observeRuntimeRobotInputData()
         binding.btnForward.setPressedUnpressedListener(onPress = viewModel::moveForward, onRelease = viewModel::stop)
         binding.btnBackward.setPressedUnpressedListener(onPress = viewModel::moveBackward, onRelease = viewModel::stop)
         binding.btnLeft.setPressedUnpressedListener(onPress = viewModel::turnLeft, onRelease = viewModel::stop)
@@ -73,6 +64,21 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
             }
 
             withBreak.setOnCheckedChangeListener { _, isChecked -> viewModel.withBreak = isChecked }
+        }
+    }
+
+    private fun observeRuntimeRobotInputData() {
+        viewModel.runTimeRobotData.observeOnLifecycle(viewLifecycleOwner) { data ->
+            data?.run {
+                binding.cvDustBoxPulled.isVisible = !data.isDustBoxInserted
+                binding.cvLidWarning.isVisible = !data.isLidClosed
+                binding.rangeRadarValues.text = getString(
+                    R.string.label_range_sensors,
+                    data.leftDistanceRange,
+                    data.centerDistanceRange,
+                    data.rightDistanceRange
+                )
+            }
         }
     }
 }

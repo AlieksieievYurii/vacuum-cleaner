@@ -104,7 +104,7 @@
             app:layout_constraintTop_toBottomOf="@+id/inf_cliff_trig" />
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/range_radar_values"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -126,7 +126,7 @@
             android:layout_height="wrap_content"
             android:text="Bumper: Left, Right, Both"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+            app:layout_constraintTop_toBottomOf="@+id/range_radar_values" />
 
         <ImageButton
             android:id="@+id/btn_left"

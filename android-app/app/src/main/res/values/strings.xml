@@ -29,4 +29,5 @@
     <string name="label_validating">Validating...</string>
     <string name="template_speed_cm_per_minute">%d CM/Min</string>
     <string name="template_number_with_percentage">%d %%</string>
+    <string name="label_range_sensors">Range Radar: L(%d) C(%d) R(%d)</string>
 </resources>

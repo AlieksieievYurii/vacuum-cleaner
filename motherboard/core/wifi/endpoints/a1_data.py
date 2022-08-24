@@ -13,6 +13,10 @@ class A1DataResponseModel(object):
     lrs: int  # Left Range Sensor
     crs: int  # Center Range Sensor
     rrs: int  # Right Range Sensor
+    ca: float  # Cell A Voltage
+    cb: float  # Cell B Voltage
+    cc: float  # Cell C Voltage
+    cd: float  # Cell D Voltage
 
 
 class GetA1DataRequestHandler(RequestHandler):
@@ -24,7 +28,6 @@ class GetA1DataRequestHandler(RequestHandler):
         self._robot = robot
 
     def perform(self, request: Request, data: AttributeHolder) -> A1DataResponseModel:
-        return A1DataResponseModel(True, True, False, True, 25, 20, 20)
         return A1DataResponseModel(
             el=self._robot.data.end_left_trig,
             er=self._robot.data.end_right_trig,
@@ -32,5 +35,9 @@ class GetA1DataRequestHandler(RequestHandler):
             ec=self._robot.data.end_lid_trig,
             lrs=self._robot.data.rangefinder_left_value,
             crs=self._robot.data.rangefinder_center_value,
-            rrs=self._robot.data.rangefinder_right_value
+            rrs=self._robot.data.rangefinder_right_value,
+            ca=self._robot.data.cell_a_voltage,
+            cb=self._robot.data.cell_b_voltage,
+            cc=self._robot.data.cell_c_voltage,
+            cd=self._robot.data.cell_d_voltage,
         )
