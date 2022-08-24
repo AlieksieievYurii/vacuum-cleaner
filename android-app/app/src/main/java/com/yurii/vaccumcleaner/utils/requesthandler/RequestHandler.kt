@@ -1,32 +1,28 @@
-package com.yurii.vaccumcleaner.requesthandler
+package com.yurii.vaccumcleaner.utils.requesthandler
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.yurii.vaccumcleaner.utils.pop
 import com.yurii.vaccumcleaner.utils.synchronizedAppend
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import org.json.JSONObject
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeoutException
+import kotlin.concurrent.thread
 
 
-class RequestHandler(private val communicator: Communicator, private val scope: CoroutineScope) {
+class RequestHandler(private val communicator: Communicator) {
     private var moshi = Moshi.Builder().build()
     private val jsonAdapter = moshi.adapter<Request<*>>(Types.newParameterizedType(Request::class.java, Any::class.java))
     private val responseAdapter = moshi.adapter(Response::class.java)
     private val responses = mutableListOf<Response>()
 
     fun start() {
-        scope.launch(Dispatchers.IO) {
-            listenForIncomingResponses()
-        }
+        thread(start = true) { listenForIncomingResponses() }
     }
 
-    suspend fun <R : Any> send(endpoint: String, requestModel: Any, responseModel: Class<R>, timeout: Int = 1000): R {
+    suspend fun <R : Any> send(endpoint: String, requestModel: Any?, responseModel: Class<R>?, timeout: Int = 1000): R? {
         val request = Request(endpoint = endpoint, requestId = UUID.randomUUID().toString(), parameters = requestModel)
         performRequest(request)
         return awaitForResponse(request, responseModel, timeout)
@@ -37,7 +33,7 @@ class RequestHandler(private val communicator: Communicator, private val scope: 
         communicator.send(data)
     }
 
-    private fun <R> awaitForResponse(request: Request<*>, responseClass: Class<R>, timeout: Int): R {
+    private fun <R> awaitForResponse(request: Request<*>, responseClass: Class<R>?, timeout: Int): R? {
         val startTime = System.currentTimeMillis()
         while (true) {
 
@@ -48,7 +44,7 @@ class RequestHandler(private val communicator: Communicator, private val scope: 
             response?.run {
                 val data = if (this.data != null) JSONObject(this.data as Map<*, *>).toString() else "{}"
                 when (this.status) {
-                    ResponseStatus.OK -> return moshi.adapter(responseClass).fromJson(data)!!
+                    ResponseStatus.OK -> return if (responseClass != null) moshi.adapter(responseClass).fromJson(data)!! else null
                     ResponseStatus.ERROR -> throw RequestFailed(request, this.errorMessage)
                     ResponseStatus.BAD_REQUEST -> throw BadRequest(request, this.errorMessage)
                 }

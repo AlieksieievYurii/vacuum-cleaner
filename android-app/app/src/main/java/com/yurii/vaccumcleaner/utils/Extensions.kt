@@ -1,5 +1,9 @@
 package com.yurii.vaccumcleaner.utils
 
+import android.view.MotionEvent
+import android.view.View
+import android.widget.SeekBar
+import androidx.appcompat.widget.SwitchCompat
 import androidx.databinding.ObservableField
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
@@ -7,7 +11,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 
 class FlowObserver<T>(
     private val lifecycleOwner: LifecycleOwner,
@@ -75,4 +78,41 @@ fun <E> MutableList<E>.pop(lock: Any, predicate: (E) -> Boolean): E? {
 
 fun <E> MutableList<E>.synchronizedAppend(lock: Any, element: E) {
     synchronized(lock) { this.add(element) }
+}
+
+fun View.setPressedUnpressedListener(onPress: () -> Unit, onRelease: () -> Unit) {
+    this.setOnTouchListener { v, motionEvent ->
+        when (motionEvent.action) {
+            MotionEvent.ACTION_DOWN -> {
+                onPress()
+                false
+            }
+            MotionEvent.ACTION_UP -> {
+                onRelease()
+                v.performClick()
+                false
+            }
+            MotionEvent.ACTION_CANCEL -> {
+                onRelease()
+                false
+            }
+            else -> false
+        }
+    }
+}
+
+fun SeekBar.setProgressListener(onProgressChanged: (progress: Int) -> Unit, onProgress: (progress: Int) -> Unit) {
+    this.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
+            onProgressChanged(p1)
+        }
+
+        override fun onStartTrackingTouch(p0: SeekBar?) {
+            //Not used
+        }
+
+        override fun onStopTrackingTouch(p0: SeekBar) {
+            onProgress(p0.progress)
+        }
+    })
 }

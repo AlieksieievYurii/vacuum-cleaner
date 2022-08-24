@@ -10,7 +10,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
-import com.yurii.vaccumcleaner.Application
+import com.yurii.vaccumcleaner.MyApplication
 import com.yurii.vaccumcleaner.utils.addUnique
 import com.yurii.vaccumcleaner.utils.replace
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(application) {
+class BluetoothDevicesViewModel(application: MyApplication) : AndroidViewModel(application) {
     sealed class BluetoothState {
         data class Ready(val isDiscovering: Boolean) : BluetoothState()
         object BluetoothIsDisabled : BluetoothState()
@@ -151,7 +151,7 @@ class BluetoothDevicesViewModel(application: Application) : AndroidViewModel(app
         }
     }
 
-    class Factory(private val application: Application) : ViewModelProvider.Factory {
+    class Factory(private val application: MyApplication) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(BluetoothDevicesViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")

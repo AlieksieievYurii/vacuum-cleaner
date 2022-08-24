@@ -27,6 +27,7 @@ class Field(object):
     type: Type
     is_required: bool = False
 
+
 class Status(str, Enum):
     OK: str = 'OK'
     ERROR: str = 'ERROR'
@@ -60,7 +61,7 @@ class Response(object):
 
 class RequestHandler(abc.ABC):
     endpoint: str
-    request_model: object
+    request_model: Optional[object]
     response_model: object
 
     @abc.abstractmethod

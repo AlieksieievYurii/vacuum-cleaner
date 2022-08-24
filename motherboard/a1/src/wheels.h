@@ -57,6 +57,7 @@ class Wheels {
     void move(uint16_t request_id, uint32_t distance_sm, uint32_t speed_sm_per_minute, bool forward, bool with_break);
     void walk(uint16_t request_id, uint32_t speed_sm_per_minute, bool forward);
     void turn(uint16_t request_id, SideDirection side_direction, uint16_t degree, uint32_t speed_sm_per_minute, bool with_break);
+    void rotate(uint16_t request_id, SideDirection side_direction, uint32_t speed_sm_per_minute);
 
   private:
     InstructionHandler* _instruction_handler;

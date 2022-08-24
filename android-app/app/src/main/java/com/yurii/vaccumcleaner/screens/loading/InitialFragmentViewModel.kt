@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.Preferences
+import com.yurii.vaccumcleaner.robot.RobotConnection
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +17,10 @@ import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
 @SuppressLint("StaticFieldLeak")
-class InitialFragmentViewModel(private val context: Context, private val robotSocketDiscovery: RobotSocketDiscovery) : ViewModel() {
+class InitialFragmentViewModel(
+    private val context: Context,
+    private val robotSocketDiscovery: RobotSocketDiscovery
+) : ViewModel() {
     sealed class Event {
         object NavigateToControlPanel : Event()
         object NavigateToBindRobot : Event()
@@ -40,9 +44,10 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
             if (savedIp != null) {
                 if (robotSocketDiscovery.tryConnect(savedIp)) {
                     delay(2000)
+                    RobotConnection.makeConnection(savedIp, 1488)
                     _state.value = State.Connected(savedIp)
                     delay(3000)
-                    navigateToControlPanel()
+                    _event.emit(Event.NavigateToControlPanel)
                 } else
                     _state.value = State.NotFound(wasIpSaved = true)
             } else
@@ -58,6 +63,7 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
             if (r.isEmpty())
                 _state.value = State.NotFound(wasIpSaved = false)
             else {
+                RobotConnection.makeConnection(r.first(), 1488)
                 Preferences.saveRobotIpAddress(context, r.first())
                 _state.value = State.Connected(r.first())
             }
@@ -82,7 +88,10 @@ class InitialFragmentViewModel(private val context: Context, private val robotSo
     }
 
     @Suppress("UNCHECKED_CAST")
-    class Factory(private val context: Context, private val robotSocketDiscovery: RobotSocketDiscovery) : ViewModelProvider.Factory {
+    class Factory(
+        private val context: Context,
+        private val robotSocketDiscovery: RobotSocketDiscovery
+    ) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(InitialFragmentViewModel::class.java))
                 return InitialFragmentViewModel(context, robotSocketDiscovery) as T

@@ -8,7 +8,6 @@
 #include "wheels.h"
 #include "motor.h"
 #include "range-finder.h"
-#include "battery-inspector.h"
 #include "ds3231.h"
 #include "DHT11.h"
 #include "power-controller.h"
@@ -44,8 +43,6 @@ RangeFinder range_finder(
   CENTER_RF_TRIG, CENTER_RF_ECHO,
   RIGHT_RF_TRIG, RIGHT_RF_ECHO
 );
-
-BatteryInspector battery_inspector(CELL_A, CELL_B, CELL_C, CELL_D);
 
 DS3231 ds3231_clock;
 
@@ -147,6 +144,17 @@ uint32_t get_rangefinder_value() {
   result |= range_finder.get_left_range_in_mm();
   result |= (uint16_t)range_finder.get_center_range_in_mm() << 8;
   result |= (uint32_t)range_finder.get_right_range_in_mm() << 16;
+  return result;
+}
+
+
+uint32_t get_battery_cells_voltages_value() {
+  uint32_t result = 0;
+  result |= power_controller.bin_repr_voltage_cell_a;
+  result |= (uint16_t)power_controller.bin_repr_voltage_cell_b << 8;
+  result |= (uint32_t)power_controller.bin_repr_voltage_cell_c << 16;
+  result |= (uint64_t)power_controller.bin_repr_voltage_cell_d << 24;
+
   return result;
 }
 
@@ -264,22 +272,6 @@ void on_main_brush_motor(uint16_t id, char* input) {
   set_motor_signal(main_brush_motor, id, input);
 }
 
-void on_request_battery_status(uint16_t id, char*) {
-  String res = "";
-  res += battery_inspector.a_cell_voltage;
-  res += ";";
-  res += battery_inspector.b_cell_voltage;
-  res += ";";
-  res += battery_inspector.c_cell_voltage;
-  res += ";";
-  res += battery_inspector.d_cell_voltage;
-  res += ";";
-  res += battery_inspector.charged;
-  char result[25] = {0};
-  res.toCharArray(result, 25);
-  instruction_handler.on_result(id, result);
-}
-
 void on_get_current_time(uint16_t id, char* input) {
   //Input has newline in the end, so we need to get rid of it
   for (uint8_t i = 0; i < MAX_INPUT_SIZE; i++) {
@@ -345,6 +337,29 @@ void on_cut_off_the_power(uint16_t id, char*) {
   instruction_handler.on_finished(id);
 }
 
+void on_rotate(uint16_t id, char* input) {
+  const int8_t direction = fetch_unsigned_hex_number(input, 0);
+  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  const int16_t speed = fetch_unsigned_hex_number(input, 1);
+  if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
+    instruction_handler.on_failed(id, 0x2);
+    return;
+  }
+
+  switch (direction) {
+    case 0x1: wheels.rotate(id, LEFT, speed); break;
+    case 0x2:  wheels.rotate(id, RIGHT, speed); break;
+    default:
+      instruction_handler.on_failed(id, 0x3);
+      return;
+  }
+  
+}
+
 void on_set_error_state_in_power_controller(uint16_t id, char* input) {
   switch (input[0]) {
     case 'T': power_controller.set_error_state(); break;
@@ -388,7 +403,8 @@ void on_walk(uint16_t id, char* input) {
 uint8_t get_power_controller_state() {
   uint8_t res = 0;
   res |= power_controller.power_state;
-  res |= power_controller.battery_state << 2;
+  res |= power_controller.charging_state << 3;
+  res |= power_controller.charging_work_status << 5;
 
   return res;
 }
@@ -425,8 +441,6 @@ void propagandate_tick_signal() {
   main_brush_motor.tick();
 
   range_finder.tick();
-
-  battery_inspector.tick();
 
   power_controller.tick();
 }

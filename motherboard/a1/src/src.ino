@@ -22,7 +22,6 @@ void setup() {
   instruction_handler.add(0x08, on_vacuum_motor);
   instruction_handler.add(0x09, on_left_brush_motor);
   instruction_handler.add(0x0A, on_right_brush_motor);
-  instruction_handler.add(0x0B, on_request_battery_status);
   instruction_handler.add(0x0C, on_get_current_time);
   instruction_handler.add(0x0D, on_set_data_time);
   instruction_handler.add(0x0E, on_get_temp_and_humid);
@@ -31,6 +30,7 @@ void setup() {
   instruction_handler.add(0x11, on_set_error_state_in_power_controller);
   instruction_handler.add(0x12, on_main_brush_motor);
   instruction_handler.add(0x13, on_walk);
+  instruction_handler.add(0x14, on_rotate);
   
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
@@ -50,6 +50,7 @@ void loop() {
   instruction_handler.add_sensor_output(0x03, get_rangefinder_value());
   instruction_handler.add_sensor_output(0x04, get_cliffs_status());
   instruction_handler.add_sensor_output(0x05, get_power_controller_state());
+  instruction_handler.add_sensor_output(0x06, get_battery_cells_voltages_value());
   instruction_handler.send_sensors_output();
 #endif
 }
