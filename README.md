@@ -11,11 +11,17 @@ This project is about how to create a simple vacuum cleaner robot. The following
 * 3D printing - the entire model is printed by 3D printer with PLA plastic. [Fusion 360](https://www.autodesk.com/products/fusion-360/overview) is used for parametric modeling and [Cura](https://ultimaker.com/software/ultimaker-cura) for slicing.
 
 ## Overview
-* The robot is a rounded shape with the following sizes:
+* The robot is a rounded shape with the following sizes: 385x99 mm
 * Weight: 3 KG
 * Brushes: 2 side brushed and one main.
 * Working time: approximately 30 minutes
 * Wireless connection: Wifi and Bluetooth
+
+<img src="https://user-images.githubusercontent.com/39415360/186521774-704884d2-03a5-4560-a252-b18bb7f3028d.jpg" width="400">&nbsp;
+<img src="https://user-images.githubusercontent.com/39415360/186525811-3159ee50-9453-465e-9723-f8cf16752921.jpg" width="465" />
+<img src="https://user-images.githubusercontent.com/39415360/186527277-fa6c89eb-ab22-4f05-a9af-4410aa841be2.jpg" width="400">&nbsp;
+<img src="https://user-images.githubusercontent.com/39415360/186528631-af64e733-9c59-4d49-9d3c-c4ffa41cbc81.jpg" width="415" />
+
 
 ## Architecture 
 ![image](https://user-images.githubusercontent.com/39415360/179946342-a393f9e0-408d-4760-a70b-cfd9a5e10395.png)
