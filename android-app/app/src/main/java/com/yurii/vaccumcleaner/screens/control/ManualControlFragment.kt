@@ -1,5 +1,6 @@
 package com.yurii.vaccumcleaner.screens.control
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -72,11 +73,20 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
             data?.run {
                 binding.cvDustBoxPulled.isVisible = !data.isDustBoxInserted
                 binding.cvLidWarning.isVisible = !data.isLidClosed
-                binding.rangeRadarValues.text = getString(
+                binding.infRangeRadarValues.text = getString(
                     R.string.label_range_sensors,
                     data.leftDistanceRange,
                     data.centerDistanceRange,
                     data.rightDistanceRange
+                )
+
+                binding.infBumper.text = getString(
+                    R.string.label_bumper_hit, when {
+                        data.leftBumperHit && data.rightBumperHit -> "Both"
+                        data.leftBumperHit -> "Left"
+                        data.rightBumperHit -> "Right"
+                        else -> "None"
+                    }
                 )
             }
         }
