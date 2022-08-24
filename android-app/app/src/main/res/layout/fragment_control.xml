@@ -175,7 +175,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:max="4000"
+            android:max="3000"
             app:layout_constraintEnd_toStartOf="@+id/target_speed"
             app:layout_constraintStart_toEndOf="@+id/tv_speed_label"
             app:layout_constraintTop_toTopOf="@+id/tv_speed_label" />
