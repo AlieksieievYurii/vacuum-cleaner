@@ -17,6 +17,8 @@ This project is about how to create a simple vacuum cleaner robot. The following
 * Working time: approximately 30 minutes
 * Wireless connection: Wifi and Bluetooth
 
+<img src="https://user-images.githubusercontent.com/39415360/186521774-704884d2-03a5-4560-a252-b18bb7f3028d.jpg" width="400" />
+
 ## Architecture 
 ![image](https://user-images.githubusercontent.com/39415360/179946342-a393f9e0-408d-4760-a70b-cfd9a5e10395.png)
 
