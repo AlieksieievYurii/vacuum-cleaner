@@ -40,7 +40,6 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
 |-----------------|:--------------------:|:------------------:|------------------:|--------------------:|
-|       0x0B      |         None         | `<cell A(0.0...5.0)>;<cell B(0.0...5.0)>;<cell C(0.0...5.0)>;<cell D(0.0...5.0)>;<capacity (0...100)>` | None | Request battery status(cells voltage, capacity in percentage) |
 |       0x0C      |  Data Time format, e.g `d-m-Y H:i:s`, `d F Y H:i:s` etc. | According to the data time format | None | Returns Data Time according to the given format |
 |       0x0E      |         None         | `<temperature(float number) in celsius>;<humidity(float number)>;<heat index(float number) in celsius>` | 0x01 - can not read the data from the sensor | Gets temperature in Celsius, humidity in percentage and heat index in Celsius |
 
@@ -56,4 +55,5 @@ A1 reads the states of the sensors (cliff ends, buttons, etc.) and sends them ou
 | 0x02 | 4 bits where 1st - Right End, 2nd - Left End, 3rd - Lid End, 4th - Dust Box End. __Counting starts from the right__ | The state of ends such as right and left obstacle ends, lid end (checks if the cap is closed) and dust box end (check if the dust box is installed) |
 | 0x03 | 3 bytes where 1st byte represents - Left Rangefinder(0..250 mm), 2nd - Center Rangefinder, 3rd - Right Rangefinder | Reads the distance of Right, Left and Center rangefinders. The range is 0..250 millimeters |
 | 0x04 | 6 bits where(one if breakage): 1 - back right, 2 - back center, 3 - back left, 4 - front right, 5 - front center, 6 - front left | Reads cliff sensors. If the signal is high - then there is a breakage |
-| 0x05 | 6 bits where the first three represents the robot state, and next three - charging state | Powering state and charging state |
+| 0x05 | 6 bits where the first three represents the robot state, next 2 - charging state and next 3 charging work state. Bits counting starts from the right to the left | Powering state, charging state and charging work state. Refer to Power Controller README.md |
+| 0x06 | 4 bytes where each byte represents voltage of particular battery cell. Counting from right to the left: 1 - cell A, 2 - cell B, 3 - cell C, 4 - cell D | Voltages of battery cells |
