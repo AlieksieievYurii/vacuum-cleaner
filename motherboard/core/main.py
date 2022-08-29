@@ -1,9 +1,7 @@
-from time import sleep
 
 from a1.robot import Robot
 from a1.socket import A1Socket
 from bluetooth.handler import BluetoothEndpointsHandler
-from utils.request_handler.handler import RequestHandlerService
 from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
 from wifi.endpoints.hello_world import HelloWorldRequest
@@ -23,13 +21,12 @@ class Core(object):
         self._wifi_endpoints_handler = wifi_endpoints_handler
         self._bluetooth_endpoint_handler = bluetooth_endpoint_handler
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
-        # wifi_request_handler_service = RequestHandlerService(wifi_communicator, wifi_module_logger)
-        # wifi_request_handler_service.register(HelloWorldRequest())
-        # wifi_request_handler_service.register(GetRobotSysInfo())
-        # wifi_request_handler_service.register(Motor(robot))
-        # wifi_request_handler_service.register(Movement(robot))
-        # wifi_request_handler_service.register(StopMovement(robot))
-        # wifi_request_handler_service.register(GetA1DataRequestHandler(robot))
+        self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
+        self._wifi_endpoints_handler.register_endpoint(GetRobotSysInfo())
+        self._wifi_endpoints_handler.register_endpoint(Motor(self._robot))
+        self._wifi_endpoints_handler.register_endpoint(Movement(self._robot))
+        self._wifi_endpoints_handler.register_endpoint(StopMovement(self._robot))
+        self._wifi_endpoints_handler.register_endpoint(GetA1DataRequestHandler(self._robot))
 
     def run(self) -> None:
         self._robot.connect()
