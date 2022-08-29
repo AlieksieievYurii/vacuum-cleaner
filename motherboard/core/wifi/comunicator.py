@@ -5,9 +5,9 @@ from utils.communicator import Communicator, CommunicatorConnectionClosed
 
 
 class WifiCommunicator(Communicator):
-    def __init__(self):
+    def __init__(self, port: int):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.bind(('', 1488))
+        self._socket.bind(('', port))
         self._connection = None
         self._reader = None
 
