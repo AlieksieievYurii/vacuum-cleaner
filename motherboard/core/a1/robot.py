@@ -73,3 +73,6 @@ class Robot(object):
     @property
     def data(self) -> A1Data:
         return self._socket.data
+
+    def connect(self) -> None:
+        self._socket.open()
