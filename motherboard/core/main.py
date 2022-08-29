@@ -2,6 +2,7 @@ from time import sleep
 
 from a1.robot import Robot
 from a1.socket import A1Socket
+from bluetooth.handler import BluetoothEndpointsHandler
 from utils.request_handler.handler import RequestHandlerService
 from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
@@ -16,9 +17,11 @@ WIFI_SOCKET_PORT = 1489
 
 
 class Core(object):
-    def __init__(self, robot: Robot, wifi_endpoints_handler: WifiEndpointsHandler):
+    def __init__(self, robot: Robot, wifi_endpoints_handler: WifiEndpointsHandler,
+                 bluetooth_endpoint_handler: BluetoothEndpointsHandler):
         self._robot = robot
         self._wifi_endpoints_handler = wifi_endpoints_handler
+        self._bluetooth_endpoint_handler = bluetooth_endpoint_handler
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
         # wifi_request_handler_service = RequestHandlerService(wifi_communicator, wifi_module_logger)
         # wifi_request_handler_service.register(HelloWorldRequest())
@@ -44,7 +47,8 @@ def main():
     robot = Robot(a1_socket)
     wifi_communicator = WifiCommunicator(WIFI_SOCKET_PORT)
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_module_logger)
-    core = Core(robot, wifi_endpoints_handler)
+    bluetooth_endpoints_handler = BluetoothEndpointsHandler()
+    core = Core(robot, wifi_endpoints_handler, bluetooth_endpoints_handler)
     core.run()
 
 
