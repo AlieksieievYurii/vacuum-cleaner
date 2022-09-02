@@ -5,7 +5,7 @@
 #define OLED_RESET 4
 
 enum DisplayState : byte {
-  INITIALIZATION
+  INITIALIZATION, SHOW_ERROR
 };
 
 class Display {
@@ -14,13 +14,16 @@ class Display {
     void tick();
 
     void show_initialization();
+    void show_error(char* message);
 
   private:
     Adafruit_SH1106* _display;
     DisplayState _display_state;
     uint8_t _index = 0;
     uint32_t _time = 0;
+    char* _error_message = 0;
     void _draw_initialization(void);
+    void _draw_error(void);
 };
 
 #endif
