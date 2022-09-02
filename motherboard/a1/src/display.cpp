@@ -18,11 +18,18 @@ void Display::show_error(char* message) {
   _display_state = SHOW_ERROR;
 }
 
+void Display::show_default(int8_t charged, float battery_voltage) {
+  _charged = charged;
+  _battery_voltage = battery_voltage;
+  _display_state = SHOW_DEFAULT;
+}
+
 void Display::tick() {
   if (millis() - _time > 300) {
     switch (_display_state) {
       case INITIALIZATION: _draw_initialization(); break;
       case SHOW_ERROR: _draw_error(); break;
+      case SHOW_DEFAULT: _draw_default(); break;
     }
 
     _time = millis();
@@ -55,6 +62,28 @@ void Display::_draw_error(void) {
     _display->print("!!! ERROR !!!");
     _index = 0;
   } else _index = 1;
+
+  _display->display();
+}
+
+void Display::_draw_default(void) {
+  _display->clearDisplay();
+  _display->setTextColor(WHITE);
+  _display->setTextSize(1);
+  _display->setCursor(5, 0);
+  if (_charged < 0) {
+    _display->print("Charg... ");
+  } else {
+    _display->print("Bat: ");
+    _display->print(_charged);
+    _display->print("% (");
+  }
+
+  _display->print(_battery_voltage);
+  _display->print("V)");
+  _display->setTextSize(1);
+  _display->setCursor(0, 30);
+  _display->print("Vacuum Cleaner Robot");
 
   _display->display();
 }
