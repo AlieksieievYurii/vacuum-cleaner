@@ -88,20 +88,12 @@ void on_led_st(uint16_t id, char* input) {
 }
 
 void on_beep(uint16_t id, char* input) {
-  int8_t index = find_character_index(input, ';', 2);
+  int8_t beep_count = fetch_unsigned_hex_number(input, 0);
+  VALIDATE_PARSING(beep_count, 0x1);
+  int16_t period = fetch_unsigned_hex_number(input, 1);
+  VALIDATE_PARSING(period, 0x2);
 
-  if (index == -1) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
-  char beep_count_array[2] = {0};
-  char period_array[6] = {0};
-  strncpy(beep_count_array, input, index);
-  strncpy(period_array, &input[index + 1], 6);
-  uint8_t bepp_count = strtol(beep_count_array, NULL, 16);
-  uint16_t period = strtol(period_array, NULL, 16);
-  buzzer.beep(id, bepp_count, period);
+  buzzer.beep(id, beep_count, period);
 }
 
 uint8_t get_controll_buttons_state() {
