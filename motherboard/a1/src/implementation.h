@@ -152,26 +152,14 @@ uint32_t get_battery_cells_voltages_value() {
 
 void on_move(uint16_t id, char* input) {
   const int8_t direction = fetch_unsigned_hex_number(input, 0);
-  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(direction, 0x1);
   const int32_t distance_in_sm = fetch_unsigned_hex_number(input, 1);
-  if (distance_in_sm == PARSING_ERROR || distance_in_sm == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(distance_in_sm, 0x1);
   const int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 2);
-  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(speed_sm_per_minute, 0x1);
   const int8_t n_with_break = fetch_unsigned_hex_number(input, 3);
-  if (n_with_break == PARSING_ERROR || n_with_break == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(n_with_break, 0x1);
+ 
 
   bool forward = false;
   switch (direction) {
