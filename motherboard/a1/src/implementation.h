@@ -159,7 +159,7 @@ void on_move(uint16_t id, char* input) {
   VALIDATE_PARSING(speed_sm_per_minute, 0x1);
   const int8_t n_with_break = fetch_unsigned_hex_number(input, 3);
   VALIDATE_PARSING(n_with_break, 0x1);
- 
+
 
   bool forward = false;
   switch (direction) {
@@ -180,32 +180,18 @@ void on_move(uint16_t id, char* input) {
   }
 
   wheels.move(id, distance_in_sm, speed_sm_per_minute, forward, with_break);
-
 }
-//<1 - left, 2 - right>;<degree>;<speed>;<halt mode>
+
 void on_turn(uint16_t id, char* input) {
   const int8_t side = fetch_unsigned_hex_number(input, 0);
-  if (side == PARSING_ERROR || side == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(side, 0x1);
   const int16_t degree = fetch_unsigned_hex_number(input, 1);
-  if (degree == PARSING_ERROR || degree == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(degree, 0x1);
   const int16_t speed = fetch_unsigned_hex_number(input, 2);
-  if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(speed, 0x1);
   const int8_t n_with_break = fetch_unsigned_hex_number(input, 3);
-  if (n_with_break == PARSING_ERROR || n_with_break == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(n_with_break, 0x1);
+
 
   bool with_break;
   switch (n_with_break) {
@@ -337,7 +323,7 @@ void on_rotate(uint16_t id, char* input) {
       instruction_handler.on_failed(id, 0x3);
       return;
   }
-  
+
 }
 
 void on_set_error_state_in_power_controller(uint16_t id, char* input) {
