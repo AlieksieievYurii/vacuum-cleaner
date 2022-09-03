@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from enum import Enum
 from typing import List, Optional
 
 from a1.exceptions import CannotParse, InstructionTimeout, InstructionFailureException
@@ -94,13 +95,20 @@ class Job(object):
                 return self._response
 
 
+class ButtonState(Enum):
+    NOTHING = 0
+    CLICK = 1
+    LONG_PRESS = 3
+
+
 class A1Data(object):
     __PATTERN = re.compile(r'(\d):(\d+);')
 
     def __init__(self):
-        self.button_up_click: bool = False
-        self.button_ok_click: bool = False
-        self.button_down_click: bool = False
+        self._button_up_click: ButtonState = ButtonState.NOTHING
+        self._button_ok_click: ButtonState = ButtonState.NOTHING
+        self._button_down_click: ButtonState = ButtonState.NOTHING
+        self._bluetooth_button_click: ButtonState = ButtonState.NOTHING
         self.end_right_trig: bool = False
         self.end_left_trig: bool = False
         self.end_dust_box_trig: bool = False
@@ -119,6 +127,38 @@ class A1Data(object):
         self.cell_b_voltage: float = 0.0
         self.cell_c_voltage: float = 0.0
         self.cell_d_voltage: float = 0.0
+
+    @property
+    def button_up(self) -> ButtonState:
+        if self._button_up_click is not ButtonState.NOTHING:
+            but = self._button_up_click
+            self._button_up_click = ButtonState.NOTHING
+            return but
+        return self._button_up_click
+
+    @property
+    def button_ok(self) -> ButtonState:
+        if self._button_ok_click is not ButtonState.NOTHING:
+            but = self._button_ok_click
+            self._button_ok_click = ButtonState.NOTHING
+            return but
+        return self._button_ok_click
+
+    @property
+    def button_down(self) -> ButtonState:
+        if self._button_down_click is not ButtonState.NOTHING:
+            but = self._button_down_click
+            self._button_down_click = ButtonState.NOTHING
+            return but
+        return self._button_down_click
+
+    @property
+    def bluetooth_button(self) -> ButtonState:
+        if self._bluetooth_button_click is not ButtonState.NOTHING:
+            but = self._bluetooth_button_click
+            self._bluetooth_button_click = ButtonState.NOTHING
+            return but
+        return self._bluetooth_button_click
 
     def parse_and_refresh(self, string: str):
         parsers = {
@@ -153,10 +193,17 @@ class A1Data(object):
         self.cell_d_voltage = bin_to_float((value >> 0x18) & 0xFF)
 
     def _parse_and_set_buttons_state(self, value: int) -> None:
-        # TODO implement
-        self.button_up_click = False
-        self.button_ok_click = False
-        self.button_down_click = False
+        if self._bluetooth_button_click is ButtonState.NOTHING:
+            self._bluetooth_button_click = ButtonState((value >> 0x6) & 0x3)
+
+        if self._button_up_click is ButtonState.NOTHING:
+            self._button_up_click = ButtonState((value >> 0x4) & 0x3)
+
+        if self._button_ok_click is ButtonState.NOTHING:
+            self._button_ok_click = ButtonState((value >> 0x2) & 0x3)
+
+        if self._button_down_click is ButtonState.NOTHING:
+            self._button_down_click = ButtonState(value & 0x3)
 
     def _parse_and_set_ends_state(self, value: int) -> None:
         self.end_right_trig = bool(value & 0x1)
