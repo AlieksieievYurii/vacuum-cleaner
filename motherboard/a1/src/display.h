@@ -1,3 +1,5 @@
+// ============== ON HOLD ================
+
 #ifndef __display_h__
 #define __display_h__
 
@@ -5,7 +7,7 @@
 #define OLED_RESET 4
 
 enum DisplayState : byte {
-  INITIALIZATION, SHOW_ERROR, SHOW_DEFAULT
+  INITIALIZATION, SHOW_ERROR, SHOW_DEFAULT, SHOW_READY
 };
 
 class Display {
@@ -16,6 +18,7 @@ class Display {
     void show_initialization();
     void show_error(char* message);
     void show_default(int8_t charged, float battery_voltage);
+    void show_ready();
 
   private:
     Adafruit_SH1106* _display;
@@ -28,6 +31,7 @@ class Display {
     void _draw_initialization(void);
     void _draw_error(void);
     void _draw_default(void);
+    void _draw_ready(void);
 };
 
 #endif

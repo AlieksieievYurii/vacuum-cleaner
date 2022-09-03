@@ -1,3 +1,5 @@
+// ============== ON HOLD ================
+
 #include "display.h"
 
 void Display::begin() {
@@ -18,6 +20,10 @@ void Display::show_error(char* message) {
   _display_state = SHOW_ERROR;
 }
 
+void Display::show_ready() {
+  _display_state = SHOW_READY;
+}
+
 void Display::show_default(int8_t charged, float battery_voltage) {
   _charged = charged;
   _battery_voltage = battery_voltage;
@@ -25,11 +31,12 @@ void Display::show_default(int8_t charged, float battery_voltage) {
 }
 
 void Display::tick() {
-  if (millis() - _time > 300) {
+  if (millis() - _time > 1000) {
     switch (_display_state) {
       case INITIALIZATION: _draw_initialization(); break;
       case SHOW_ERROR: _draw_error(); break;
       case SHOW_DEFAULT: _draw_default(); break;
+      case SHOW_READY: _draw_ready(); break;
     }
 
     _time = millis();
@@ -38,8 +45,7 @@ void Display::tick() {
 
 void Display::_draw_initialization(void) {
   if (_index <= 5) {
-    _display->drawCircle(64, 40, _index++ * 4, WHITE);
-    _display->display();
+    //_display->drawCircle(64, 40, _index++ * 4, WHITE);
   } else {
     _index = 0;
     _display->clearDisplay();
@@ -47,8 +53,8 @@ void Display::_draw_initialization(void) {
   _display->setTextColor(WHITE);
   _display->setTextSize(1);
   _display->setCursor(10, 0);
-  _display->print("Initialization...");
-  _display->display();
+//  _display->print("Initialization...");
+//  _display->display();
 }
 
 void Display::_draw_error(void) {
@@ -86,4 +92,13 @@ void Display::_draw_default(void) {
   _display->print("Vacuum Cleaner Robot");
 
   _display->display();
+}
+
+void Display::_draw_ready(void) {
+  _display->clearDisplay();
+  _display->setTextColor(WHITE);
+  _display->setTextSize(2);
+  _display->setCursor(40, 40);
+  _display->print("READY");
+   _display->display();
 }
