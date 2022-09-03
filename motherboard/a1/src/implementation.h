@@ -214,6 +214,7 @@ void on_turn(uint16_t id, char* input) {
 
 void set_motor_signal(Motor &motor, uint16_t id, char* input) {
   uint8_t value = fetch_unsigned_hex_number(input, 0);
+  
   if (value > 100) {
     instruction_handler.on_failed(id, 0x1);
     return;
@@ -305,25 +306,17 @@ void on_cut_off_the_power(uint16_t id, char*) {
 
 void on_rotate(uint16_t id, char* input) {
   const int8_t direction = fetch_unsigned_hex_number(input, 0);
-  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(direction, 0x1);
   const int16_t speed = fetch_unsigned_hex_number(input, 1);
-  if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x2);
-    return;
-  }
+  VALIDATE_PARSING(speed, 0x2);
 
   switch (direction) {
     case 0x1: wheels.rotate(id, LEFT, speed); break;
-    case 0x2:  wheels.rotate(id, RIGHT, speed); break;
+    case 0x2: wheels.rotate(id, RIGHT, speed); break;
     default:
       instruction_handler.on_failed(id, 0x3);
       return;
   }
-
 }
 
 void on_set_error_state_in_power_controller(uint16_t id, char* input) {
@@ -340,11 +333,9 @@ void on_set_error_state_in_power_controller(uint16_t id, char* input) {
 
 void on_walk(uint16_t id, char* input) {
   int8_t direction = fetch_unsigned_hex_number(input, 0);
-
-  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(direction, 0x1);
+  int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 1);
+  VALIDATE_PARSING(speed_sm_per_minute, 0x1);
 
   bool forward = false;
   switch (direction) {
@@ -355,15 +346,7 @@ void on_walk(uint16_t id, char* input) {
       return;
   }
 
-  int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 1);
-
-  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
   wheels.walk(id, speed_sm_per_minute, forward);
-
 }
 
 uint8_t get_power_controller_state() {
