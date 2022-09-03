@@ -22,6 +22,10 @@ Button btn_up(BUT_UP);
 Button btn_ok(BUT_OK);
 Button btn_down(BUT_DOWN);
 
+Button btn_bluetooth(BUT_BL);
+Led btn_bluetooth_led_red(LED_BL_RED);
+Led btn_bluetooth_led_green(LED_BL_GREEN);
+
 Buzzer buzzer(BUZZER, instruction_handler);
 
 Wheel wheel_left(LEFT_FORWARD, LEFT_BACKWARD, LEFT_WHEEL_SPEED_SENSOR, LEFT_WHEEL_DIRECTION_SENSOR, []() {
@@ -98,6 +102,12 @@ void on_beep(uint16_t id, char* input) {
 
 uint8_t get_controll_buttons_state() {
   uint8_t state = 0;
+
+  switch (btn_bluetooth.read_state()) {
+    case CLICK: state |= 0x80; break;
+    case LONG_CLICK: state |= 0xC0; break;
+    case UNPRESSED: break;
+  }
 
   switch (btn_up.read_state()) {
     case CLICK: state |= 0x10; break;
@@ -214,7 +224,7 @@ void on_turn(uint16_t id, char* input) {
 
 void set_motor_signal(Motor &motor, uint16_t id, char* input) {
   uint8_t value = fetch_unsigned_hex_number(input, 0);
-  
+
   if (value > 100) {
     instruction_handler.on_failed(id, 0x1);
     return;
@@ -379,6 +389,7 @@ void propagandate_tick_signal() {
   btn_up.tick();
   btn_ok.tick();
   btn_down.tick();
+  btn_bluetooth.tick();
 
   buzzer.tick();
 
