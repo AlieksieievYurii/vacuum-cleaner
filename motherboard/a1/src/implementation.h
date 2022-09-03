@@ -104,7 +104,7 @@ uint8_t get_controll_buttons_state() {
   uint8_t state = 0;
 
   switch (btn_bluetooth.read_state()) {
-    case CLICK: state |= 0x80; break;
+    case CLICK: state |= 0x40; break;
     case LONG_CLICK: state |= 0xC0; break;
     case UNPRESSED: break;
   }
