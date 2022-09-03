@@ -34,4 +34,7 @@ The height has been shrinked to 75 mm. The wall thickness has been increased to 
 ![image](https://user-images.githubusercontent.com/39415360/144293647-498b55bc-5ecc-4ac9-aeb6-c720ee8d6c83.png)
 ![image](https://user-images.githubusercontent.com/39415360/144293617-66a65e46-1d5e-451d-a9f0-47d76eb69617.png)
 
+## Final Model
+![VacuumCleaner v172](https://user-images.githubusercontent.com/39415360/186529397-a590aed9-84cf-456b-92f9-f1232a22e4a5.jpg)
+
 
