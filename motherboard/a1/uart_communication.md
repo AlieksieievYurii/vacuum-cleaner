@@ -51,7 +51,7 @@ A1 reads the states of the sensors (cliff ends, buttons, etc.) and sends them ou
 # Output table
 |  Id  |              Value            |                     Description                    |
 |------|:-----------------------------:|:--------------------------------------------------:|
-| 0x01 | Bits `**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Up, Second - OK, third - Down. | Reads click events of control panel(Up, Ok, Down buttons) |
+| 0x01 | Bits `**^**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Bluetooth button, Second - Up, Third - OK, Fourth - Down. | Reads click events of control panel(Bluetooth,Up, Ok, Down buttons) |
 | 0x02 | 4 bits where 1st - Right End, 2nd - Left End, 3rd - Lid End, 4th - Dust Box End. __Counting starts from the right__ | The state of ends such as right and left obstacle ends, lid end (checks if the cap is closed) and dust box end (check if the dust box is installed) |
 | 0x03 | 3 bytes where 1st byte represents - Left Rangefinder(0..250 mm), 2nd - Center Rangefinder, 3rd - Right Rangefinder | Reads the distance of Right, Left and Center rangefinders. The range is 0..250 millimeters |
 | 0x04 | 6 bits where(one if breakage): 1 - back right, 2 - back center, 3 - back left, 4 - front right, 5 - front center, 6 - front left | Reads cliff sensors. If the signal is high - then there is a breakage |
