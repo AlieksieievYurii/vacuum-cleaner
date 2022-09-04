@@ -150,12 +150,10 @@ uint32_t get_rangefinder_value() {
 }
 
 
-uint32_t get_battery_cells_voltages_value() {
-  uint32_t result = 0;
-  result |= power_controller.bin_repr_voltage_cell_a;
-  result |= (uint16_t)power_controller.bin_repr_voltage_cell_b << 8;
-  result |= (uint32_t)power_controller.bin_repr_voltage_cell_c << 16;
-  result |= (uint64_t)power_controller.bin_repr_voltage_cell_d << 24;
+uint16_t get_battery_voltage_value() {
+  uint16_t result = 0;
+  result |= power_controller.battery_voltage_dec_part;
+  result |= (uint16_t)power_controller.battery_voltage_int_part << 8;
 
   return result;
 }
