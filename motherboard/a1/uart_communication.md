@@ -56,4 +56,4 @@ A1 reads the states of the sensors (cliff ends, buttons, etc.) and sends them ou
 | 0x03 | 3 bytes where 1st byte represents - Left Rangefinder(0..250 mm), 2nd - Center Rangefinder, 3rd - Right Rangefinder | Reads the distance of Right, Left and Center rangefinders. The range is 0..250 millimeters |
 | 0x04 | 6 bits where(one if breakage): 1 - back right, 2 - back center, 3 - back left, 4 - front right, 5 - front center, 6 - front left | Reads cliff sensors. If the signal is high - then there is a breakage |
 | 0x05 | 6 bits where the first three represents the robot state, next 2 - charging state and next 3 charging work state. Bits counting starts from the right to the left | Powering state, charging state and charging work state. Refer to Power Controller README.md |
-| 0x06 | 4 bytes where each byte represents voltage of particular battery cell. Counting from right to the left: 1 - cell A, 2 - cell B, 3 - cell C, 4 - cell D | Voltages of battery cells |
+| 0x06 | 2 bytes representing battery voltage. The first byte(from right to left) - decimal part, second byte - integer part | Voltages of the battery |
