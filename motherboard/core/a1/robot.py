@@ -52,6 +52,9 @@ class Robot(object):
     def stop_movement(self, with_break: bool) -> Job:
         return self.move_forward(0, 0, with_break)
 
+    def get_data_time(self) -> Job:
+        return self._socket.send_instruction(0x0C, 'Y-d-m H:i:s')
+
     def _rotate(self, left: bool, speed: int) -> Job:
         parameters = f'{"1" if left else "2"};{speed:x}'
         return self._socket.send_instruction(0x14, parameters)
