@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from a1.models import ButtonState
 from a1.robot import Robot
 from a1.socket import A1Socket
 from bluetooth.handler import BluetoothEndpointsHandler
+from utils.utils import is_ntp_synchronized, os_set_data_time
 from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
 from wifi.endpoints.hello_world import HelloWorldRequest
@@ -42,13 +45,27 @@ class Core(object):
             return None
 
         self._wifi_endpoints_handler.start()
-
+        self._initialization()
         try:
             self._run_core_loop()
         except Exception as error:
             self._logger.critical(f'Core loop is failed. Reason: {error}')
             if self._debug:
                 raise error
+
+    def _initialization(self) -> None:
+        self._set_core_data_time()
+
+    def _set_core_data_time(self) -> None:
+        self._logger.info('Setting DateTime...')
+        if is_ntp_synchronized():
+            self._logger.info('NTP is synchronized on the core! Setting the datetime for A1 RTC')
+            now = datetime.now()
+            self._robot.set_date_time(now)
+        else:
+            self._logger.info('NTP is not synchronized on the core! Reading from A1 RTC')
+            rtc_data_time = self._robot.get_date_time().expect().data
+            os_set_data_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
         while True:
