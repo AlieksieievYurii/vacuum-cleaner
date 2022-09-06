@@ -4,6 +4,7 @@ from typing import List, Optional
 import serial
 from serial.threaded import LineReader, ReaderThread
 
+from a1.exceptions import A1Exception
 from a1.models import A1Data, Job, Response, Request
 
 from utils.logger import a1_logger
@@ -73,9 +74,15 @@ class A1Socket(object):
         self._reader_thread.start()
         sleep(1)
 
+    @property
+    def __protocol(self) -> SerialA1Communicator:
+        if not self._reader_thread.protocol:
+            raise A1Exception('UART socket is not opened!')
+        return self._reader_thread.protocol
+
     def send_instruction(self, instruction_id: int, parameters: str, timeout: Optional[int] = None) -> Job:
-        return self._reader_thread.protocol.send_instruction(instruction_id, parameters, timeout)
+        return self.__protocol.send_instruction(instruction_id, parameters, timeout)
 
     @property
     def data(self) -> A1Data:
-        return self._reader_thread.protocol.data
+        return self.__protocol.data
