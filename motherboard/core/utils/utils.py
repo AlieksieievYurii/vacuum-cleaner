@@ -9,6 +9,10 @@ def millis() -> int:
     return round(time.time() * 1000)
 
 
+def constrain_number(value: int, min_valu: int, max_value: int) -> int:
+    return max(min(max_value, value), min_valu)
+
+
 def boolean(value) -> bool:
     if isinstance(value, bool):
         return value
