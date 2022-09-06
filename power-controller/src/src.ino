@@ -132,7 +132,7 @@ void handle_chargering(void) {
     charging_work_status = OK;
     return;
   } else {
-    if (IS_CHARGING && IS_CONSTANT_CURRENT && !IS_CHARGED) {
+    if (IS_CHARGING && !IS_CHARGED) {
       charging_state = CHARGING;
 
       if (charging_voltage > MAX_ACCEPTABLE_CHARGING_VOLTAGE)
@@ -142,7 +142,7 @@ void handle_chargering(void) {
       else
         charging_work_status = OK;
 
-    } else if (IS_CHARGED && !IS_CONSTANT_CURRENT && !IS_CHARGING) {
+    } else if (IS_CHARGED && !IS_CHARGING) {
       charging_work_status = OK;
       charging_state = CHARGED;
     } else {
