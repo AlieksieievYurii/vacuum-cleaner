@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List, Optional
 
 from a1.exceptions import CannotParse, InstructionTimeout, InstructionFailureException
-from utils.utils import millis
+from utils.utils import millis, constrain_number
 
 
 @dataclass
@@ -103,6 +103,8 @@ class ButtonState(Enum):
 
 class A1Data(object):
     __PATTERN = re.compile(r'(\d):(\d+);')
+    MAX_BATTERY_VOLTAGE: float = 16.7
+    MIN_BATTERY_VOLTAGE: float = 13.10
 
     def __init__(self):
         self._button_up_click: ButtonState = ButtonState.NOTHING
@@ -122,11 +124,8 @@ class A1Data(object):
         self.front_left_cliff_breakage: bool = False
         self.front_center_cliff_breakage: bool = False
         self.front_right_cliff_breakage: bool = False
-        self.is_about_to_shut_down: bool = False  # Todo
-        self.cell_a_voltage: float = 0.0
-        self.cell_b_voltage: float = 0.0
-        self.cell_c_voltage: float = 0.0
-        self.cell_d_voltage: float = 0.0
+        self.battery_voltage: float = 0.0
+        self.battery_capacity: int = 0  # 0...100
 
     @property
     def button_up(self) -> ButtonState:
@@ -166,7 +165,7 @@ class A1Data(object):
             0x2: self._parse_and_set_ends_state,
             0x3: self._parse_dis_values,
             0x4: self._parse_cliffs,
-            0x6: self._parse_voltages_of_battery_cells
+            0x6: self._parse_battery_voltage_value
         }
         for result in self.__PATTERN.findall(string):
             sensor_id = int(result[0], 16)
@@ -183,14 +182,14 @@ class A1Data(object):
         self.front_center_cliff_breakage = bool(value >> 0x4 & 0x1)
         self.front_left_cliff_breakage = bool(value >> 0x5 & 0x1)
 
-    def _parse_voltages_of_battery_cells(self, value: int) -> None:
-        def bin_to_float(v: int) -> float:
-            return (v >> 0x4) + ((v & 0xF) / 10)
+    def _parse_battery_voltage_value(self, value: int) -> None:
+        decimal_part = value & 0xff
+        integer_part = (value >> 0x8) & 0xff
+        self.battery_voltage = integer_part + decimal_part / 10
 
-        self.cell_a_voltage = bin_to_float(value & 0xFF)
-        self.cell_b_voltage = bin_to_float((value >> 0x8) & 0xFF)
-        self.cell_c_voltage = bin_to_float((value >> 0x10) & 0xFF)
-        self.cell_d_voltage = bin_to_float((value >> 0x18) & 0xFF)
+        capacity = round((self.battery_voltage - self.MIN_BATTERY_VOLTAGE) * 100 / (
+                self.MAX_BATTERY_VOLTAGE - self.MIN_BATTERY_VOLTAGE))
+        self.battery_capacity = constrain_number(capacity, 0, 100)
 
     def _parse_and_set_buttons_state(self, value: int) -> None:
         if self._bluetooth_button_click is ButtonState.NOTHING:

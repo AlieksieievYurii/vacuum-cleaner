@@ -45,7 +45,7 @@ class Core(object):
             return None
 
         self._wifi_endpoints_handler.start()
-        self._initialization()
+        #self._initialization()
         try:
             self._run_core_loop()
         except Exception as error:
@@ -69,6 +69,10 @@ class Core(object):
 
     def _run_core_loop(self) -> None:
         while True:
+            if self._is_shutting_down_triggered():
+                self._shut_down_core()
+                break
+
             but = self._robot.data.button_up
             if but is ButtonState.CLICK:
                 print('UP CLICK')
@@ -92,6 +96,12 @@ class Core(object):
                 print('B CLICK')
             elif but4 is ButtonState.LONG_PRESS:
                 print('B LONG PRESS')
+
+    def _is_shutting_down_triggered(self) -> bool:
+        pass
+
+    def _shut_down_core(self) -> None:
+        pass
 
 
 def main():
