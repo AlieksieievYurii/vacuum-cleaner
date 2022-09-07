@@ -4,7 +4,7 @@ from a1.models import ButtonState
 from a1.robot import Robot
 from a1.socket import A1Socket
 from bluetooth.handler import BluetoothEndpointsHandler
-from utils.utils import is_ntp_synchronized, os_set_data_time
+from utils.os import OperationSystem, get_operation_system
 from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
 from wifi.endpoints.hello_world import HelloWorldRequest
@@ -18,9 +18,10 @@ WIFI_SOCKET_PORT = 1489
 
 
 class Core(object):
-    def __init__(self, robot: Robot, wifi_endpoints_handler: WifiEndpointsHandler,
+    def __init__(self, os: OperationSystem, robot: Robot, wifi_endpoints_handler: WifiEndpointsHandler,
                  bluetooth_endpoint_handler: BluetoothEndpointsHandler, logger: CoreLogger, **kwargs):
         self._debug = bool(kwargs.get('debug'))
+        self._os = os
         self._robot = robot
         self._wifi_endpoints_handler = wifi_endpoints_handler
         self._bluetooth_endpoint_handler = bluetooth_endpoint_handler
@@ -45,7 +46,7 @@ class Core(object):
             return None
 
         self._wifi_endpoints_handler.start()
-        # self._initialization()
+        self._initialization()
         try:
             self._run_core_loop()
         except Exception as error:
@@ -58,14 +59,14 @@ class Core(object):
 
     def _set_core_data_time(self) -> None:
         self._logger.info('Setting DateTime...')
-        if is_ntp_synchronized():
+        if self._os.is_ntp_synchronized():
             self._logger.info('NTP is synchronized on the core! Setting the datetime for A1 RTC')
             now = datetime.now()
             self._robot.set_date_time(now)
         else:
             self._logger.info('NTP is not synchronized on the core! Reading from A1 RTC')
             rtc_data_time = self._robot.get_date_time().expect().data
-            os_set_data_time(rtc_data_time)
+            self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
         while True:
@@ -105,13 +106,14 @@ class Core(object):
 
 
 def main():
+    os: OperationSystem = get_operation_system()
     # COM5 /dev/serial0
     a1_socket = A1Socket("COM5")
     robot = Robot(a1_socket)
     wifi_communicator = WifiCommunicator(WIFI_SOCKET_PORT)
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_module_logger)
     bluetooth_endpoints_handler = BluetoothEndpointsHandler()
-    core = Core(robot, wifi_endpoints_handler, bluetooth_endpoints_handler, CoreLogger(True), debug=False)
+    core = Core(os, robot, wifi_endpoints_handler, bluetooth_endpoints_handler, CoreLogger(True), debug=False)
     core.run()
 
 
