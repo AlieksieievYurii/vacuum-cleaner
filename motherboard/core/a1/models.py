@@ -126,6 +126,7 @@ class A1Data(object):
         self.front_right_cliff_breakage: bool = False
         self.battery_voltage: float = 0.0
         self.battery_capacity: int = 0  # 0...100
+        self.is_shut_down_button_triggered: bool = False
 
     @property
     def button_up(self) -> ButtonState:
@@ -165,6 +166,7 @@ class A1Data(object):
             0x2: self._parse_and_set_ends_state,
             0x3: self._parse_dis_values,
             0x4: self._parse_cliffs,
+            0x5: self._parse_power_controller_states,
             0x6: self._parse_battery_voltage_value
         }
         for result in self.__PATTERN.findall(string):
@@ -173,6 +175,15 @@ class A1Data(object):
             f = parsers.get(sensor_id)
             if f:
                 f(value)
+
+    def _parse_power_controller_states(self, value: int) -> None:
+        power_state = value & 0x3  # Fetch first 3 bits which represents power state
+        # 1 - booting up
+        # 2 - 0x0 (TURNED_OFF)
+        # 0x1 (BOOTING_UP)
+        # 0x2 (TURNED_ON)
+        # 0x3 (SHUTTING_DOWN)
+        self.is_shut_down_button_triggered = power_state == 0x3
 
     def _parse_cliffs(self, value: int) -> None:
         self.back_right_cliff_breakage = bool(value >> 0x0 & 0x1)
