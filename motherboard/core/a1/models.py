@@ -101,6 +101,12 @@ class ButtonState(Enum):
     LONG_PRESS = 3
 
 
+class ChargingState(Enum):
+    NO_CHARGING = 0
+    CHARGING = 1
+    CHARGED = 2
+
+
 class A1Data(object):
     __PATTERN = re.compile(r'(\d):(\d+);')
     MAX_BATTERY_VOLTAGE: float = 16.7
@@ -127,6 +133,7 @@ class A1Data(object):
         self.battery_voltage: float = 0.0
         self.battery_capacity: int = 0  # 0...100
         self.is_shut_down_button_triggered: bool = False
+        self.charging_state: ChargingState = ChargingState.NO_CHARGING
 
     @property
     def button_up(self) -> ButtonState:
@@ -184,6 +191,7 @@ class A1Data(object):
         # 0x2 (TURNED_ON)
         # 0x3 (SHUTTING_DOWN)
         self.is_shut_down_button_triggered = power_state == 0x3
+        self.charging_state = ChargingState((value >> 3) & 0x3)
 
     def _parse_cliffs(self, value: int) -> None:
         self.back_right_cliff_breakage = bool(value >> 0x0 & 0x1)
