@@ -102,7 +102,17 @@ class Core(object):
         return self._robot.data.is_shut_down_button_triggered
 
     def _shut_down_core(self) -> None:
-        print('perform shut down')
+        self._logger.info('Preparing to shutdown')
+        self._logger.info('Stop Wifi Service...')
+        # self._wifi_endpoints_handler.stop() TODO
+        self._logger.info('Stop Bluetooth Service...')
+        # self._bluetooth_endpoints_handler.stop() TODO
+        self._logger.info('Send signal to turn off the robot in 10 seconds to A1...')
+        # TODO
+        self._logger.info('Close A1 Connection...')
+        # TODO
+        self._logger.info('Perform shutdown the system...')
+        self._os.shutdown()
 
 
 def main():
