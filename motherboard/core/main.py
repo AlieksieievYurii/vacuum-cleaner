@@ -45,6 +45,8 @@ class Core(object):
                 raise error
             return None
 
+        self._robot.core_is_initialized(True)
+
         self._wifi_endpoints_handler.start()
         self._initialization()
         try:
