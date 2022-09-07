@@ -46,6 +46,7 @@ class Core(object):
             return None
 
         self._robot.core_is_initialized(True)
+        self._robot.beep(1, 500)
 
         self._wifi_endpoints_handler.start()
         self._initialization()
@@ -72,7 +73,6 @@ class Core(object):
 
     def _run_core_loop(self) -> None:
         while True:
-            print(self._robot.data.charging_state)
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
                 break
