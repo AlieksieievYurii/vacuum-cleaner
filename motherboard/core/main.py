@@ -110,7 +110,7 @@ class Core(object):
         self._logger.info('Stop Bluetooth Service...')
         # self._bluetooth_endpoints_handler.stop() TODO
         self._logger.info('Send signal to turn off the robot in 10 seconds to A1...')
-        # TODO
+        self._robot.set_timer_to_cut_off_power(15).expect()
         self._logger.info('Close A1 Connection...')
         # TODO
         self._logger.info('Perform shutdown the system...')
