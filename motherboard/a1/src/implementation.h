@@ -54,6 +54,8 @@ DHT dht(TEMP_HUMIDITY_SENSOR);
 
 PowerController power_controller;
 
+uint32_t time_to_turn_off = 0;
+
 void on_has_been_initialized(uint16_t id, char* input) {
   switch (input[0]) {
     case 'S': power_controller.set_state_TURNED_ON(); break;
@@ -379,7 +381,27 @@ uint8_t get_cliffs_status() {
   return res;
 }
 
+void on_set_timer_to_turn_off(uint16_t id, char* input) {
+  int8_t seconds = fetch_unsigned_hex_number(input, 0);
+  VALIDATE_PARSING(seconds, 0x1);
+
+  // If PC state is not SHUTTING_DOWN then send error. Because We can turn off only if it is shutting down
+  if (power_controller.power_state != 0x3) { 
+    instruction_handler.on_failed(id, 0x2);
+    return;
+  }
+  
+  time_to_turn_off = millis() + seconds*1000;
+  
+  instruction_handler.on_finished(id);
+}
+
 void propagandate_tick_signal() {
+  if (time_to_turn_off > 0 && millis() >= time_to_turn_off) {
+   power_controller.set_state_TURNED_OFF();
+  }
+  
+  
   led_wifi.tick();
   led_error.tick();
   led_status.tick();
