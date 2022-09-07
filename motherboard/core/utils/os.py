@@ -25,8 +25,20 @@ class OperationSystem(ABC):
 
         pass
 
+    @abstractmethod
+    def shutdown(self) -> None:
+        """
+        Abstract function that is supposed to perform shutdown the OS
+
+        :return: None
+        """
+        pass
+
 
 class WindowsOperationSystem(OperationSystem):
+
+    def shutdown(self) -> None:
+        print('TEST. Perform shutdown')
 
     def set_date_time(self, data_time: str) -> None:
         print(f'TEST. Set datetime: {data_time}')
@@ -36,6 +48,9 @@ class WindowsOperationSystem(OperationSystem):
 
 
 class LinuxOperationSystem(OperationSystem):
+    def shutdown(self) -> None:
+        subprocess.run(['shutdown', '-r', 'now'], check=True)
+
     def set_date_time(self, data_time: str) -> None:
         subprocess.run(['timedatectl', 'set-time', data_time], check=True)
 
