@@ -1,10 +1,10 @@
 /*
- * PowerController is a board based on Arduino Nano that is responsible for proper switching on or off the main power. 
- * Also reads the battery's cells voltages. The board has DC-DC regulator that is considered as a charger, 
- * so the board also checks if the battery is charging correclty.
- * The board itself is supposed to be connected with motherboard(with A1 module) by I2C protocol as Slave. A1 module sends specific commands, e.g 
- * to say that the mother board has been booted up or is goint to shut down.
- */
+   PowerController is a board based on Arduino Nano that is responsible for proper switching on or off the main power.
+   Also reads the battery's cells voltages. The board has DC-DC regulator that is considered as a charger,
+   so the board also checks if the battery is charging correclty.
+   The board itself is supposed to be connected with motherboard(with A1 module) by I2C protocol as Slave. A1 module sends specific commands, e.g
+   to say that the mother board has been booted up or is goint to shut down.
+*/
 
 #include <Wire.h>
 
@@ -65,7 +65,7 @@ void requestEvent() {
   Wire.write(charging_state);
   Wire.write(charging_work_status);
   Wire.write((uint8_t) battery_voltage); // Pushing integer part
-  Wire.write(((uint8_t)(battery_voltage*10)%10)); // Pushing decimal part
+  Wire.write(((uint8_t)(battery_voltage * 10) % 10)); // Pushing decimal part
 }
 
 void receiveEvent(int) {
@@ -74,12 +74,16 @@ void receiveEvent(int) {
 }
 
 void loop(void) {
-  if (button_is_pressed()) {
+  BUTTON_STATE button_state = get_button_state();
+
+  if (button_state == PRESSED) {
     if (current_status == TURNED_OFF) {
       current_status = BOOTING_UP;
     } else if (current_status == TURNED_ON) {
       current_status = SHUTTING_DOWN;
     }
+  } else if (button_state == LONG_PRESSED) {
+    current_status = TURNED_OFF;
   }
 
   if (current_status == TURNED_OFF) {
@@ -120,9 +124,9 @@ void on_receive_command(uint8_t command) {
 
 
 /*
- * Checks if the battery is charing. Moreover, it validates the voltage 
- * and proper work status of the DC-DC charger module.
- */
+   Checks if the battery is charing. Moreover, it validates the voltage
+   and proper work status of the DC-DC charger module.
+*/
 void handle_chargering(void) {
   float charging_voltage = CHARGING_VOLTAGE;
 
@@ -156,11 +160,11 @@ void but_leds_handler() {
     blink_red_green();
     return;
   }
-  
+
   if (charging_state == CHARGED) {
     fade_in_out_green_button_led();
     return;
-  }else if (charging_state == CHARGING) {
+  } else if (charging_state == CHARGING) {
     fade_in_out_red_button_led();
     return;
   }
