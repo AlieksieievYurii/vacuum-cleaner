@@ -14,6 +14,7 @@ class WifiEndpointsHandler(Thread):
 
     def __init__(self, wifi_communicator: WifiCommunicator, logger: WifiModuleLogger):
         self._wifi_communicator = wifi_communicator
+        self._logger = logger
         self._request_handler = RequestHandlerService(self._wifi_communicator, logger)
         super().__init__(name="WifiConnection", daemon=True)
 
@@ -22,5 +23,7 @@ class WifiEndpointsHandler(Thread):
 
     def run(self) -> None:
         while True:
-            self._wifi_communicator.accept_connection()
+            self._logger.info('Waiting for connection...')
+            client_address = self._wifi_communicator.accept_connection()
+            self._logger.info(f'Accepted connection by {client_address}')
             self._request_handler.start_handling()
