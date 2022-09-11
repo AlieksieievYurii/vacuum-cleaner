@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 from sys import platform
 import re
 import subprocess
@@ -34,8 +35,20 @@ class OperationSystem(ABC):
         """
         pass
 
+    @abstractmethod
+    def play_sound(self, file: Path) -> None:
+        """
+        Abstract function that is supposed to play given media file
+
+        :return: None
+        """
+        pass
+
 
 class WindowsOperationSystem(OperationSystem):
+
+    def play_sound(self, file: Path) -> None:
+        pass
 
     def shutdown(self) -> None:
         print('TEST. Perform shutdown')
@@ -48,6 +61,9 @@ class WindowsOperationSystem(OperationSystem):
 
 
 class LinuxOperationSystem(OperationSystem):
+    def play_sound(self, file: Path) -> None:
+        subprocess.run(['omxplayer', file.as_posix()])
+
     def shutdown(self) -> None:
         subprocess.run(['shutdown', '-r', 'now'], check=True)
 
