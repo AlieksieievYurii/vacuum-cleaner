@@ -54,7 +54,7 @@ class Core(object):
         self._robot.beep(3, 100)
 
         self._wifi_endpoints_handler.start()
-        self._initialization()
+        # self._initialization()
         try:
             self._run_core_loop()
         except Exception as error:
@@ -127,7 +127,7 @@ class Core(object):
 def main():
     os: OperationSystem = get_operation_system()
     ##COM5 /dev/serial0
-    a1_socket = A1Socket("COM5")
+    a1_socket = A1Socket("/dev/serial0")
     robot = Robot(a1_socket)
     wifi_communicator = WifiCommunicator(WIFI_SOCKET_PORT)
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_module_logger)
