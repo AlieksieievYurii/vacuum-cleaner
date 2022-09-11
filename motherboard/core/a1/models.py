@@ -42,6 +42,10 @@ class Response(object):
             raise Exception('The response is successful. So it does not have error code')
         return self._error_code
 
+    def raise_if_failed(self):
+        if not self.is_successful:
+            raise Exception(f'The instruction has failed! ID:{self.id}. Error Code: {self.error_code}')
+
     @classmethod
     def parse(cls, string: str) -> 'Response':
         parsed_groups = cls.__REGEX.match(string)
@@ -74,6 +78,7 @@ class Job(object):
 
     def expect(self) -> Response:
         while True:
+
             if self.response:
                 return self.response
 
@@ -84,8 +89,6 @@ class Job(object):
 
         if self._timeout and millis() - self._time >= self._timeout:
             raise InstructionTimeout(self._request, self._timeout)
-        else:
-            self._time = millis()
 
         for index, resp in enumerate(self._responses):
             if resp.id == self._request.id:

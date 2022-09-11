@@ -79,7 +79,7 @@ class A1Socket(object):
             raise A1Exception('UART socket is not opened!')
         return self._reader_thread.protocol
 
-    def send_instruction(self, instruction_id: int, parameters: str, timeout: Optional[int] = None) -> Job:
+    def send_instruction(self, instruction_id: int, parameters: str, timeout: int = 1000) -> Job:
         return self.__protocol.send_instruction(instruction_id, parameters, timeout)
 
     @property
