@@ -5,6 +5,8 @@ from a1.robot import Robot
 from a1.socket import A1Socket
 from bluetooth.handler import BluetoothEndpointsHandler
 from utils.os import OperationSystem, get_operation_system
+from utils.speetch.voice import Voice
+from utils.speetch.voices import RudeMaximVoice
 from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
 from wifi.endpoints.hello_world import HelloWorldRequest
@@ -18,13 +20,16 @@ WIFI_SOCKET_PORT = 1489
 
 
 class Core(object):
+
     def __init__(self, os: OperationSystem, robot: Robot, wifi_endpoints_handler: WifiEndpointsHandler,
-                 bluetooth_endpoint_handler: BluetoothEndpointsHandler, logger: CoreLogger, **kwargs):
+                 bluetooth_endpoint_handler: BluetoothEndpointsHandler,
+                 voice: Voice, logger: CoreLogger, **kwargs):
         self._debug = bool(kwargs.get('debug'))
         self._os = os
         self._robot = robot
         self._wifi_endpoints_handler = wifi_endpoints_handler
         self._bluetooth_endpoint_handler = bluetooth_endpoint_handler
+        self._voice = voice
         self._logger = logger
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
@@ -72,6 +77,7 @@ class Core(object):
             self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
+        self._voice.say_introduction()
         while True:
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
@@ -120,13 +126,14 @@ class Core(object):
 
 def main():
     os: OperationSystem = get_operation_system()
-    # COM5 /dev/serial0
+    ##COM5 /dev/serial0
     a1_socket = A1Socket("COM5")
     robot = Robot(a1_socket)
     wifi_communicator = WifiCommunicator(WIFI_SOCKET_PORT)
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_module_logger)
     bluetooth_endpoints_handler = BluetoothEndpointsHandler()
-    core = Core(os, robot, wifi_endpoints_handler, bluetooth_endpoints_handler, CoreLogger(True), debug=False)
+    voice: Voice = RudeMaximVoice(os)
+    core = Core(os, robot, wifi_endpoints_handler, bluetooth_endpoints_handler, voice, CoreLogger(True), debug=False)
     core.run()
 
 
