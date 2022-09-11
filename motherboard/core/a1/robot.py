@@ -7,11 +7,26 @@ class Robot(object):
     def __init__(self, socket: A1Socket):
         self._socket = socket
 
-    def core_is_initialized(self, is_successful: bool):
-        return self._socket.send_instruction(0x01, 'S' if is_successful else 'F')
+    def core_is_initialized(self, is_successful: bool) -> None:
+        """
+        Sends the signal to A1 to inform that the core is ready!
 
-    def beep(self, count: int = 3, period: int = 100) -> Job:
-        return self._socket.send_instruction(0x05, f'{count:x};{period:x}')
+        :param is_successful: True if yes
+        :return: None
+        """
+
+        resp = self._socket.send_instruction(0x01, 'S' if is_successful else 'F').expect()
+        resp.raise_if_failed()
+
+    def beep(self, count: int = 3, period: int = 100) -> None:
+        """
+        Sends the signal to A1 to make beeps
+
+        :param count: beep cont
+        :param period: period between beeps
+        :return: None
+        """
+        self._socket.send_instruction(0x05, f'{count:x};{period:x}', timeout=None).expect().raise_if_failed()
 
     def set_vacuum_motor(self, value: int) -> Job:
         return self._socket.send_instruction(0x08, f'{value:x}')

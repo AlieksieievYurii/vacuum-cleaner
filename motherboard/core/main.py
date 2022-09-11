@@ -23,14 +23,14 @@ class Core(object):
 
     def __init__(self, os: OperationSystem, robot: Robot, wifi_endpoints_handler: WifiEndpointsHandler,
                  bluetooth_endpoint_handler: BluetoothEndpointsHandler,
-                 voice: Voice, logger: CoreLogger, **kwargs):
+                 voice: Voice, **kwargs):
         self._debug = bool(kwargs.get('debug'))
         self._os = os
         self._robot = robot
         self._wifi_endpoints_handler = wifi_endpoints_handler
         self._bluetooth_endpoint_handler = bluetooth_endpoint_handler
         self._voice = voice
-        self._logger = logger
+        self._logger = kwargs['logger']
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
         self._wifi_endpoints_handler.register_endpoint(GetRobotSysInfo())
@@ -50,8 +50,8 @@ class Core(object):
                 raise error
             return None
 
-        self._robot.core_is_initialized(True)
-        self._robot.beep(1, 500)
+        self._robot.core_is_initialized(is_successful=True)
+        self._robot.beep(3, 100)
 
         self._wifi_endpoints_handler.start()
         self._initialization()
@@ -133,7 +133,9 @@ def main():
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_module_logger)
     bluetooth_endpoints_handler = BluetoothEndpointsHandler()
     voice: Voice = RudeMaximVoice(os)
-    core = Core(os, robot, wifi_endpoints_handler, bluetooth_endpoints_handler, voice, CoreLogger(True), debug=False)
+    core = Core(os, robot, wifi_endpoints_handler, bluetooth_endpoints_handler, voice,
+                logger=CoreLogger(True),
+                debug=False)
     core.run()
 
 
