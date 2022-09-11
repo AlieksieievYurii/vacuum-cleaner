@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-formatter = logging.Formatter('%(asctime)s%(msecs)03d %(levelname)s %(message)s', '%H:%M:%S:')
+formatter = logging.Formatter('%(asctime)s%(msecs)03d %(name)s %(levelname)s %(message)s', '%H:%M:%S:')
 
 
 def _create_logger(name: str, console: bool, _formatter):
