@@ -38,6 +38,11 @@ class RequestHandlerService(object):
         """
 
         self.is_connection_closed = False
+
+        if self._reader_thread:
+            del self._reader_thread
+
+        self._reader_thread = threading.Thread(target=self._keep_reading_data, name="DataReader")
         self._reader_thread.start()
         self._keep_handling_incoming_requests()
 
@@ -87,6 +92,7 @@ class RequestHandlerService(object):
         while True:
             if self.is_connection_closed:
                 break
+
             if self._queue.qsize():
                 request: Request = self._queue.get()
                 request_handler = self._find_corresponding_handler(request)
