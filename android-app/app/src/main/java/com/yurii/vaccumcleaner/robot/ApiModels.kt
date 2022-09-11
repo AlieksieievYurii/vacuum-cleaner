@@ -24,8 +24,6 @@ data class RobotInputData(
     @Json(name = "lrs") val leftDistanceRange: Int,
     @Json(name = "crs") val centerDistanceRange: Int,
     @Json(name = "rrs") val rightDistanceRange: Int,
-    @Json(name = "ca") val cellAVoltage: Float,
-    @Json(name = "cb") val cellBVoltage: Float,
-    @Json(name = "cc") val cellCVoltage: Float,
-    @Json(name = "cd") val cellDVoltage: Float,
+    @Json(name = "bv") val batteryVoltage: Float,
+    @Json(name = "bc") val batteryCapacity: Int,
 )
