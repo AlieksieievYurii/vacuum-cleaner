@@ -12,6 +12,13 @@
 #define TIMER5_B  TIMER5_COMPB_vect
 #define TIMER5_C  TIMER5_COMPC_vect
 
+#define VALIDATE_PARSING(value, error_code)                                   \
+      {                                                                       \
+        if (value == PARSING_ERROR || value == CANNOT_PARSE_NUMBER) {         \
+          instruction_handler.on_failed(id, error_code);                      \
+          return;                                                             \
+        }                                                                     \
+      }                                                                       \
 
 int32_t find_character_index(char* input, char character, uint8_t limit, const uint32_t from = 0) {
   for (uint32_t i = 0; i <= limit; i++) {

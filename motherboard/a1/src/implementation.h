@@ -22,6 +22,10 @@ Button btn_up(BUT_UP);
 Button btn_ok(BUT_OK);
 Button btn_down(BUT_DOWN);
 
+Button btn_bluetooth(BUT_BL);
+Led btn_bluetooth_led_red(LED_BL_RED);
+Led btn_bluetooth_led_green(LED_BL_GREEN);
+
 Buzzer buzzer(BUZZER, instruction_handler);
 
 Wheel wheel_left(LEFT_FORWARD, LEFT_BACKWARD, LEFT_WHEEL_SPEED_SENSOR, LEFT_WHEEL_DIRECTION_SENSOR, []() {
@@ -49,6 +53,8 @@ DS3231 ds3231_clock;
 DHT dht(TEMP_HUMIDITY_SENSOR);
 
 PowerController power_controller;
+
+uint32_t time_to_turn_off = 0;
 
 void on_has_been_initialized(uint16_t id, char* input) {
   switch (input[0]) {
@@ -88,24 +94,22 @@ void on_led_st(uint16_t id, char* input) {
 }
 
 void on_beep(uint16_t id, char* input) {
-  int8_t index = find_character_index(input, ';', 2);
+  int8_t beep_count = fetch_unsigned_hex_number(input, 0);
+  VALIDATE_PARSING(beep_count, 0x1);
+  int16_t period = fetch_unsigned_hex_number(input, 1);
+  VALIDATE_PARSING(period, 0x2);
 
-  if (index == -1) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
-  char beep_count_array[2] = {0};
-  char period_array[6] = {0};
-  strncpy(beep_count_array, input, index);
-  strncpy(period_array, &input[index + 1], 6);
-  uint8_t bepp_count = strtol(beep_count_array, NULL, 16);
-  uint16_t period = strtol(period_array, NULL, 16);
-  buzzer.beep(id, bepp_count, period);
+  buzzer.beep(id, beep_count, period);
 }
 
 uint8_t get_controll_buttons_state() {
   uint8_t state = 0;
+
+  switch (btn_bluetooth.read_state()) {
+    case CLICK: state |= 0x40; break;
+    case LONG_CLICK: state |= 0xC0; break;
+    case UNPRESSED: break;
+  }
 
   switch (btn_up.read_state()) {
     case CLICK: state |= 0x10; break;
@@ -148,38 +152,24 @@ uint32_t get_rangefinder_value() {
 }
 
 
-uint32_t get_battery_cells_voltages_value() {
-  uint32_t result = 0;
-  result |= power_controller.bin_repr_voltage_cell_a;
-  result |= (uint16_t)power_controller.bin_repr_voltage_cell_b << 8;
-  result |= (uint32_t)power_controller.bin_repr_voltage_cell_c << 16;
-  result |= (uint64_t)power_controller.bin_repr_voltage_cell_d << 24;
+uint16_t get_battery_voltage_value() {
+  uint16_t result = 0;
+  result |= power_controller.battery_voltage_dec_part;
+  result |= (uint16_t)power_controller.battery_voltage_int_part << 8;
 
   return result;
 }
 
 void on_move(uint16_t id, char* input) {
   const int8_t direction = fetch_unsigned_hex_number(input, 0);
-  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(direction, 0x1);
   const int32_t distance_in_sm = fetch_unsigned_hex_number(input, 1);
-  if (distance_in_sm == PARSING_ERROR || distance_in_sm == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(distance_in_sm, 0x1);
   const int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 2);
-  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(speed_sm_per_minute, 0x1);
   const int8_t n_with_break = fetch_unsigned_hex_number(input, 3);
-  if (n_with_break == PARSING_ERROR || n_with_break == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(n_with_break, 0x1);
+
 
   bool forward = false;
   switch (direction) {
@@ -200,32 +190,18 @@ void on_move(uint16_t id, char* input) {
   }
 
   wheels.move(id, distance_in_sm, speed_sm_per_minute, forward, with_break);
-
 }
-//<1 - left, 2 - right>;<degree>;<speed>;<halt mode>
+
 void on_turn(uint16_t id, char* input) {
   const int8_t side = fetch_unsigned_hex_number(input, 0);
-  if (side == PARSING_ERROR || side == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(side, 0x1);
   const int16_t degree = fetch_unsigned_hex_number(input, 1);
-  if (degree == PARSING_ERROR || degree == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(degree, 0x1);
   const int16_t speed = fetch_unsigned_hex_number(input, 2);
-  if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(speed, 0x1);
   const int8_t n_with_break = fetch_unsigned_hex_number(input, 3);
-  if (n_with_break == PARSING_ERROR || n_with_break == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(n_with_break, 0x1);
+
 
   bool with_break;
   switch (n_with_break) {
@@ -248,6 +224,7 @@ void on_turn(uint16_t id, char* input) {
 
 void set_motor_signal(Motor &motor, uint16_t id, char* input) {
   uint8_t value = fetch_unsigned_hex_number(input, 0);
+
   if (value > 100) {
     instruction_handler.on_failed(id, 0x1);
     return;
@@ -339,25 +316,17 @@ void on_cut_off_the_power(uint16_t id, char*) {
 
 void on_rotate(uint16_t id, char* input) {
   const int8_t direction = fetch_unsigned_hex_number(input, 0);
-  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
+  VALIDATE_PARSING(direction, 0x1);
   const int16_t speed = fetch_unsigned_hex_number(input, 1);
-  if (speed == PARSING_ERROR || speed == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x2);
-    return;
-  }
+  VALIDATE_PARSING(speed, 0x2);
 
   switch (direction) {
     case 0x1: wheels.rotate(id, LEFT, speed); break;
-    case 0x2:  wheels.rotate(id, RIGHT, speed); break;
+    case 0x2: wheels.rotate(id, RIGHT, speed); break;
     default:
       instruction_handler.on_failed(id, 0x3);
       return;
   }
-  
 }
 
 void on_set_error_state_in_power_controller(uint16_t id, char* input) {
@@ -374,11 +343,9 @@ void on_set_error_state_in_power_controller(uint16_t id, char* input) {
 
 void on_walk(uint16_t id, char* input) {
   int8_t direction = fetch_unsigned_hex_number(input, 0);
-
-  if (direction == PARSING_ERROR || direction == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
+  VALIDATE_PARSING(direction, 0x1);
+  int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 1);
+  VALIDATE_PARSING(speed_sm_per_minute, 0x1);
 
   bool forward = false;
   switch (direction) {
@@ -389,15 +356,7 @@ void on_walk(uint16_t id, char* input) {
       return;
   }
 
-  int32_t speed_sm_per_minute = fetch_unsigned_hex_number(input, 1);
-
-  if (speed_sm_per_minute == PARSING_ERROR || speed_sm_per_minute == CANNOT_PARSE_NUMBER) {
-    instruction_handler.on_failed(id, 0x1);
-    return;
-  }
-
   wheels.walk(id, speed_sm_per_minute, forward);
-
 }
 
 uint8_t get_power_controller_state() {
@@ -422,7 +381,27 @@ uint8_t get_cliffs_status() {
   return res;
 }
 
+void on_set_timer_to_turn_off(uint16_t id, char* input) {
+  int8_t seconds = fetch_unsigned_hex_number(input, 0);
+  VALIDATE_PARSING(seconds, 0x1);
+
+  // If PC state is not SHUTTING_DOWN then send error. Because We can turn off only if it is shutting down
+  if (power_controller.power_state != 0x3) { 
+    instruction_handler.on_failed(id, 0x2);
+    return;
+  }
+  
+  time_to_turn_off = millis() + seconds*1000;
+  
+  instruction_handler.on_finished(id);
+}
+
 void propagandate_tick_signal() {
+  if (time_to_turn_off > 0 && millis() >= time_to_turn_off) {
+   power_controller.set_state_TURNED_OFF();
+  }
+  
+  
   led_wifi.tick();
   led_error.tick();
   led_status.tick();
@@ -430,6 +409,7 @@ void propagandate_tick_signal() {
   btn_up.tick();
   btn_ok.tick();
   btn_down.tick();
+  btn_bluetooth.tick();
 
   buzzer.tick();
 

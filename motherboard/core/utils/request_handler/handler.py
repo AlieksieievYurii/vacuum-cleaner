@@ -16,6 +16,7 @@ class RequestHandlerService(object):
         self._request_handlers: List[RequestHandler] = []
         self._queue = queue.Queue()
         self._logger = logger
+        self._reader_thread = threading.Thread(target=self._keep_reading_data, name="DataReader")
         self.is_connection_closed = False
 
     def register(self, request_handler: RequestHandler):
@@ -28,15 +29,22 @@ class RequestHandlerService(object):
         # TODO Handle the case when trying to register with already append endpoint
         self._request_handlers.append(request_handler)
 
-    def start(self) -> None:
+    def start_handling(self) -> None:
         """
-        Starts listening for incoming requests as well as handling them in a separated threads
+        Endless Blocking function that handles incoming request in the thread of the caller.
+        Accepting incoming request are done in separated thread. If connection is lost/closed, the function is released.
 
         :return: None
         """
+
         self.is_connection_closed = False
-        threading.Thread(target=self._keep_handling_incoming_requests, name="RequestHandler").start()
-        threading.Thread(target=self._keep_reading_data, name="DataReader").start()
+
+        if self._reader_thread:
+            del self._reader_thread
+
+        self._reader_thread = threading.Thread(target=self._keep_reading_data, name="DataReader")
+        self._reader_thread.start()
+        self._keep_handling_incoming_requests()
 
     def _keep_reading_data(self) -> None:
         """
@@ -84,6 +92,7 @@ class RequestHandlerService(object):
         while True:
             if self.is_connection_closed:
                 break
+
             if self._queue.qsize():
                 request: Request = self._queue.get()
                 request_handler = self._find_corresponding_handler(request)

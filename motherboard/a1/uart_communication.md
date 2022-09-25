@@ -36,6 +36,7 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x11 | `T` - sets error state for Power Controller; `F` - resets the error state | `0x1` - wrong parameter | Sets error state in Power Controller |
 | 0x12 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the main brush motor |
 | 0x13 | `<direction(1 byte of hex) where 0x01 - forward, 0x02 - backward>;<speed(4 bytes of hex) cm per minute>` | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag | Move the robot endless |
+| 0xFF | `<seconds(1 byte of hex)>` | `0x01` -  Wrong value. `0x02` - can not perform turing off while it is not shutting down | Sets timer in seconds when to cut off the power. Can be set only when the current status is Shutting Down |
 
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
@@ -51,9 +52,9 @@ A1 reads the states of the sensors (cliff ends, buttons, etc.) and sends them ou
 # Output table
 |  Id  |              Value            |                     Description                    |
 |------|:-----------------------------:|:--------------------------------------------------:|
-| 0x01 | Bits `**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Up, Second - OK, third - Down. | Reads click events of control panel(Up, Ok, Down buttons) |
+| 0x01 | Bits `**^**^**^**` where 00 - unpressed, 01 - click, 11 - long click. First pare - Bluetooth button, Second - Up, Third - OK, Fourth - Down. | Reads click events of control panel(Bluetooth,Up, Ok, Down buttons) |
 | 0x02 | 4 bits where 1st - Right End, 2nd - Left End, 3rd - Lid End, 4th - Dust Box End. __Counting starts from the right__ | The state of ends such as right and left obstacle ends, lid end (checks if the cap is closed) and dust box end (check if the dust box is installed) |
 | 0x03 | 3 bytes where 1st byte represents - Left Rangefinder(0..250 mm), 2nd - Center Rangefinder, 3rd - Right Rangefinder | Reads the distance of Right, Left and Center rangefinders. The range is 0..250 millimeters |
 | 0x04 | 6 bits where(one if breakage): 1 - back right, 2 - back center, 3 - back left, 4 - front right, 5 - front center, 6 - front left | Reads cliff sensors. If the signal is high - then there is a breakage |
 | 0x05 | 6 bits where the first three represents the robot state, next 2 - charging state and next 3 charging work state. Bits counting starts from the right to the left | Powering state, charging state and charging work state. Refer to Power Controller README.md |
-| 0x06 | 4 bytes where each byte represents voltage of particular battery cell. Counting from right to the left: 1 - cell A, 2 - cell B, 3 - cell C, 4 - cell D | Voltages of battery cells |
+| 0x06 | 2 bytes representing battery voltage. The first byte(from right to left) - decimal part, second byte - integer part | Voltages of the battery |

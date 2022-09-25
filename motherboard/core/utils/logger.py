@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-formatter = logging.Formatter('%(asctime)s%(msecs)03d %(levelname)s %(message)s', '%H:%M:%S:')
+formatter = logging.Formatter('%(asctime)s%(msecs)03d %(name)s %(levelname)s %(message)s', '%H:%M:%S:')
 
 
 def _create_logger(name: str, console: bool, _formatter):
@@ -20,6 +20,28 @@ def _create_logger(name: str, console: bool, _formatter):
         handler.setFormatter(formatter)
         logger.addHandler(handler)
     return logger
+
+
+class CoreLogger(object):
+    def __init__(self, console=False):
+        self._logger = _create_logger('core', console, formatter)
+
+    def debug(self, message: str) -> None:
+        self._logger.debug(message)
+
+    def error(self, message: str) -> None:
+        self._logger.error(message)
+
+    def info(self, message: str) -> None:
+        self._logger.info(message)
+
+    def critical(self, message: str) -> None:
+        self._logger.critical(message)
+
+    def print_entry_point(self) -> None:
+        self.info("======================")
+        self.info("=== Start the Core ===")
+        self.info("======================")
 
 
 class WifiModuleLogger(object):
@@ -53,6 +75,9 @@ class A1Logger(object):
         with_stop = f'with_stop:true' if with_stop else ''
 
         self._robot_movement_logger.info(f'TURN: {side_speed_angle};{with_stop};')
+
+    def info(self, message: str) -> None:
+        self._a1_logger.info(message)
 
     def debug(self, message: str) -> None:
         self._a1_logger.debug(message)

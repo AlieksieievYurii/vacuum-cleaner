@@ -19,13 +19,8 @@ The response consist of 7 bytes where:
 * 1 byte -> represents id of power state. See [Powet States Table](#power_states)
 * 2 byte -> represents id of charging state. See [Charging States Table](#charging_states)
 * 3 byte ->  represents id of charging work state(if the charging is working properly). See [Charging Work States Table](#charging_work_states)
-
-_The following 4 bytes represent voltages of the battery's cells. The value is integer where first 5 bytes are decimal part, and the next 3 bytes are integer part.
-The maximum value is 7.10._
-* 4 byte - cell A
-* 5 byte - cell B
-* 6 byte - cell C
-* 7 byte - cell D
+* 4 byte -> represents integer part of the battery voltage
+* 5 byte -> represents decimal part of the battery voltage
 
 ## <a name="power_states">Power States</a>
 |    ID    |   Description    |

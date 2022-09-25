@@ -7,11 +7,26 @@ class Robot(object):
     def __init__(self, socket: A1Socket):
         self._socket = socket
 
-    def core_is_initialized(self, is_successful: bool):
-        return self._socket.send_instruction(0x01, 'S' if is_successful else 'F')
+    def core_is_initialized(self, is_successful: bool) -> None:
+        """
+        Sends the signal to A1 to inform that the core is ready!
 
-    def beep(self, count: int = 3, period: int = 100) -> Job:
-        return self._socket.send_instruction(0x05, f'{count:x};{period:x}')
+        :param is_successful: True if yes
+        :return: None
+        """
+
+        resp = self._socket.send_instruction(0x01, 'S' if is_successful else 'F').expect()
+        resp.raise_if_failed()
+
+    def beep(self, count: int = 3, period: int = 100) -> None:
+        """
+        Sends the signal to A1 to make beeps
+
+        :param count: beep cont
+        :param period: period between beeps
+        :return: None
+        """
+        self._socket.send_instruction(0x05, f'{count:x};{period:x}', timeout=None).expect().raise_if_failed()
 
     def set_vacuum_motor(self, value: int) -> Job:
         return self._socket.send_instruction(0x08, f'{value:x}')
@@ -52,6 +67,17 @@ class Robot(object):
     def stop_movement(self, with_break: bool) -> Job:
         return self.move_forward(0, 0, with_break)
 
+    def get_date_time(self) -> Job:
+        return self._socket.send_instruction(0x0C, 'Y-d-m H:i:s')
+
+    def set_date_time(self, datetime) -> Job:
+        parameters = f'{datetime.year:x};{datetime.month:x};{datetime.day:x};' \
+                     f'{datetime.hour:x};{datetime.minute:x};{datetime.second:x}'
+        return self._socket.send_instruction(0x0D, parameters)
+
+    def set_timer_to_cut_off_power(self, seconds: int) -> Job:
+        return self._socket.send_instruction(0xFF, f'{seconds:x}')
+
     def _rotate(self, left: bool, speed: int) -> Job:
         parameters = f'{"1" if left else "2"};{speed:x}'
         return self._socket.send_instruction(0x14, parameters)
@@ -73,3 +99,6 @@ class Robot(object):
     @property
     def data(self) -> A1Data:
         return self._socket.data
+
+    def connect(self) -> None:
+        self._socket.open()
