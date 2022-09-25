@@ -36,6 +36,7 @@ Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
 | 0x11 | `T` - sets error state for Power Controller; `F` - resets the error state | `0x1` - wrong parameter | Sets error state in Power Controller |
 | 0x12 | `<speed(2 bytes of hex)>` | `0x01` - Wrong speed value, must in range 0..0x64 | Sets speed for the main brush motor |
 | 0x13 | `<direction(1 byte of hex) where 0x01 - forward, 0x02 - backward>;<speed(4 bytes of hex) cm per minute>` | `0x01` - Cannot parse the command, `0x02` - Wrong direction flag | Move the robot endless |
+| 0xFF | `<seconds(1 byte of hex)>` | `0x01` -  Wrong value. `0x02` - can not perform turing off while it is not shutting down | Sets timer in seconds when to cut off the power. Can be set only when the current status is Shutting Down |
 
 # Instructions table(Demandable)
 | Instruction ID  |      parameters      |      Response      |    Error Codes    |    Description      |
