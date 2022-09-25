@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.yurii.vaccumcleaner.MyApplication
 import com.yurii.vaccumcleaner.Preferences
 import com.yurii.vaccumcleaner.robot.RobotConnection
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
@@ -44,7 +45,7 @@ class InitialFragmentViewModel(
             if (savedIp != null) {
                 if (robotSocketDiscovery.tryConnect(savedIp)) {
                     delay(2000)
-                    RobotConnection.makeConnection(savedIp, 1488)
+                    RobotConnection.makeConnection(savedIp, MyApplication.ROBOT_SOCKET_PORT)
                     _state.value = State.Connected(savedIp)
                     delay(3000)
                     _event.emit(Event.NavigateToControlPanel)
@@ -63,7 +64,7 @@ class InitialFragmentViewModel(
             if (r.isEmpty())
                 _state.value = State.NotFound(wasIpSaved = false)
             else {
-                RobotConnection.makeConnection(r.first(), 1488)
+                RobotConnection.makeConnection(r.first(), 1489)
                 Preferences.saveRobotIpAddress(context, r.first())
                 _state.value = State.Connected(r.first())
             }

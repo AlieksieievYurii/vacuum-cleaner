@@ -76,6 +76,9 @@ class A1Logger(object):
 
         self._robot_movement_logger.info(f'TURN: {side_speed_angle};{with_stop};')
 
+    def info(self, message: str) -> None:
+        self._a1_logger.info(message)
+
     def debug(self, message: str) -> None:
         self._a1_logger.debug(message)
 

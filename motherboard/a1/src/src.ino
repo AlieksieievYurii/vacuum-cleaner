@@ -3,7 +3,7 @@
 #include "instruction-handler.h"
 #include "utils.h"
 
-InstructionHandler instruction_handler(Serial);
+InstructionHandler instruction_handler(Serial3);
 
 #include "implementation.h"
 

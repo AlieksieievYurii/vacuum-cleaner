@@ -3,6 +3,7 @@ package com.yurii.vaccumcleaner.robot
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.text.format.Formatter
+import com.yurii.vaccumcleaner.MyApplication
 import com.yurii.vaccumcleaner.utils.reverseBytes
 import kotlinx.coroutines.*
 import timber.log.Timber
@@ -60,7 +61,7 @@ class RobotSocketDiscovery(context: Context) {
     suspend fun tryConnect(ip: String) = withContext(Dispatchers.IO) {
         val soc = Socket()
         try {
-            soc.connect(InetSocketAddress(ip, 1488), 1000)
+            soc.connect(InetSocketAddress(ip, MyApplication.ROBOT_SOCKET_PORT), 1000)
             soc.close()
             return@withContext true
         } catch (timeout: SocketTimeoutException) {

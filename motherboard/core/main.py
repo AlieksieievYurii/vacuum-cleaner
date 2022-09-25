@@ -77,7 +77,7 @@ class Core(object):
             self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
-        self._voice.say_introduction()
+        #self._voice.say_introduction()
         while True:
             if self._is_shutting_down_triggered():
                 self._shut_down_core()

@@ -131,7 +131,7 @@ void handle_chargering(void) {
   float charging_voltage = CHARGING_VOLTAGE;
 
   //If the charding voltage is less than 1 -> the charging power is unplugged
-  if (charging_voltage < 1) {
+  if (charging_voltage < 12) {
     charging_state = NOT_CHARGING;
     charging_work_status = OK;
     return;
