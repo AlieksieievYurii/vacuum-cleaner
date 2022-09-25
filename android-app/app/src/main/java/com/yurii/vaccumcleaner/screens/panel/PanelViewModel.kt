@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 import java.lang.IllegalStateException
 
@@ -19,8 +20,28 @@ class PanelViewModel : ViewModel() {
 
     fun openManualControlFragment() {
         viewModelScope.launch {
-            _event.emit(Event.NavigateToControlFragment)
+           // _event.emit(Event.NavigateToControlFragment)
         }
+    }
+
+    fun openCleaningHistory() {
+
+    }
+
+    fun openPidSettings() {
+
+    }
+
+    fun openWifiSettings() {
+
+    }
+
+    fun openCleaningAlgoSettings() {
+
+    }
+
+    fun startCleaning() {
+
     }
 
     @Suppress("UNCHECKED_CAST")
