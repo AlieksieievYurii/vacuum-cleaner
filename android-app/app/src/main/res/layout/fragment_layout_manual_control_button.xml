@@ -17,7 +17,6 @@
         tools:ignore="SpeakableTextPresentCheck">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/animationView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleX="1.5"
