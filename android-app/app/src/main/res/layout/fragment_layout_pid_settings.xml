@@ -27,5 +27,15 @@
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/settings_sliders" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_pid_settings"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:layout_marginBottom="3dp"
+            android:layout_gravity="bottom"/>
+
     </androidx.cardview.widget.CardView>
 </layout>

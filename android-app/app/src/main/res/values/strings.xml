@@ -31,4 +31,9 @@
     <string name="template_number_with_percentage">%d %%</string>
     <string name="label_range_sensors">Range Radar: L(%d) C(%d) R(%d)</string>
     <string name="label_bumper_hit">Bumper hit: %s</string>
+    <string name="label_algorithm">Algorithm</string>
+    <string name="label_pid_settings">PID Settings</string>
+    <string name="label_wifi">WIFI</string>
+    <string name="label_history">History</string>
+    <string name="label_manual">Manual</string>
 </resources>
