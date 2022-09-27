@@ -13,7 +13,7 @@ data class MovementRequestModel(val direction: String, val speed: Int)
 @JsonClass(generateAdapter = true)
 data class StopMovementRequestModel(@Json(name = "with_break") val withBreak: Boolean)
 
-class Robot(private val requestHandler: RequestHandler) {
+class RobotWifiImplementation(private val requestHandler: RequestHandler) {
 
     suspend fun getSysInfo(): GeneralSystemInfo {
         return requestHandler.send("/get-sys-info", null, GeneralSystemInfo::class.java)!!
