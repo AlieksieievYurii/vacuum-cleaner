@@ -10,10 +10,9 @@ import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentPanelBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
-import timber.log.Timber
 
 class PanelFragment : Fragment(R.layout.fragment_panel) {
-    private val viewModel: PanelViewModel by viewModels { Injector.providePanelViewModel(requireActivity()) }
+    private val viewModel: PanelViewModel by viewModels { Injector.providePanelViewModel() }
     private val binding: FragmentPanelBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

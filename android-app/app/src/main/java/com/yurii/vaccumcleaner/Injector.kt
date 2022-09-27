@@ -2,6 +2,7 @@ package com.yurii.vaccumcleaner
 
 import android.app.Activity
 import com.yurii.vaccumcleaner.robot.RobotConnection
+import com.yurii.vaccumcleaner.robot.RobotMockUpImpl
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import com.yurii.vaccumcleaner.screens.binder.BinderViewModel
 import com.yurii.vaccumcleaner.screens.control.ManualControlViewModel
@@ -22,8 +23,9 @@ object Injector {
             robotSocketDiscovery)
     }
 
-    fun providePanelViewModel(activity: Activity): PanelViewModel.Factory {
-        return PanelViewModel.Factory()
+    fun providePanelViewModel(): PanelViewModel.Factory {
+        //return PanelViewModel.Factory(RobotConnection.getRobotAPI())
+        return PanelViewModel.Factory(RobotMockUpImpl())
     }
 
     fun provideManualControlViewModel(): ManualControlViewModel.Factory {
