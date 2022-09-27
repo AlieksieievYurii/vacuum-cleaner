@@ -28,6 +28,9 @@ class PanelFragment : Fragment(R.layout.fragment_panel) {
             }
         }
 
+        viewModel.lidIsOpened.observeOnLifecycle(viewLifecycleOwner) { isLidOpened -> binding.headerWidget.setLidStatus(isLidOpened) }
+        viewModel.dustBoxIsOut.observeOnLifecycle(viewLifecycleOwner) { isDustBoxOut -> binding.headerWidget.setDustBoxStatus(isDustBoxOut) }
+
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
                 PanelViewModel.Event.NavigateToControlFragment -> findNavController().navigate(R.id.action_panelFragment_to_manualControlFragment)

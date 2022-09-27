@@ -4,10 +4,10 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentLayoutHeaderWidgetBinding
-import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
 import com.yurii.vaccumcleaner.utils.ui.BatteryView
 import java.lang.IllegalStateException
 
@@ -18,7 +18,6 @@ class HeaderWidget(context: Context, attrs: AttributeSet) : FrameLayout(context,
     )
 
     init {
-        //inflate(context, R.layout.fragment_layout_header_widget, this)
         isClickable = true
         isFocusable = true
     }
@@ -26,14 +25,14 @@ class HeaderWidget(context: Context, attrs: AttributeSet) : FrameLayout(context,
     fun setBatteryIsCharging() {
         binding.apply {
             battery.state = BatteryView.State.CHARGING
-            batteryInfo.text = "Charging..."
+            batteryInfo.text = resources.getString(R.string.label_charging)
         }
     }
 
     fun setBatteryIsCharged() {
         binding.apply {
             battery.state = BatteryView.State.CHARGED
-            batteryInfo.text = "Charged"
+            batteryInfo.text = resources.getString(R.string.label_charged)
         }
     }
 
@@ -52,5 +51,13 @@ class HeaderWidget(context: Context, attrs: AttributeSet) : FrameLayout(context,
 
             batteryInfo.text = resources.getString(R.string.template_battery_info, capacity, voltage)
         }
+    }
+
+    fun setLidStatus(isLidOpen: Boolean) {
+        binding.layoutLidOpened.isVisible = isLidOpen
+    }
+
+    fun setDustBoxStatus(isDustBoxOut: Boolean) {
+        binding.layoutBoxOut.isVisible = isDustBoxOut
     }
 }

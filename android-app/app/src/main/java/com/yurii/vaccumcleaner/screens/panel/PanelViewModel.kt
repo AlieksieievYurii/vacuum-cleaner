@@ -28,6 +28,12 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
     private val _batteryState: MutableStateFlow<BatteryState> = MutableStateFlow(BatteryState.Working(100, 16.7f))
     val batteryState = _batteryState.asStateFlow()
 
+    private val _lidIsOpen: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val lidIsOpened = _lidIsOpen.asStateFlow()
+
+    private val _dustBoxIsOut: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val dustBoxIsOut = _dustBoxIsOut.asStateFlow()
+
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
     val event = _event.asSharedFlow()
 
@@ -64,13 +70,17 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
     private fun startReadingRobotState() = viewModelScope.launch {
         while (true) {
             val robotData = robot.getRobotInputData()
-            Timber.e(robotData.chargingState.toString())
+
             _batteryState.value = when (robotData.chargingState) {
                 0 -> BatteryState.Working(robotData.batteryCapacity, robotData.batteryVoltage)
                 1 -> BatteryState.Charging
                 2 -> BatteryState.Charged
                 else -> throw IllegalStateException("Unhandled battery state ID '${robotData.chargingState}'")
             }
+
+            _lidIsOpen.value = !robotData.isLidClosed
+            _dustBoxIsOut.value = !robotData.isDustBoxInserted
+
             delay(1000)
         }
     }
