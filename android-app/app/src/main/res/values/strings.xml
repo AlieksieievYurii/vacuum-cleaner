@@ -36,4 +36,6 @@
     <string name="label_wifi">WIFI</string>
     <string name="label_history">History</string>
     <string name="label_manual">Manual</string>
+    <string name="label_lid_opened">Lid opened</string>
+    <string name="label_box_out">Box out</string>
 </resources>
