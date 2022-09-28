@@ -1,6 +1,6 @@
 package com.yurii.vaccumcleaner
 
-import android.app.Activity
+import android.content.Context
 import com.yurii.vaccumcleaner.robot.RobotConnection
 import com.yurii.vaccumcleaner.robot.RobotMockUpImpl
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
@@ -16,11 +16,11 @@ object Injector {
         return BinderViewModel.Factory()
     }
 
-    fun provideInitialFragmentViewModel(activity: Activity): InitialFragmentViewModel.Factory {
-        val robotSocketDiscovery = RobotSocketDiscovery(activity)
+    fun provideInitialFragmentViewModel(context: Context): InitialFragmentViewModel.Factory {
         return InitialFragmentViewModel.Factory(
-            activity,
-            robotSocketDiscovery)
+            Preferences(context),
+            RobotSocketDiscovery(context)
+        )
     }
 
     fun providePanelViewModel(): PanelViewModel.Factory {
