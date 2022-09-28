@@ -35,6 +35,7 @@ class PanelFragment : Fragment(R.layout.fragment_panel) {
             when (it) {
                 PanelViewModel.Event.NavigateToControlFragment -> findNavController().navigate(R.id.action_panelFragment_to_manualControlFragment)
                 is PanelViewModel.Event.ShowError -> showError(binding.root, getString(R.string.label_error_accurred), it.exception)
+                PanelViewModel.Event.NavigateToPidSettingsFragment -> findNavController().navigate(R.id.action_panelFragment_to_pidSettingsFragment)
             }
         }
     }

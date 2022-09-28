@@ -23,6 +23,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     sealed class Event {
         object NavigateToControlFragment : Event()
+        object NavigateToPidSettingsFragment : Event()
         data class ShowError(val exception: Throwable) : Event()
     }
 
@@ -61,9 +62,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     }
 
-    fun openPidSettings() {
-
-    }
+    fun openPidSettings() = sendEvent(Event.NavigateToPidSettingsFragment)
 
     fun openWifiSettings() {
 
@@ -75,6 +74,12 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     fun startCleaning() {
 
+    }
+
+    private fun sendEvent(event: Event) {
+        viewModelScope.launch {
+            _event.emit(event)
+        }
     }
 
     private fun startReadingRobotState() = netWorkScope.launch {
@@ -99,6 +104,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
         super.onCleared()
         viewModelJob.cancel()
     }
+
     @Suppress("UNCHECKED_CAST")
     class Factory(private val robot: Robot) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
