@@ -42,4 +42,5 @@
     <string name="label_charging">Charging…</string>
     <string name="label_charged">Charged</string>
     <string name="label_open">Open</string>
+    <string name="label_error_accurred">Error accurred</string>
 </resources>

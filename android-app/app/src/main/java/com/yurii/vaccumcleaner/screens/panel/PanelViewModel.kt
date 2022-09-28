@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.Robot
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 
 import java.lang.IllegalStateException
 
@@ -23,6 +23,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     sealed class Event {
         object NavigateToControlFragment : Event()
+        data class ShowError(val exception: Throwable) : Event()
     }
 
     private val _batteryState: MutableStateFlow<BatteryState> = MutableStateFlow(BatteryState.Working(100, 16.7f))
@@ -36,6 +37,15 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
     val event = _event.asSharedFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        viewModelScope.launch {
+            _event.emit(Event.ShowError(exception))
+        }
+    }
+
+    private val viewModelJob = SupervisorJob()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + errorHandler)
 
     init {
         startReadingRobotState()
@@ -67,7 +77,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     }
 
-    private fun startReadingRobotState() = viewModelScope.launch {
+    private fun startReadingRobotState() = netWorkScope.launch {
         while (true) {
             val robotData = robot.getRobotInputData()
 
@@ -85,6 +95,10 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        viewModelJob.cancel()
+    }
     @Suppress("UNCHECKED_CAST")
     class Factory(private val robot: Robot) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
