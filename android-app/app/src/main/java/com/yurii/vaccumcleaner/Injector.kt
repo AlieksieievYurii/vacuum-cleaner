@@ -9,6 +9,7 @@ import com.yurii.vaccumcleaner.screens.control.ManualControlViewModel
 
 import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
+import com.yurii.vaccumcleaner.screens.pid.PidSettingsViewModel
 
 object Injector {
 
@@ -26,6 +27,10 @@ object Injector {
     fun providePanelViewModel(): PanelViewModel.Factory {
         //return PanelViewModel.Factory(RobotConnection.getRobotAPI())
         return PanelViewModel.Factory(RobotMockUpImpl())
+    }
+
+    fun providePidSettingsViewModel(): PidSettingsViewModel.Factory {
+        return PidSettingsViewModel.Factory(RobotMockUpImpl())
     }
 
     fun provideManualControlViewModel(): ManualControlViewModel.Factory {
