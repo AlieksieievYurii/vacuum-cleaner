@@ -41,4 +41,5 @@
     <string name="template_battery_info">%d %% (%.1f V)</string>
     <string name="label_charging">Charging…</string>
     <string name="label_charged">Charged</string>
+    <string name="label_open">Open</string>
 </resources>
