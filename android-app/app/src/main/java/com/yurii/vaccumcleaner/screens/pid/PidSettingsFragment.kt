@@ -19,5 +19,7 @@ class PidSettingsFragment : Fragment(R.layout.fragment_pid_settings) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
     }
 }
