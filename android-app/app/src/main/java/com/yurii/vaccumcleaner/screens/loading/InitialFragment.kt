@@ -15,7 +15,7 @@ import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 
 
 class InitialFragment : Fragment(R.layout.fragment_initial) {
-    private val viewModel: InitialFragmentViewModel by viewModels { Injector.provideInitialFragmentViewModel(requireActivity()) }
+    private val viewModel: InitialFragmentViewModel by viewModels { Injector.provideInitialFragmentViewModel(requireContext()) }
     private val viewBinding: FragmentInitialBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
