@@ -1,5 +1,6 @@
 package com.yurii.vaccumcleaner.robot
 
+import kotlinx.coroutines.delay
 import timber.log.Timber
 
 class RobotMockUpImpl : Robot {
@@ -52,5 +53,15 @@ class RobotMockUpImpl : Robot {
             batteryCapacity = 100,
             chargingState = 0
         )
+    }
+
+    override suspend fun getCurrentPidSettings(): PidSettings {
+        delay(1000)
+        return PidSettings(0.1f, 0.03f, 0.0f)
+    }
+
+    override suspend fun setPidSettings(pidSettings: PidSettings) {
+        delay(1000)
+        Timber.i("Setting up PID: $pidSettings")
     }
 }

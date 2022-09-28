@@ -11,4 +11,6 @@ interface Robot {
     suspend fun setLeftBrushMotor(value: Int)
     suspend fun setRightBrushMotor(value: Int)
     suspend fun getRobotInputData(): RobotInputData
+    suspend fun getCurrentPidSettings(): PidSettings
+    suspend fun setPidSettings(pidSettings: PidSettings)
 }
