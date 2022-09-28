@@ -1,13 +1,15 @@
 package com.yurii.vaccumcleaner
 
-import android.app.Activity
+import android.content.Context
 import com.yurii.vaccumcleaner.robot.RobotConnection
+import com.yurii.vaccumcleaner.robot.RobotMockUpImpl
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import com.yurii.vaccumcleaner.screens.binder.BinderViewModel
 import com.yurii.vaccumcleaner.screens.control.ManualControlViewModel
 
 import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
+import com.yurii.vaccumcleaner.screens.pid.PidSettingsViewModel
 
 object Injector {
 
@@ -15,15 +17,20 @@ object Injector {
         return BinderViewModel.Factory()
     }
 
-    fun provideInitialFragmentViewModel(activity: Activity): InitialFragmentViewModel.Factory {
-        val robotSocketDiscovery = RobotSocketDiscovery(activity)
+    fun provideInitialFragmentViewModel(context: Context): InitialFragmentViewModel.Factory {
         return InitialFragmentViewModel.Factory(
-            activity,
-            robotSocketDiscovery)
+            Preferences(context),
+            RobotSocketDiscovery(context)
+        )
     }
 
-    fun providePanelViewModel(activity: Activity): PanelViewModel.Factory {
-        return PanelViewModel.Factory()
+    fun providePanelViewModel(): PanelViewModel.Factory {
+        //return PanelViewModel.Factory(RobotConnection.getRobotAPI())
+        return PanelViewModel.Factory(RobotMockUpImpl())
+    }
+
+    fun providePidSettingsViewModel(): PidSettingsViewModel.Factory {
+        return PidSettingsViewModel.Factory(RobotMockUpImpl())
     }
 
     fun provideManualControlViewModel(): ManualControlViewModel.Factory {

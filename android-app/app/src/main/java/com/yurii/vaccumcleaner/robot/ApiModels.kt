@@ -26,4 +26,12 @@ data class RobotInputData(
     @Json(name = "rrs") val rightDistanceRange: Int,
     @Json(name = "bv") val batteryVoltage: Float,
     @Json(name = "bc") val batteryCapacity: Int,
+    @Json(name = "cs") val chargingState: Int, // NO CHARGING = 0, CHARGING = 1, CHARGED = 2
+)
+
+@JsonClass(generateAdapter = true)
+data class PidSettings(
+    val proportional: Float,
+    val integral: Float,
+    val derivative: Float
 )

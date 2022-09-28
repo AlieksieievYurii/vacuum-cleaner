@@ -14,100 +14,85 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView2"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="24dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
+        <com.yurii.vaccumcleaner.screens.panel.widgets.HeaderWidget
+            android:id="@+id/headerWidget"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/right_vertical_guideline"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.yurii.vaccumcleaner.screens.panel.widgets.ManualControlButton
+            android:id="@+id/manual_control_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:onClick="@{() -> viewModel.openManualControlFragment()}"
-            app:cardBackgroundColor="@color/teal_200"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="@+id/cardView"
-            app:layout_constraintStart_toStartOf="@+id/cardView"
-            app:layout_constraintTop_toBottomOf="@+id/cardView">
+            app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/headerWidget" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.13999999"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/controller" />
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="300dp"
-            android:layout_height="100dp"
+        <com.yurii.vaccumcleaner.screens.panel.widgets.HistoryButton
+            android:id="@+id/history_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/teal_700"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:onClick="@{() -> viewModel.openCleaningHistory()}"
+            app:layout_constraintEnd_toStartOf="@+id/pidSettingsButton"
+            app:layout_constraintStart_toEndOf="@+id/manual_control_button"
+            app:layout_constraintTop_toBottomOf="@+id/headerWidget" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationView2"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:scaleX="1.5"
-                android:scaleY="1.5"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.13999999"
-                app:lottie_autoPlay="false"
-                app:lottie_loop="false"
-                app:lottie_progress="100"
-                app:lottie_rawRes="@raw/charging_battery" />
-        </androidx.cardview.widget.CardView>
-
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+        <com.yurii.vaccumcleaner.screens.panel.widgets.PidSettingsButton
+            android:id="@+id/pidSettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/teal_200"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="@+id/cardView2"
-            app:layout_constraintStart_toStartOf="@+id/cardView2"
-            app:layout_constraintTop_toBottomOf="@+id/cardView2">
+            android:onClick="@{() -> viewModel.openPidSettings()}"
+            app:layout_constraintEnd_toStartOf="@+id/right_vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/headerWidget" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationView4"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.13999999"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/history" />
+                <com.yurii.vaccumcleaner.screens.panel.widgets.WifiSettingsButton
+                    android:id="@+id/wifiSettingsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:onClick="@{() -> viewModel.openWifiSettings()}"
+                    app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/manual_control_button" />
 
-        </androidx.cardview.widget.CardView>
+                <com.yurii.vaccumcleaner.screens.panel.widgets.AlgoSettingsButton
+                    android:id="@+id/algoSettingsButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:onClick="@{() -> viewModel.openCleaningAlgoSettings()}"
+                    app:layout_constraintEnd_toEndOf="@+id/history_button"
+                    app:layout_constraintStart_toStartOf="@+id/history_button"
+                    app:layout_constraintTop_toBottomOf="@+id/history_button" />
+
+                <com.yurii.vaccumcleaner.screens.panel.widgets.StartButton
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:onClick="@{() -> viewModel.startCleaning()}"
+                    app:layout_constraintEnd_toStartOf="@+id/right_vertical_guideline"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
+                    app:layout_constraintTop_toBottomOf="@+id/algoSettingsButton" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/left_vertical_guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="16dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/right_vertical_guideline"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="16dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
