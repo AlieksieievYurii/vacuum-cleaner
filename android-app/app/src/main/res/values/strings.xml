@@ -42,7 +42,7 @@
     <string name="label_charging">Charging…</string>
     <string name="label_charged">Charged</string>
     <string name="label_open">Open</string>
-    <string name="label_error_accurred">Error accurred</string>
+    <string name="label_error_occurred">Error occurred</string>
     <string name="label_can_not_find_robot">Can\'t find the robot</string>
     <string name="label_discovering">Discovering…</string>
     <string name="label_connected_with_ip">Connected. IP: %s</string>

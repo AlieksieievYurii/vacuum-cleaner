@@ -8,7 +8,9 @@ import androidx.fragment.app.viewModels
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentPidSettingsBinding
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
+import com.yurii.vaccumcleaner.utils.ui.showError
 
 class PidSettingsFragment : Fragment(R.layout.fragment_pid_settings) {
     private val viewModel: PidSettingsViewModel by viewModels { Injector.providePidSettingsViewModel() }
@@ -21,5 +23,11 @@ class PidSettingsFragment : Fragment(R.layout.fragment_pid_settings) {
         binding.lifecycleOwner = viewLifecycleOwner
 
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
+
+        viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
+                is PidSettingsViewModel.Event.ShowError -> showError(binding.root, getString(R.string.label_error_occurred), event.exception)
+            }
+        }
     }
 }
