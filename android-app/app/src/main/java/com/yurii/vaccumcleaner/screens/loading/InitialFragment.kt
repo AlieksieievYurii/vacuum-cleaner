@@ -15,7 +15,7 @@ import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 
 
 class InitialFragment : Fragment(R.layout.fragment_initial) {
-    private val viewModel: InitialFragmentViewModel by viewModels { Injector.provideInitialFragmentViewModel(requireActivity()) }
+    private val viewModel: InitialFragmentViewModel by viewModels { Injector.provideInitialFragmentViewModel(requireContext()) }
     private val viewBinding: FragmentInitialBinding by viewBinding()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -30,16 +30,16 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
             when (state) {
                 is InitialFragmentViewModel.State.NotFound -> {
                     runAnimation(R.raw.failed)
-                    viewBinding.status.text = "Cannot find the robot"
+                    viewBinding.status.setText(R.string.label_can_not_find_robot)
                     viewBinding.layoutRobotIsNotFound.isVisible = true
                 }
                 is InitialFragmentViewModel.State.Scanning -> {
-                    viewBinding.status.text = "Discovering..."
+                    viewBinding.status.setText(R.string.label_discovering)
                     runAnimation(R.raw.scanning, infinitive = true)
                     viewBinding.layoutRobotIsNotFound.isVisible = false
                 }
                 is InitialFragmentViewModel.State.Connected -> {
-                    viewBinding.status.text = "Connected. IP: ${state.ip}"
+                    viewBinding.status.text = getString(R.string.label_connected_with_ip, state.ip)
                     viewBinding.layoutRobotIsNotFound.isVisible = false
                     runAnimation(R.raw.done)
                 }

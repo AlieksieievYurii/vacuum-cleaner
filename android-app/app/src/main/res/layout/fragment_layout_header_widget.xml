@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="?android:attr/colorAccent"
+        app:cardCornerRadius="15dp"
+        app:cardElevation="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/cardView"
+        app:layout_constraintStart_toStartOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        tools:ignore="SpeakableTextPresentCheck">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical">
+
+            <com.yurii.vaccumcleaner.utils.ui.BatteryView
+                android:id="@+id/battery"
+                android:layout_width="40dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="15dp" />
+
+            <TextView
+                android:id="@+id/battery_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/white"
+                tools:text="86% (16.7V)" />
+
+            <TextView
+                android:id="@+id/layout_box_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/label_box_out"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_outbox_24"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/layout_lid_opened"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                android:text="@string/label_lid_opened"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                app:drawableStartCompat="@drawable/ic_call_missed_outgoing_24"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>
