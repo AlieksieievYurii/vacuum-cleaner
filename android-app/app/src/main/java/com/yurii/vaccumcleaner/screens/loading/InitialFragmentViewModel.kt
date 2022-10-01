@@ -41,11 +41,9 @@ class InitialFragmentViewModel(
             val savedIp = preferences.getRobotIpAddress()
             if (savedIp != null) {
                 if (robotSocketDiscovery.tryConnect(savedIp)) {
-                    delay(2000)
+                    delay(1000)
                     RobotConnection.makeConnection(savedIp, MyApplication.ROBOT_SOCKET_PORT)
-                    _state.value = State.Connected(savedIp)
-                    delay(3000)
-                    _event.emit(Event.NavigateToControlPanel)
+                    setConnectedStatus(savedIp)
                 } else
                     startDiscovering()
             } else
@@ -64,13 +62,15 @@ class InitialFragmentViewModel(
                 val robotIp = r.first()
                 RobotConnection.makeConnection(robotIp, 1489)
                 preferences.saveRobotIpAddress(robotIp)
-                _state.value = State.Connected(robotIp)
+                setConnectedStatus(robotIp)
             }
         }
     }
 
-    private fun navigateToControlPanel() {
-        sendEvent(Event.NavigateToControlPanel)
+    private suspend fun setConnectedStatus(robotIp: String) {
+        _state.value = State.Connected(robotIp)
+        delay(2000)
+        _event.emit(Event.NavigateToControlPanel)
     }
 
     fun navigateToBindRobot() {
