@@ -24,6 +24,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
     sealed class Event {
         object NavigateToControlFragment : Event()
         object NavigateToPidSettingsFragment : Event()
+        object NavigateToAlgorithmSetupFragment : Event()
         data class ShowError(val exception: Throwable) : Event()
     }
 
@@ -68,9 +69,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     }
 
-    fun openCleaningAlgoSettings() {
-
-    }
+    fun openCleaningAlgoSettings() = sendEvent(Event.NavigateToAlgorithmSetupFragment)
 
     fun startCleaning() {
 
