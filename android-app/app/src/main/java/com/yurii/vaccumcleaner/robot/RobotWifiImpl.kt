@@ -49,6 +49,10 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
         TODO("Not yet implemented")
     }
 
+    override suspend fun getAlgorithmScripts(): AlgorithmScriptList {
+        return requestHandler.send("/get-algorithm-scripts", null, AlgorithmScriptList::class.java)!!
+    }
+
     private suspend fun setMotor(motorName: String, value: Int) {
         requestHandler.send<Any>("/set-motor", MotorRequestModule(motorName, value), null)
     }
