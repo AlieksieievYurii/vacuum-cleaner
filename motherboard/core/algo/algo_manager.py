@@ -45,12 +45,7 @@ class AlgorithmManager(object):
 
         :return: list of dicts
         """
-
-        result = []
-        for script in self.ALGORITHM_SCRIPTS:
-            result.append(self.get_script_info(script))
-
-        return result
+        return [self.get_script_info(script) for script in self.ALGORITHM_SCRIPTS]
 
     def get_script_info(self, script: Type[Script]) -> dict:
         """
