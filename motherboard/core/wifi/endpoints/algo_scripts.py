@@ -36,14 +36,12 @@ class GetAlgorithmScriptsRequest(RequestHandler):
     def perform(self, request: Request, data: AttributeHolder) -> ResponseModel:
         scripts = []
         for script in self._algorithm_manager.get_scripts():
-            arguments_list = []
-            for argument in script['arguments']:
-                arguments_list.append(AlgorithmArgument(
-                    name=argument['name'],
-                    value_type=argument['value_type'],
-                    default_value=argument['default'],
-                    current_value=argument['value']
-                ))
+            arguments_list = [AlgorithmArgument(
+                name=argument['name'],
+                value_type=argument['value_type'],
+                default_value=argument['default'],
+                current_value=argument['value']
+            ) for argument in script['arguments']]
 
             scripts.append(AlgorithmScript(
                 name=script['name'],
