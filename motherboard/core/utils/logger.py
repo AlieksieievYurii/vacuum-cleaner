@@ -99,4 +99,4 @@ class AlgorithmManagerLogger(object):
 
 a1_logger = A1Logger(True)
 wifi_module_logger = WifiModuleLogger(True)
-algorithm_manager = AlgorithmManagerLogger(True)
+algorithm_manager_logger = AlgorithmManagerLogger(True)
