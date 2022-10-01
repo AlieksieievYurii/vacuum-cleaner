@@ -1,4 +1,23 @@
 import time
+from typing import Any
+
+
+def get_typed_arg(name: str, t: Any, kwargs: dict) -> Any:
+    """
+    Returns value of the given key of the kwargs. ALso it checks if the value exists and its type
+
+    :param name: key
+    :param t: type
+    :param kwargs: dict
+    :return: typed value
+    """
+
+    value = kwargs.get(name)
+    if not value:
+        raise ValueError(f'Can not fetch "{name}" key!')
+    elif not isinstance(value, t):
+        raise ValueError(f'Wrong type of "{name}"!')
+    return value
 
 
 def millis() -> int:
