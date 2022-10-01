@@ -61,17 +61,13 @@ class AlgorithmManager(object):
         }
 
         saved_values = self._load_arguments(script)
-        arguments = []
 
-        for arg_ref, arg in script.get_arguments().items():
-            arguments.append({
-                'name': arg.name,
-                'value_type': self._represent_type(arg.type),
-                'default': arg.default,
-                'value': saved_values.__getattribute__(arg_ref)
-            })
-
-        script_info['arguments'] = arguments
+        script_info['arguments'] = [{
+            'name': arg.name,
+            'value_type': self._represent_type(arg.type),
+            'default': arg.default,
+            'value': saved_values.__getattribute__(arg_ref)
+        } for arg_ref, arg in script.get_arguments().items()]
 
         return script_info
 
