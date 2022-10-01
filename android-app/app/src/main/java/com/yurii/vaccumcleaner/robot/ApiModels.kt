@@ -35,3 +35,23 @@ data class PidSettings(
     val integral: Float,
     val derivative: Float
 )
+
+@JsonClass(generateAdapter = true)
+data class ScriptArgument(
+    val name: String,
+    @Json(name = "value_type") val valueType: String,
+    @Json(name = "current_value") val currentValue: Any,
+    @Json(name = "default_value") val defaultValue: Any
+)
+
+@JsonClass(generateAdapter = true)
+data class AlgorithmScript(
+    val name: String,
+    val description: String,
+    val arguments: List<ScriptArgument>
+)
+
+@JsonClass(generateAdapter = true)
+data class AlgorithmScriptList(
+    val scripts: List<AlgorithmScript>
+)
