@@ -91,6 +91,6 @@ data class AlgorithmScript(
 
 @JsonClass(generateAdapter = true)
 data class AlgorithmScriptList(
-    val currentScript: String = "simple",
+    @Json(name = "current_script") val currentScript: String,
     val scripts: List<AlgorithmScript>
 )
