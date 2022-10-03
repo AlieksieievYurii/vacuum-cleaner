@@ -18,12 +18,23 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
     private val _currentScript = MutableStateFlow<AlgorithmScript?>(null)
     val currentScript = _currentScript.asStateFlow()
 
+    private val _algorithmScripts = ArrayList<AlgorithmScript>()
+
     init {
         viewModelScope.launch {
-            val r = robot.getAlgorithmScripts()
-            _scriptsList.value = r.scripts.map { it.name }
-            _currentScript.value = r.scripts.find { it.name == r.currentScript }
+            val response = robot.getAlgorithmScripts()
+            _algorithmScripts.apply {
+                clear()
+                addAll(response.scripts)
+            }
+
+            _scriptsList.value = response.scripts.map { it.name }
+            setScript(response.currentScript)
         }
+    }
+
+    fun setScript(name: String) {
+        _currentScript.value = _algorithmScripts.find { it.name == name }
     }
 
 

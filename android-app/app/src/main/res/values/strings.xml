@@ -49,4 +49,5 @@
     <string name="label_proportional_value">Proportional</string>
     <string name="label_integral_value">Integral</string>
     <string name="label_derivative_value">Derivative</string>
+    <string name="label_range">%s (Range %d..%d)</string>
 </resources>

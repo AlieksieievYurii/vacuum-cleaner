@@ -50,6 +50,9 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply.setOnClickListener { onApply() }
+        binding.scripts.setOnItemClickListener { _, _, position, _ ->
+            viewModel.setScript(binding.scripts.adapter.getItem(position).toString())
+        }
 
         viewModel.scriptsList.observeOnLifecycle(viewLifecycleOwner) {
             it?.run {
