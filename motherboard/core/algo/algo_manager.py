@@ -39,6 +39,11 @@ class AlgorithmManager(object):
     def set_script_parameters(self, script_name: str, arguments: dict) -> None:
         pass
 
+    def get_current_script_name(self) -> str:
+        if self._algorithm_script:
+            return self._algorithm_script.get_name()
+        raise AlgorithmManagerException('Script is not set')
+
     def get_scripts(self) -> List[dict]:
         """
         Returns the list of dicts containing all registered algorithm scripts.
@@ -121,7 +126,8 @@ class AlgorithmManager(object):
         for arg_ref_name, arg in script.get_arguments().items():
             value: Optional = config_dict.get(arg.name)
             if value is None:
-                setattr(arguments_holder, arg_ref_name, None)
+                raise LoadingScriptArgumentsException(
+                    f'Value of "{arg.name}" does not exist. Val: {arg.default}; Type: {arg.type}')
             elif self._does_value_meet_type(arg.type, value):
                 setattr(arguments_holder, arg_ref_name, value)
             else:
