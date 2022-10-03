@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.AlgorithmScript
 import com.yurii.vaccumcleaner.robot.Robot
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,10 +19,14 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
     private val _currentScript = MutableStateFlow<AlgorithmScript?>(null)
     val currentScript = _currentScript.asStateFlow()
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _algorithmScripts = ArrayList<AlgorithmScript>()
 
     init {
         viewModelScope.launch {
+            delay(1000)
             val response = robot.getAlgorithmScripts()
             _algorithmScripts.apply {
                 clear()
@@ -30,6 +35,8 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
 
             _scriptsList.value = response.scripts.map { it.name }
             setScript(response.currentScript)
+
+            _isLoading.value = false
         }
     }
 

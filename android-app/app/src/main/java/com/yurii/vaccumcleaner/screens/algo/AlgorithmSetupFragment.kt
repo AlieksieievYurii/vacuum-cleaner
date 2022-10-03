@@ -20,6 +20,7 @@ import com.yurii.vaccumcleaner.databinding.ItemTextFieldBinding
 import com.yurii.vaccumcleaner.robot.ArgumentValue
 import com.yurii.vaccumcleaner.robot.ScriptArgument
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
 import timber.log.Timber
 import java.lang.IllegalStateException
 
@@ -43,6 +44,7 @@ class InputFilterMinMax(private val min: Int, private val max: Int) : InputFilte
 class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
     private val binding: FragmentAlgorithmSetupBinding by viewBinding()
     private val viewModel: AlgorithmSetupViewModel by viewModels { Injector.provideAlgorithmSetupViewModel() }
+    private val loadingDialog by lazy { LoadingDialog(requireContext()) }
 
     private val argumentsViews = HashMap<ScriptArgument, ViewDataBinding>()
 
@@ -73,6 +75,8 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
 
             }
         }
+
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
     }
 
     private fun onApply() {
