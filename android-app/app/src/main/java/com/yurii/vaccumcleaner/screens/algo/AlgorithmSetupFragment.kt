@@ -17,8 +17,10 @@ import com.yurii.vaccumcleaner.databinding.FragmentAlgorithmSetupBinding
 import com.yurii.vaccumcleaner.databinding.ItemChoiceBinding
 import com.yurii.vaccumcleaner.databinding.ItemSwitchBinding
 import com.yurii.vaccumcleaner.databinding.ItemTextFieldBinding
+import com.yurii.vaccumcleaner.robot.ArgumentValue
 import com.yurii.vaccumcleaner.robot.ScriptArgument
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
+import timber.log.Timber
 import java.lang.IllegalStateException
 
 class InputFilterMinMax(private val min: Int, private val max: Int) : InputFilter {
@@ -42,10 +44,12 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
     private val binding: FragmentAlgorithmSetupBinding by viewBinding()
     private val viewModel: AlgorithmSetupViewModel by viewModels { Injector.provideAlgorithmSetupViewModel() }
 
-    private val argumentView = HashMap<ScriptArgument, ViewDataBinding>()
+    private val argumentsViews = HashMap<ScriptArgument, ViewDataBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.apply.setOnClickListener { onApply() }
 
         viewModel.scriptsList.observeOnLifecycle(viewLifecycleOwner) {
             it?.run {
@@ -58,7 +62,8 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
             script?.run {
                 binding.scripts.setText(script.name, false)
                 binding.description.text = script.description
-                argumentView.clear()
+                argumentsViews.clear()
+                binding.argumentsLayout.removeAllViews()
                 script.arguments.forEach {
                     generateParameter(it)
                 }
@@ -68,24 +73,33 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
     }
 
     fun onApply() {
-
+        val args = mutableListOf<ArgumentValue>()
+        argumentsViews.forEach { entry ->
+            if (entry.key.valueType in arrayOf("string", "integer", "floating")) {
+                val b = entry.value as ItemTextFieldBinding
+                args.add(
+                    ArgumentValue(
+                        entry.key.name, value = when (entry.key.valueType) {
+                            "string" -> b.input.text.toString()
+                            "integer" -> b.input.text.toString().toInt()
+                            "floating" -> b.input.text.toString().toFloat()
+                            else -> throw IllegalStateException("Unhandled arg type for $entry")
+                        }
+                    )
+                )
+            }
+        }
+        Timber.i(args.toString())
     }
 
     private fun generateParameter(argument: ScriptArgument) {
-        if (argument.valueType in arrayOf("string", "integer", "floating"))
-            addEditTextView(argument)
-        else if (argument.valueType == "boolean")
-            addSwitchView(argument)
-        else {
-            val rangeTypeRegex = Regex("(\\d+)..(\\d+)")
-            val choiceTypeRegex = Regex("([^,]+)")
-            if (rangeTypeRegex.containsMatchIn(argument.valueType)) {
-                val (min, max) = rangeTypeRegex.find(argument.valueType)!!.destructured
-                addRangeView(argument, min.toInt(), max.toInt())
-            } else if (choiceTypeRegex.containsMatchIn(argument.valueType)) {
-                val choices = choiceTypeRegex.findAll(argument.valueType).toList().map { it.value }
-                addChoiceView(argument, choices)
-            }
+        when (val typedValue = argument.getType()) {
+            is ScriptArgument.Type.Floating -> addEditTextView(argument)
+            is ScriptArgument.Type.IntRange -> addRangeView(argument, typedValue.from, typedValue.to)
+            is ScriptArgument.Type.Integer -> addEditTextView(argument)
+            is ScriptArgument.Type.Text -> addEditTextView(argument)
+            is ScriptArgument.Type.TextChoice -> addChoiceView(argument, typedValue.values)
+            is ScriptArgument.Type.Bool -> addSwitchView(argument)
         }
     }
 
@@ -94,7 +108,7 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         val currentValue = argument.currentValue as Boolean
         view.sw.isChecked = currentValue
         view.sw.text = argument.name
-        argumentView[argument] = view
+        argumentsViews[argument] = view
     }
 
     private fun addRangeView(argument: ScriptArgument, min: Int, max: Int) {
@@ -103,7 +117,7 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         view.input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
         view.input.setText((argument.currentValue as Double).toInt().toString())
         view.input.filters = arrayOf(InputFilterMinMax(min, max))
-        argumentView[argument] = view
+        argumentsViews[argument] = view
     }
 
     private fun addChoiceView(argument: ScriptArgument, choices: List<String>) {
@@ -111,28 +125,28 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         view.textInputLayout.hint = argument.name
         view.scripts.setAdapter(ArrayAdapter(requireContext(), R.layout.item_simple_list, choices))
         view.scripts.setText(argument.currentValue as String, false)
-        argumentView[argument] = view
+        argumentsViews[argument] = view
     }
 
     private fun addEditTextView(argument: ScriptArgument) {
         val view: ItemTextFieldBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_text_field, binding.argumentsLayout, true)
         view.inputLayout.hint = argument.name
-        when (argument.valueType) {
-            "string" -> view.input.apply {
+        when (val typedValue = argument.getType()) {
+            is ScriptArgument.Type.Text -> view.input.apply {
                 inputType = InputType.TYPE_CLASS_TEXT
-                setText(argument.currentValue as String)
+                setText(typedValue.value)
             }
-            "integer" -> view.input.apply {
+            is ScriptArgument.Type.Integer -> view.input.apply {
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
-                setText((argument.currentValue as Double).toInt().toString())
+                setText(typedValue.value.toString())
             }
-            "floating" -> view.input.apply {
+            is ScriptArgument.Type.Floating -> view.input.apply {
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
-                setText((argument.currentValue as Double).toString())
+                setText(typedValue.value.toString())
             }
             else -> throw IllegalStateException("Can not add EditTextView for the type ${argument.valueType}")
         }
-        argumentView[argument] = view
+        argumentsViews[argument] = view
     }
 
 }

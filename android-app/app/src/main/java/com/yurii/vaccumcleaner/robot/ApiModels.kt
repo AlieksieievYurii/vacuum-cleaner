@@ -1,7 +1,9 @@
 package com.yurii.vaccumcleaner.robot
 
+import android.text.BoringLayout
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.lang.IllegalStateException
 
 @JsonClass(generateAdapter = true)
 data class GeneralSystemInfo(
@@ -42,6 +44,43 @@ data class ScriptArgument(
     @Json(name = "value_type") val valueType: String,
     @Json(name = "current_value") val currentValue: Any,
     @Json(name = "default_value") val defaultValue: Any
+) {
+    companion object {
+        private val rangeTypeRegex = Regex("(\\d+)..(\\d+)")
+        private val choiceTypeRegex = Regex("([^,]+)")
+    }
+
+    sealed class Type {
+        data class Text(val value: String, val default: String) : Type()
+        data class Integer(val value: Int, val default: Int) : Type()
+        data class Floating(val value: Float, val default: Float) : Type()
+        data class IntRange(val from: Int, val to: Int, val default: Int) : Type()
+        data class TextChoice(val values: List<String>, val default: String) : Type()
+        data class Bool(val value: Boolean, val default: Boolean) : Type()
+    }
+
+    fun getType(): Type = when {
+        valueType == "boolean" -> Type.Bool(currentValue as Boolean, defaultValue as Boolean)
+        valueType == "string" -> Type.Text(currentValue as String, defaultValue as String)
+        valueType == "integer" -> Type.Integer(currentValue.toString().toFloat().toInt(), defaultValue.toString().toFloat().toInt())
+        valueType == "floating" -> Type.Floating(currentValue.toString().toFloat(), defaultValue.toString().toFloat())
+        rangeTypeRegex.containsMatchIn(valueType) -> {
+            val (from, to) = rangeTypeRegex.find(valueType)!!.destructured
+            Type.IntRange(from.toInt(), to.toInt(), defaultValue.toString().toFloat().toInt())
+        }
+        choiceTypeRegex.containsMatchIn(valueType) -> {
+            val choices = choiceTypeRegex.findAll(valueType).toList().map { it.value }
+            Type.TextChoice(choices, defaultValue.toString())
+        }
+
+        else -> throw IllegalStateException("Unhandled argument $this")
+    }
+}
+
+@JsonClass(generateAdapter = true)
+data class ArgumentValue(
+    val name: String,
+    val value: Any
 )
 
 @JsonClass(generateAdapter = true)
@@ -53,5 +92,6 @@ data class AlgorithmScript(
 
 @JsonClass(generateAdapter = true)
 data class AlgorithmScriptList(
+    val currentScript: String = "simple",
     val scripts: List<AlgorithmScript>
 )
