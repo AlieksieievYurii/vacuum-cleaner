@@ -1,6 +1,5 @@
 package com.yurii.vaccumcleaner.robot
 
-import android.text.BoringLayout
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.lang.IllegalStateException
