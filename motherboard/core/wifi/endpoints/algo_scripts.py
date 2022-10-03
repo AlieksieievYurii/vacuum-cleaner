@@ -22,6 +22,7 @@ class AlgorithmScript(object):
 
 @dataclass
 class ResponseModel(object):
+    current_script: str
     scripts: List[AlgorithmScript]
 
 
@@ -49,4 +50,4 @@ class GetAlgorithmScriptsRequest(RequestHandler):
                 arguments=arguments_list
             ))
 
-        return ResponseModel(scripts=scripts)
+        return ResponseModel(current_script=self._algorithm_manager.get_current_script_name(), scripts=scripts)
