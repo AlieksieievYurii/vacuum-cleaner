@@ -80,19 +80,19 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
     }
 
     private fun onApply() {
-        val args = argumentsViews.map { entry ->
+        val parameters = argumentsViews.map { entry ->
             ArgumentValue(
                 entry.key.name, value = when (entry.key.getType()) {
                     is ScriptArgument.Type.Bool -> (entry.value as ItemSwitchBinding).sw.isChecked
                     is ScriptArgument.Type.Floating -> (entry.value as ItemTextFieldBinding).input.text.toString().toFloat()
-                    is ScriptArgument.Type.IntRange -> (entry.value as ItemTextFieldBinding).input.text.toString()
+                    is ScriptArgument.Type.IntRange -> (entry.value as ItemTextFieldBinding).input.text.toString().toInt()
                     is ScriptArgument.Type.Integer -> (entry.value as ItemTextFieldBinding).input.text.toString().toInt()
                     is ScriptArgument.Type.Text -> (entry.value as ItemTextFieldBinding).input.text.toString()
                     is ScriptArgument.Type.TextChoice -> (entry.value as ItemChoiceBinding).scripts.text.toString()
                 }
             )
         }
-        Timber.i(args.toString())
+        viewModel.applySettings(parameters)
     }
 
     private fun generateParameter(argument: ScriptArgument) {
