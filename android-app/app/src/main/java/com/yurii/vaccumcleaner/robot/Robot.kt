@@ -14,4 +14,5 @@ interface Robot {
     suspend fun getCurrentPidSettings(): PidSettings
     suspend fun setPidSettings(pidSettings: PidSettings)
     suspend fun getAlgorithmScripts(): AlgorithmScriptList
+    suspend fun setAlgorithmScript(algorithm: Algorithm)
 }

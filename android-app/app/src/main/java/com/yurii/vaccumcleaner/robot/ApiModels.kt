@@ -94,3 +94,9 @@ data class AlgorithmScriptList(
     @Json(name = "current_script") val currentScript: String,
     val scripts: List<AlgorithmScript>
 )
+
+@JsonClass(generateAdapter = true)
+data class Algorithm(
+    @Json(name = "script_name") val name: String,
+    val parameters: List<ArgumentValue>
+)
