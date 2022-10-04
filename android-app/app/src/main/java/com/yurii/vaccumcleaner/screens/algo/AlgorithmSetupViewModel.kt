@@ -8,12 +8,17 @@ import com.yurii.vaccumcleaner.robot.AlgorithmScript
 import com.yurii.vaccumcleaner.robot.ArgumentValue
 import com.yurii.vaccumcleaner.robot.Robot
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
 class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
+    sealed class Event {
+        object CloseFragment : Event()
+    }
 
     private val _scriptsList = MutableStateFlow<List<String>?>(null)
     val scriptsList = _scriptsList.asStateFlow()
@@ -25,6 +30,9 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
     val isLoading = _isLoading.asStateFlow()
 
     private val _algorithmScripts = ArrayList<AlgorithmScript>()
+
+    private val _event = MutableSharedFlow<Event>()
+    val event = _event.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -52,7 +60,12 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
             robot.setAlgorithmScript(Algorithm(name = _currentScript.value!!.name, parameters = parameters))
             delay(1000)
             _isLoading.value = false
+            sendEvent(Event.CloseFragment)
         }
+    }
+
+    private fun sendEvent(event: Event) = viewModelScope.launch {
+        _event.emit(event)
     }
 
 

@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentAlgorithmSetupBinding
@@ -60,6 +61,12 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
             it?.run {
                 val adapter = ArrayAdapter(requireContext(), R.layout.item_simple_list, it)
                 binding.scripts.setAdapter(adapter)
+            }
+        }
+
+        viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when(event) {
+                AlgorithmSetupViewModel.Event.CloseFragment -> findNavController().popBackStack()
             }
         }
 
