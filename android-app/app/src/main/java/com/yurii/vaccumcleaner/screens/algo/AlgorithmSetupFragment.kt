@@ -21,6 +21,7 @@ import com.yurii.vaccumcleaner.databinding.ItemSwitchBinding
 import com.yurii.vaccumcleaner.databinding.ItemTextFieldBinding
 import com.yurii.vaccumcleaner.robot.ArgumentValue
 import com.yurii.vaccumcleaner.robot.AlgorithmParameter
+import com.yurii.vaccumcleaner.utils.hideKeyboard
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
 import java.lang.IllegalStateException
@@ -52,7 +53,10 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply.setOnClickListener { onApply() }
+        binding.apply.setOnClickListener {
+            hideKeyboard()
+            onApply()
+        }
         binding.algorithms.setOnItemClickListener { _, _, position, _ ->
             viewModel.setAlgorithm(binding.algorithms.adapter.getItem(position).toString())
         }
@@ -65,8 +69,10 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         }
 
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
-            when(event) {
-                AlgorithmSetupViewModel.Event.CloseFragment -> findNavController().popBackStack()
+            when (event) {
+                AlgorithmSetupViewModel.Event.CloseFragment -> {
+                    findNavController().popBackStack()
+                }
             }
         }
 
