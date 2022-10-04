@@ -1,7 +1,7 @@
 import abc
 from dataclasses import dataclass
 from enum import Enum
-from typing import Type, Dict, Optional
+from typing import Type, Dict, Optional, Any
 from utils.request_handler.exceptions import RequiredFieldIsNotFound, InvalidRequestData
 
 
@@ -32,6 +32,11 @@ class Status(str, Enum):
     OK: str = 'OK'
     ERROR: str = 'ERROR'
     BAD_REQUEST: str = 'BAD_REQUEST'
+
+
+class ListType(object):
+    def __init__(self, value_type: Any):
+        self.value_type = value_type
 
 
 @dataclass
