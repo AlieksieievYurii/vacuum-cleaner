@@ -7,6 +7,7 @@ import android.text.Spanned
 import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import android.widget.ArrayAdapter
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
@@ -22,7 +23,6 @@ import com.yurii.vaccumcleaner.robot.ArgumentValue
 import com.yurii.vaccumcleaner.robot.ScriptArgument
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
-import timber.log.Timber
 import java.lang.IllegalStateException
 
 class InputFilterMinMax(private val min: Int, private val max: Int) : InputFilter {
@@ -73,6 +73,7 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         viewModel.currentScript.observeOnLifecycle(viewLifecycleOwner) { script ->
             script?.run {
                 binding.scripts.setText(script.name, false)
+                binding.description.isVisible = true
                 binding.description.text = script.description
                 argumentsViews.clear()
                 binding.argumentsLayout.removeAllViews()

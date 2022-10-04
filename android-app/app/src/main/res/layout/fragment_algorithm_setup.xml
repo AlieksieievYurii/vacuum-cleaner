@@ -39,6 +39,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                tools:visibility="visible"
                 android:background="#D8D8D8"
                 android:padding="8dp"
                 tools:text="Test"
