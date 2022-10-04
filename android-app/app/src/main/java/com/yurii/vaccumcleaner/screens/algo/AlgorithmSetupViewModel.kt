@@ -3,7 +3,9 @@ package com.yurii.vaccumcleaner.screens.algo
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.yurii.vaccumcleaner.robot.Algorithm
 import com.yurii.vaccumcleaner.robot.AlgorithmScript
+import com.yurii.vaccumcleaner.robot.ArgumentValue
 import com.yurii.vaccumcleaner.robot.Robot
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,6 +44,15 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
 
     fun setScript(name: String) {
         _currentScript.value = _algorithmScripts.find { it.name == name }
+    }
+
+    fun applySettings(parameters: List<ArgumentValue>) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            robot.setAlgorithmScript(Algorithm(name = _currentScript.value!!.name, parameters = parameters))
+            delay(1000)
+            _isLoading.value = false
+        }
     }
 
 
