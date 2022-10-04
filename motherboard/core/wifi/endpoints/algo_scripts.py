@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from typing import List, Any
 
 from algo.algo_manager import AlgorithmManager
-from utils.request_handler.models import RequestHandler, Request, AttributeHolder
+from utils.config import Configuration
+from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field, ListType
 
 
 @dataclass
@@ -24,6 +25,16 @@ class AlgorithmScript(object):
 class ResponseModel(object):
     current_script: str
     scripts: List[AlgorithmScript]
+
+
+class Parameter(object):
+    name = Field('name', str, is_required=True)
+    value = Field('value', Any, is_required=True)
+
+
+class RequestModel(object):
+    script_name = Field('script_name', str, is_required=True)
+    parameters = Field('parameters', ListType(Parameter), is_required=True)
 
 
 class GetAlgorithmScriptsRequest(RequestHandler):
@@ -51,3 +62,18 @@ class GetAlgorithmScriptsRequest(RequestHandler):
             ))
 
         return ResponseModel(current_script=self._algorithm_manager.get_current_script_name(), scripts=scripts)
+
+
+class SetAlgorithmScriptRequest(RequestHandler):
+    endpoint = '/set-algorithm-scripts'
+    request_model = RequestModel
+    response_model = None
+
+    def __init__(self, algorithm_manager: AlgorithmManager, config: Configuration):
+        self._algorithm_manager = algorithm_manager
+        self._config = config
+
+    def perform(self, request: Request, data: AttributeHolder):
+        self._algorithm_manager.set_script_parameters(data.script_name, {p.name: p.value for p in data.parameters})
+        self._config.set_target_cleaning_algorithm(data.script_name)
+        self._algorithm_manager.set_script(data.script_name)
