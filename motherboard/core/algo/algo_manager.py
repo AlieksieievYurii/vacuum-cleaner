@@ -7,7 +7,7 @@ from a1.models import A1Data
 from algo.scripts.smart import Smart
 from algo.scripts.script import Script, ArgumentsHolder
 from algo.scripts.simple import Simple
-from utils.logger import AlgorithmManagerLogger, algorithm_manager_logger
+from utils.logger import AlgorithmManagerLogger
 
 
 class AlgorithmManagerException(Exception):
@@ -30,6 +30,7 @@ class AlgorithmManager(object):
         self._algorithm_script: Optional[Script] = None
         self._algorithm_script_arguments_holder: Optional[ArgumentsHolder] = None
         self._working_thread: Optional[Thread] = None
+        self._configs_folder: Path = Path(__file__).parent / 'scripts' / 'configs'
 
     def set_script(self, name: str) -> None:
         self._logger.info(f'Set Cleaning Algorithm Script: {name}')
@@ -37,7 +38,25 @@ class AlgorithmManager(object):
         self._algorithm_script_arguments_holder = self._load_arguments(self._algorithm_script)
 
     def set_script_parameters(self, script_name: str, arguments: dict) -> None:
-        pass
+        """
+        Sets parameters for the given script. The parameters are saved to the file BUT NOT APPLIED
+        # TODO refactor the code by specifying what is argument and parameter
+        :param script_name: target script to apply for
+        :param arguments: dict of parameters e.g {"parameter_name": param_value}
+        :return: None
+        """
+
+        script = self._get_script(script_name)
+        res = {}
+        for arg in script.get_arguments().values():
+            value = arguments.get(arg.name)
+            if value is None:
+                raise AlgorithmManagerException(f'Parameter is not found')
+            if not self._does_value_meet_type(arg.type, value):
+                raise AlgorithmManagerException(f'Wrong type. Name: {arg.name}; Value: {value}')
+
+            res[arg.name] = value
+        self._save_config_for(script, res)
 
     def get_current_script_name(self) -> str:
         if self._algorithm_script:
@@ -97,31 +116,28 @@ class AlgorithmManager(object):
             raise AlgorithmManagerException(f'Can not find the given script: {script_name}')
 
     def _load_arguments(self, script: Script) -> ArgumentsHolder:
-        config_file: Path = Path(__file__).parent / 'scripts' / 'configs' / f'{script.get_name()}.json'
         self._logger.info(f'Try to load "{script.get_name()}" arguments from the config')
         try:
-            args = self._load_arguments_values_from_file(script, config_file)
+            args = self._load_arguments_values_from_file(script)
             self._logger.info(f'Saved arguments of "{script.get_name()}" are loaded')
             return args
         except LoadingScriptArgumentsException as error:
             self._logger.error(
                 f'Can not load script algorithm config for {script.get_name()}.'
                 f' So recreating with default values. Reason: {error}')
-            return self._recreate_argument_config_file(script, config_file)
+            return self._recreate_argument_config_file(script)
 
-    def _load_arguments_values_from_file(self, script: Script, config: Path) -> ArgumentsHolder:
+    def _load_arguments_values_from_file(self, script: Script) -> ArgumentsHolder:
         """
         Reads the given config file. Tries to get correct value for the given script's arguments.
         Otherwise the exception is raised.
 
         :param script: an instance of target Script
-        :param config: script config file associated to the given script
         :return: ArgumentsHolder containing arguments with saved values
         """
-        if not config.exists():
-            raise LoadingScriptArgumentsException('Config file does not exist!')
+
         arguments_holder = ArgumentsHolder()
-        config_dict = json.loads(config.read_bytes())
+        config_dict = self._read_config_for(script)
 
         for arg_ref_name, arg in script.get_arguments().items():
             value: Optional = config_dict.get(arg.name)
@@ -136,12 +152,11 @@ class AlgorithmManager(object):
 
         return arguments_holder
 
-    def _recreate_argument_config_file(self, script: Script, config: Path) -> ArgumentsHolder:
+    def _recreate_argument_config_file(self, script: Script) -> ArgumentsHolder:
         """
         Creates/Overrides script config file with the default values.
 
         :param script: an instance of target Script
-        :param config: script config file associated to the given script
         :return: ArgumentsHolder containing arguments with default values
         """
 
@@ -158,7 +173,7 @@ class AlgorithmManager(object):
             result[arg.name] = arg.default
             setattr(arguments_holder, arg_ref_name, arg.default)
 
-        config.write_text(json.dumps(result, indent=4))
+        self._save_config_for(script, result)
 
         return arguments_holder
 
@@ -189,8 +204,12 @@ class AlgorithmManager(object):
 
         raise AlgorithmManagerException(f'Unsupported type for the argument: {t}')
 
+    def _read_config_for(self, script: Script) -> dict:
+        config_file = self._configs_folder / f'{script.get_name()}.json'
+        if not config_file.exists():
+            raise LoadingScriptArgumentsException(f'Config file for "{script.get_name()}" does not exist!')
+        return json.loads(config_file.read_bytes())
 
-if __name__ == '__main__':
-    a = AlgorithmManager(None, algorithm_manager_logger)
-    # a.set_script('simple')
-    print(a.get_scripts())
+    def _save_config_for(self, script: Script, parameters: dict) -> None:
+        config_file = self._configs_folder / f'{script.get_name()}.json'
+        config_file.write_text(json.dumps(parameters, indent=4))
