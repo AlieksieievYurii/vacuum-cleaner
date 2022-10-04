@@ -11,7 +11,7 @@ class ScriptException(Exception):
 
 
 @dataclass
-class Argument(object):
+class FieldParameter(object):
     name: str
     type: Any
     default: Any
@@ -19,7 +19,7 @@ class Argument(object):
 
 class ArgumentsHolder(object):
     """
-    Represents dynamic attributes holder for Arguments
+    Represents dynamic attributes holder
 
     @DynamicAttrs
     """
@@ -48,4 +48,4 @@ class Script(ABC):
 
     @classmethod
     def get_arguments(cls) -> dict:
-        return {var: val for var, val in cls.__dict__.items() if isinstance(val, Argument)}
+        return {var: val for var, val in cls.__dict__.items() if isinstance(val, FieldParameter)}
