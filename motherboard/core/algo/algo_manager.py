@@ -4,9 +4,9 @@ from threading import Thread
 from typing import Optional, List, Type, Any
 
 from a1.models import A1Data
-from algo.scripts.smart import Smart
-from algo.scripts.script import Script, ArgumentsHolder
-from algo.scripts.simple import Simple
+from algo.algorithms.smart import Smart
+from algo.algorithms.algorithm import Algorithm, ArgumentsHolder
+from algo.algorithms.simple import Simple
 from utils.logger import AlgorithmManagerLogger
 
 
@@ -14,12 +14,12 @@ class AlgorithmManagerException(Exception):
     pass
 
 
-class LoadingScriptArgumentsException(AlgorithmManagerException):
+class LoadingAlgorithmArgumentsException(AlgorithmManagerException):
     pass
 
 
 class AlgorithmManager(object):
-    ALGORITHM_SCRIPTS: List[Type[Script]] = [
+    ALGORITHMS: List[Type[Algorithm]] = [
         Simple,
         Smart
     ]
@@ -27,78 +27,81 @@ class AlgorithmManager(object):
     def __init__(self, a1_data: A1Data, logger: AlgorithmManagerLogger):
         self._a1_data = a1_data
         self._logger = logger
-        self._algorithm_script: Optional[Script] = None
-        self._algorithm_script_arguments_holder: Optional[ArgumentsHolder] = None
+        self._algorithm: Optional[Algorithm] = None
         self._working_thread: Optional[Thread] = None
-        self._configs_folder: Path = Path(__file__).parent / 'scripts' / 'configs'
+        self._configs_folder: Path = Path(__file__).parent / 'algorithms' / 'configs'
 
-    def set_script(self, name: str) -> None:
-        self._logger.info(f'Set Cleaning Algorithm Script: {name}')
-        self._algorithm_script = self._get_script(name)
-        self._algorithm_script_arguments_holder = self._load_arguments(self._algorithm_script)
+    def set_algorithm(self, name: str) -> None:
+        self._logger.info(f'Set Cleaning Algorithm: {name}')
+        algorithm = self._get_algorithm_class(name)
+        algorithm_arguments_holder = self._load_arguments(algorithm)
+        self._algorithm = algorithm(algorithm_arguments_holder)
 
-    def set_script_parameters(self, script_name: str, arguments: dict) -> None:
+    def save_algorithm_arguments(self, algorithm_name: str, arguments: dict) -> None:
         """
-        Sets parameters for the given script. The parameters are saved to the file BUT NOT APPLIED
-        # TODO refactor the code by specifying what is argument and parameter
-        :param script_name: target script to apply for
-        :param arguments: dict of parameters e.g {"parameter_name": param_value}
+        Saves arguments for the given algorithm to the file, BUT NOT APPLIED to the selected algorithm
+
+        :param algorithm_name: target algorithm to apply for
+        :param arguments: dict of arguments e.g {"parameter_name": param_value}
         :return: None
         """
 
-        script = self._get_script(script_name)
+        algorithm = self._get_algorithm_class(algorithm_name)
         res = {}
-        for arg in script.get_arguments().values():
+        for arg in algorithm.get_parameters().values():
             value = arguments.get(arg.name)
+
             if value is None:
-                raise AlgorithmManagerException(f'Parameter is not found')
+                raise AlgorithmManagerException(f'Argument value for "{arg.name}" is not found')
             if not self._does_value_meet_type(arg.type, value):
                 raise AlgorithmManagerException(f'Wrong type. Name: {arg.name}; Value: {value}')
 
             res[arg.name] = value
-        self._save_config_for(script, res)
 
-    def get_current_script_name(self) -> str:
-        if self._algorithm_script:
-            return self._algorithm_script.get_name()
-        raise AlgorithmManagerException('Script is not set')
+        self._save_config_for(algorithm, res)
 
-    def get_scripts(self) -> List[dict]:
+    def get_current_algorithm_name(self) -> str:
+        if self._algorithm:
+            return self._algorithm.get_name()
+        raise AlgorithmManagerException('Algorithm is not set')
+
+    def get_algorithms(self) -> List[dict]:
         """
-        Returns the list of dicts containing all registered algorithm scripts.
+        Returns the list of dicts containing all registered algorithms.
 
         :return: list of dicts
         """
-        return [self.get_script_info(script) for script in self.ALGORITHM_SCRIPTS]
 
-    def get_script_info(self, script: Type[Script]) -> dict:
+        return [self.get_algorithm_info(algorithm) for algorithm in self.ALGORITHMS]
+
+    def get_algorithm_info(self, algorithm: Type[Algorithm]) -> dict:
         """
-        Returns the information(name, description, arguments) of the given Script class
+        Returns the information(name, description, arguments) of the given Algorithm class
 
-        :param script: subclass of Script
+        :param algorithm: subclass of Algorithm
         :return: dict containing name, description, arguments
         """
 
-        script_info: dict = {
-            'name': script.get_name(),
-            'description': script.get_description()
+        algorithm_info: dict = {
+            'name': algorithm.get_name(),
+            'description': algorithm.get_description()
         }
 
-        saved_values = self._load_arguments(script)
+        saved_values = self._load_arguments(algorithm)
 
-        script_info['arguments'] = [{
-            'name': arg.name,
-            'value_type': self._represent_type(arg.type),
-            'default': arg.default,
-            'value': saved_values.__getattribute__(arg_ref)
-        } for arg_ref, arg in script.get_arguments().items()]
+        algorithm_info['arguments'] = [{
+            'name': parameter.name,
+            'value_type': self._represent_type(parameter.type),
+            'default': parameter.default,
+            'value': saved_values.__getattribute__(parameter_ref)
+        } for parameter_ref, parameter in algorithm.get_parameters().items()]
 
-        return script_info
+        return algorithm_info
 
     def start(self):
         if self._working_thread:
             raise AlgorithmManagerException('Algorithm is already executing')
-        if not self._algorithm_script:
+        if not self._algorithm:
             raise AlgorithmManagerException('Can not start algorithm, because not selected')
 
         self._working_thread = Thread('Algo', target=self._algorithm_loop, daemon=False)
@@ -106,74 +109,75 @@ class AlgorithmManager(object):
 
     def _algorithm_loop(self) -> None:
         while True:
-            self._algorithm_script.loop(self._a1_data)
+            self._algorithm.loop(self._a1_data)
 
-    def _get_script(self, script_name: str) -> Type[Script]:
-        for script in self.ALGORITHM_SCRIPTS:
-            if script.get_name() == script_name:
-                return script
+    def _get_algorithm_class(self, algorithm_name: str) -> Type[Algorithm]:
+        for algorithm in self.ALGORITHMS:
+            if algorithm.get_name() == algorithm_name:
+                return algorithm
         else:
-            raise AlgorithmManagerException(f'Can not find the given script: {script_name}')
+            raise AlgorithmManagerException(f'Can not find the given algorithm: {algorithm_name}')
 
-    def _load_arguments(self, script: Script) -> ArgumentsHolder:
-        self._logger.info(f'Try to load "{script.get_name()}" arguments from the config')
+    def _load_arguments(self, algorithm: Algorithm) -> ArgumentsHolder:
+        self._logger.info(f'Try to load "{algorithm.get_name()}" arguments from the config')
         try:
-            args = self._load_arguments_values_from_file(script)
-            self._logger.info(f'Saved arguments of "{script.get_name()}" are loaded')
+            args = self._load_arguments_from_file(algorithm)
+            self._logger.info(f'Saved arguments of "{algorithm.get_name()}" are loaded')
             return args
-        except LoadingScriptArgumentsException as error:
+        except LoadingAlgorithmArgumentsException as error:
             self._logger.error(
-                f'Can not load script algorithm config for {script.get_name()}.'
+                f'Can not load algorithm config for {algorithm.get_name()}.'
                 f' So recreating with default values. Reason: {error}')
-            return self._recreate_argument_config_file(script)
+            return self._recreate_argument_config_file(algorithm)
 
-    def _load_arguments_values_from_file(self, script: Script) -> ArgumentsHolder:
+    def _load_arguments_from_file(self, algorithm: Type[Algorithm]) -> ArgumentsHolder:
         """
-        Reads the given config file. Tries to get correct value for the given script's arguments.
+        Reads the given config file. Tries to get correct value for the given algorithm's parameters.
         Otherwise the exception is raised.
 
-        :param script: an instance of target Script
+        :param algorithm: class of Algorithm
         :return: ArgumentsHolder containing arguments with saved values
         """
 
         arguments_holder = ArgumentsHolder()
-        config_dict = self._read_config_for(script)
+        config_dict = self._read_config_for(algorithm)
 
-        for arg_ref_name, arg in script.get_arguments().items():
-            value: Optional = config_dict.get(arg.name)
+        for parameter_ref, parameter in algorithm.get_parameters().items():
+            value: Optional = config_dict.get(parameter.name)
             if value is None:
-                raise LoadingScriptArgumentsException(
-                    f'Value of "{arg.name}" does not exist. Val: {arg.default}; Type: {arg.type}')
-            elif self._does_value_meet_type(arg.type, value):
-                setattr(arguments_holder, arg_ref_name, value)
+                raise LoadingAlgorithmArgumentsException(
+                    f'Value of "{parameter.name}" does not exist. Val: {parameter.default}; Type: {parameter.type}')
+            elif self._does_value_meet_type(parameter.type, value):
+                setattr(arguments_holder, parameter_ref, value)
             else:
-                raise LoadingScriptArgumentsException(
-                    f'Value of "{arg.name}" does not meet the type. Val: {arg.default}; Type: {arg.type}')
+                raise LoadingAlgorithmArgumentsException(
+                    f'Value of "{parameter.name}" does not meet the type.'
+                    f' Val: {parameter.default}; Type: {parameter.type}')
 
         return arguments_holder
 
-    def _recreate_argument_config_file(self, script: Script) -> ArgumentsHolder:
+    def _recreate_argument_config_file(self, algorithm: Type[Algorithm]) -> ArgumentsHolder:
         """
-        Creates/Overrides script config file with the default values.
+        Creates/Overrides algorithm config file with the default values.
 
-        :param script: an instance of target Script
+        :param algorithm: class of Algorithm
         :return: ArgumentsHolder containing arguments with default values
         """
 
         arguments_holder = ArgumentsHolder()
         result: dict = {}
-        for arg_ref_name, arg in script.get_arguments().items():
-            if arg.type is None:
-                raise LoadingScriptArgumentsException('Type can not be None')
-            elif arg.default is None:
-                raise LoadingScriptArgumentsException('Default Value can not be None')
-            elif not self._does_value_meet_type(arg.type, arg.default):
-                raise LoadingScriptArgumentsException(
-                    f'Default value does not meet the type. Val: {arg.default}; Type: {arg.type} ')
-            result[arg.name] = arg.default
-            setattr(arguments_holder, arg_ref_name, arg.default)
+        for parameter_ref, parameter in algorithm.get_parameters().items():
+            if parameter.type is None:
+                raise LoadingAlgorithmArgumentsException('Type can not be None')
+            elif parameter.default is None:
+                raise LoadingAlgorithmArgumentsException('Default Value can not be None')
+            elif not self._does_value_meet_type(parameter.type, parameter.default):
+                raise LoadingAlgorithmArgumentsException(
+                    f'Default value does not meet the type. Val: {parameter.default}; Type: {parameter.type} ')
+            result[parameter.name] = parameter.default
+            setattr(arguments_holder, parameter_ref, parameter.default)
 
-        self._save_config_for(script, result)
+        self._save_config_for(algorithm, result)
 
         return arguments_holder
 
@@ -204,12 +208,12 @@ class AlgorithmManager(object):
 
         raise AlgorithmManagerException(f'Unsupported type for the argument: {t}')
 
-    def _read_config_for(self, script: Script) -> dict:
-        config_file = self._configs_folder / f'{script.get_name()}.json'
+    def _read_config_for(self, algorithm: Algorithm) -> dict:
+        config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         if not config_file.exists():
-            raise LoadingScriptArgumentsException(f'Config file for "{script.get_name()}" does not exist!')
+            raise LoadingAlgorithmArgumentsException(f'Config file for "{algorithm.get_name()}" does not exist!')
         return json.loads(config_file.read_bytes())
 
-    def _save_config_for(self, script: Script, parameters: dict) -> None:
-        config_file = self._configs_folder / f'{script.get_name()}.json'
+    def _save_config_for(self, algorithm: Algorithm, parameters: dict) -> None:
+        config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         config_file.write_text(json.dumps(parameters, indent=4))

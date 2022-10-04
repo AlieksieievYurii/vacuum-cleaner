@@ -20,7 +20,7 @@ import com.yurii.vaccumcleaner.databinding.ItemChoiceBinding
 import com.yurii.vaccumcleaner.databinding.ItemSwitchBinding
 import com.yurii.vaccumcleaner.databinding.ItemTextFieldBinding
 import com.yurii.vaccumcleaner.robot.ArgumentValue
-import com.yurii.vaccumcleaner.robot.ScriptArgument
+import com.yurii.vaccumcleaner.robot.AlgorithmParameter
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
 import java.lang.IllegalStateException
@@ -47,20 +47,20 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
     private val viewModel: AlgorithmSetupViewModel by viewModels { Injector.provideAlgorithmSetupViewModel() }
     private val loadingDialog by lazy { LoadingDialog(requireContext()) }
 
-    private val argumentsViews = HashMap<ScriptArgument, ViewDataBinding>()
+    private val argumentsViews = HashMap<AlgorithmParameter, ViewDataBinding>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply.setOnClickListener { onApply() }
-        binding.scripts.setOnItemClickListener { _, _, position, _ ->
-            viewModel.setScript(binding.scripts.adapter.getItem(position).toString())
+        binding.algorithms.setOnItemClickListener { _, _, position, _ ->
+            viewModel.setAlgorithm(binding.algorithms.adapter.getItem(position).toString())
         }
 
-        viewModel.scriptsList.observeOnLifecycle(viewLifecycleOwner) {
+        viewModel.algorithmNames.observeOnLifecycle(viewLifecycleOwner) {
             it?.run {
                 val adapter = ArrayAdapter(requireContext(), R.layout.item_simple_list, it)
-                binding.scripts.setAdapter(adapter)
+                binding.algorithms.setAdapter(adapter)
             }
         }
 
@@ -70,14 +70,14 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
             }
         }
 
-        viewModel.currentScript.observeOnLifecycle(viewLifecycleOwner) { script ->
+        viewModel.currentAlgorithm.observeOnLifecycle(viewLifecycleOwner) { script ->
             script?.run {
-                binding.scripts.setText(script.name, false)
+                binding.algorithms.setText(script.name, false)
                 binding.description.isVisible = true
                 binding.description.text = script.description
                 argumentsViews.clear()
-                binding.argumentsLayout.removeAllViews()
-                script.arguments.forEach {
+                binding.parametersLayout.removeAllViews()
+                script.parameters.forEach {
                     generateParameter(it)
                 }
 
@@ -91,39 +91,39 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         val parameters = argumentsViews.map { entry ->
             ArgumentValue(
                 entry.key.name, value = when (entry.key.getType()) {
-                    is ScriptArgument.Type.Bool -> (entry.value as ItemSwitchBinding).sw.isChecked
-                    is ScriptArgument.Type.Floating -> (entry.value as ItemTextFieldBinding).input.text.toString().toFloat()
-                    is ScriptArgument.Type.IntRange -> (entry.value as ItemTextFieldBinding).input.text.toString().toInt()
-                    is ScriptArgument.Type.Integer -> (entry.value as ItemTextFieldBinding).input.text.toString().toInt()
-                    is ScriptArgument.Type.Text -> (entry.value as ItemTextFieldBinding).input.text.toString()
-                    is ScriptArgument.Type.TextChoice -> (entry.value as ItemChoiceBinding).scripts.text.toString()
+                    is AlgorithmParameter.Type.Bool -> (entry.value as ItemSwitchBinding).sw.isChecked
+                    is AlgorithmParameter.Type.Floating -> (entry.value as ItemTextFieldBinding).input.text.toString().toFloat()
+                    is AlgorithmParameter.Type.IntRange -> (entry.value as ItemTextFieldBinding).input.text.toString().toInt()
+                    is AlgorithmParameter.Type.Integer -> (entry.value as ItemTextFieldBinding).input.text.toString().toInt()
+                    is AlgorithmParameter.Type.Text -> (entry.value as ItemTextFieldBinding).input.text.toString()
+                    is AlgorithmParameter.Type.TextChoice -> (entry.value as ItemChoiceBinding).algorithms.text.toString()
                 }
             )
         }
         viewModel.applySettings(parameters)
     }
 
-    private fun generateParameter(argument: ScriptArgument) {
+    private fun generateParameter(argument: AlgorithmParameter) {
         when (val typedValue = argument.getType()) {
-            is ScriptArgument.Type.Floating -> addEditTextView(argument)
-            is ScriptArgument.Type.IntRange -> addRangeView(argument, typedValue.from, typedValue.to)
-            is ScriptArgument.Type.Integer -> addEditTextView(argument)
-            is ScriptArgument.Type.Text -> addEditTextView(argument)
-            is ScriptArgument.Type.TextChoice -> addChoiceView(argument, typedValue.values)
-            is ScriptArgument.Type.Bool -> addSwitchView(argument)
+            is AlgorithmParameter.Type.Floating -> addEditTextView(argument)
+            is AlgorithmParameter.Type.IntRange -> addRangeView(argument, typedValue.from, typedValue.to)
+            is AlgorithmParameter.Type.Integer -> addEditTextView(argument)
+            is AlgorithmParameter.Type.Text -> addEditTextView(argument)
+            is AlgorithmParameter.Type.TextChoice -> addChoiceView(argument, typedValue.values)
+            is AlgorithmParameter.Type.Bool -> addSwitchView(argument)
         }
     }
 
-    private fun addSwitchView(argument: ScriptArgument) {
-        val view: ItemSwitchBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_switch, binding.argumentsLayout, true)
+    private fun addSwitchView(argument: AlgorithmParameter) {
+        val view: ItemSwitchBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_switch, binding.parametersLayout, true)
         val currentValue = argument.currentValue as Boolean
         view.sw.isChecked = currentValue
         view.sw.text = argument.name
         argumentsViews[argument] = view
     }
 
-    private fun addRangeView(argument: ScriptArgument, min: Int, max: Int) {
-        val view: ItemTextFieldBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_text_field, binding.argumentsLayout, true)
+    private fun addRangeView(argument: AlgorithmParameter, min: Int, max: Int) {
+        val view: ItemTextFieldBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_text_field, binding.parametersLayout, true)
         view.inputLayout.hint = getString(R.string.label_range, argument.name, min, max)
         view.input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
         view.input.setText((argument.currentValue as Double).toInt().toString())
@@ -131,27 +131,27 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
         argumentsViews[argument] = view
     }
 
-    private fun addChoiceView(argument: ScriptArgument, choices: List<String>) {
-        val view = DataBindingUtil.inflate<ItemChoiceBinding>(layoutInflater, R.layout.item_choice, binding.argumentsLayout, true)
+    private fun addChoiceView(argument: AlgorithmParameter, choices: List<String>) {
+        val view = DataBindingUtil.inflate<ItemChoiceBinding>(layoutInflater, R.layout.item_choice, binding.parametersLayout, true)
         view.textInputLayout.hint = argument.name
-        view.scripts.setAdapter(ArrayAdapter(requireContext(), R.layout.item_simple_list, choices))
-        view.scripts.setText(argument.currentValue as String, false)
+        view.algorithms.setAdapter(ArrayAdapter(requireContext(), R.layout.item_simple_list, choices))
+        view.algorithms.setText(argument.currentValue as String, false)
         argumentsViews[argument] = view
     }
 
-    private fun addEditTextView(argument: ScriptArgument) {
-        val view: ItemTextFieldBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_text_field, binding.argumentsLayout, true)
+    private fun addEditTextView(argument: AlgorithmParameter) {
+        val view: ItemTextFieldBinding = DataBindingUtil.inflate(layoutInflater, R.layout.item_text_field, binding.parametersLayout, true)
         view.inputLayout.hint = argument.name
         when (val typedValue = argument.getType()) {
-            is ScriptArgument.Type.Text -> view.input.apply {
+            is AlgorithmParameter.Type.Text -> view.input.apply {
                 inputType = InputType.TYPE_CLASS_TEXT
                 setText(typedValue.value)
             }
-            is ScriptArgument.Type.Integer -> view.input.apply {
+            is AlgorithmParameter.Type.Integer -> view.input.apply {
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_SIGNED
                 setText(typedValue.value.toString())
             }
-            is ScriptArgument.Type.Floating -> view.input.apply {
+            is AlgorithmParameter.Type.Floating -> view.input.apply {
                 inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
                 setText(typedValue.value.toString())
             }

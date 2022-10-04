@@ -20,16 +20,16 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
         object CloseFragment : Event()
     }
 
-    private val _scriptsList = MutableStateFlow<List<String>?>(null)
-    val scriptsList = _scriptsList.asStateFlow()
+    private val _algorithmNames = MutableStateFlow<List<String>?>(null)
+    val algorithmNames = _algorithmNames.asStateFlow()
 
-    private val _currentScript = MutableStateFlow<AlgorithmScript?>(null)
-    val currentScript = _currentScript.asStateFlow()
+    private val _currentAlgorithm = MutableStateFlow<AlgorithmScript?>(null)
+    val currentAlgorithm = _currentAlgorithm.asStateFlow()
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
 
-    private val _algorithmScripts = ArrayList<AlgorithmScript>()
+    private val _algorithms = ArrayList<AlgorithmScript>()
 
     private val _event = MutableSharedFlow<Event>()
     val event = _event.asSharedFlow()
@@ -37,27 +37,27 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
     init {
         viewModelScope.launch {
             delay(1000)
-            val response = robot.getAlgorithmScripts()
-            _algorithmScripts.apply {
+            val response = robot.getAlgorithms()
+            _algorithms.apply {
                 clear()
-                addAll(response.scripts)
+                addAll(response.algorithms)
             }
 
-            _scriptsList.value = response.scripts.map { it.name }
-            setScript(response.currentScript)
+            _algorithmNames.value = response.algorithms.map { it.name }
+            setAlgorithm(response.currentAlgorithmName)
 
             _isLoading.value = false
         }
     }
 
-    fun setScript(name: String) {
-        _currentScript.value = _algorithmScripts.find { it.name == name }
+    fun setAlgorithm(name: String) {
+        _currentAlgorithm.value = _algorithms.find { it.name == name }
     }
 
-    fun applySettings(parameters: List<ArgumentValue>) {
+    fun applySettings(arguments: List<ArgumentValue>) {
         viewModelScope.launch {
             _isLoading.value = true
-            robot.setAlgorithmScript(Algorithm(name = _currentScript.value!!.name, parameters = parameters))
+            robot.setAlgorithm(Algorithm(name = _currentAlgorithm.value!!.name, arguments = arguments))
             delay(1000)
             _isLoading.value = false
             sendEvent(Event.CloseFragment)

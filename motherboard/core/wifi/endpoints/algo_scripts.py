@@ -7,7 +7,7 @@ from utils.request_handler.models import RequestHandler, Request, AttributeHolde
 
 
 @dataclass
-class AlgorithmArgument(object):
+class AlgorithmParameter(object):
     name: str
     value_type: str
     default_value: Any
@@ -15,16 +15,16 @@ class AlgorithmArgument(object):
 
 
 @dataclass
-class AlgorithmScript(object):
+class Algorithm(object):
     name: str
     description: str
-    arguments: List[AlgorithmArgument]
+    parameters: List[AlgorithmParameter]
 
 
 @dataclass
 class ResponseModel(object):
-    current_script: str
-    scripts: List[AlgorithmScript]
+    current_algorithm: str
+    algorithms: List[Algorithm]
 
 
 class Parameter(object):
@@ -33,12 +33,12 @@ class Parameter(object):
 
 
 class RequestModel(object):
-    script_name = Field('script_name', str, is_required=True)
-    parameters = Field('parameters', ListType(Parameter), is_required=True)
+    algorithm_name = Field('algorithm_name', str, is_required=True)
+    arguments = Field('arguments', ListType(Parameter), is_required=True)
 
 
-class GetAlgorithmScriptsRequest(RequestHandler):
-    endpoint = '/get-algorithm-scripts'
+class GetAlgorithmsRequest(RequestHandler):
+    endpoint = '/get-algorithms'
     request_model = None
     response_model = ResponseModel
 
@@ -46,26 +46,26 @@ class GetAlgorithmScriptsRequest(RequestHandler):
         self._algorithm_manager = algorithm_manager
 
     def perform(self, request: Request, data: AttributeHolder) -> ResponseModel:
-        scripts = []
-        for script in self._algorithm_manager.get_scripts():
-            arguments_list = [AlgorithmArgument(
-                name=argument['name'],
-                value_type=argument['value_type'],
-                default_value=argument['default'],
-                current_value=argument['value']
-            ) for argument in script['arguments']]
+        algorithms = []
+        for algorithm in self._algorithm_manager.get_algorithms():
+            parameters = [AlgorithmParameter(
+                name=parameter['name'],
+                value_type=parameter['value_type'],
+                default_value=parameter['default'],
+                current_value=parameter['value']
+            ) for parameter in algorithm['arguments']]
 
-            scripts.append(AlgorithmScript(
-                name=script['name'],
-                description=script['description'],
-                arguments=arguments_list
+            algorithms.append(Algorithm(
+                name=algorithm['name'],
+                description=algorithm['description'],
+                parameters=parameters
             ))
 
-        return ResponseModel(current_script=self._algorithm_manager.get_current_script_name(), scripts=scripts)
+        return ResponseModel(self._algorithm_manager.get_current_algorithm_name(), algorithms)
 
 
 class SetAlgorithmScriptRequest(RequestHandler):
-    endpoint = '/set-algorithm-scripts'
+    endpoint = '/set-algorithm'
     request_model = RequestModel
     response_model = None
 
@@ -74,6 +74,6 @@ class SetAlgorithmScriptRequest(RequestHandler):
         self._config = config
 
     def perform(self, request: Request, data: AttributeHolder):
-        self._algorithm_manager.set_script_parameters(data.script_name, {p.name: p.value for p in data.parameters})
-        self._config.set_target_cleaning_algorithm(data.script_name)
-        self._algorithm_manager.set_script(data.script_name)
+        self._algorithm_manager.save_algorithm_arguments(data.algorithm_name, {a.name: a.value for a in data.arguments})
+        self._config.set_target_cleaning_algorithm(data.algorithm_name)
+        self._algorithm_manager.set_algorithm(data.algorithm_name)

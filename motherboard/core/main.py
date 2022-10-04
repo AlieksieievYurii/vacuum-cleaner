@@ -12,7 +12,7 @@ from utils.speetch.voices import RudeMaximVoice
 from utils.utils import get_typed_arg
 from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
-from wifi.endpoints.algo_scripts import GetAlgorithmScriptsRequest
+from wifi.endpoints.algo_scripts import GetAlgorithmsRequest, SetAlgorithmScriptRequest
 from wifi.endpoints.hello_world import HelloWorldRequest
 from utils.logger import wifi_module_logger, CoreLogger, algorithm_manager_logger
 from wifi.endpoints.motor import Motor
@@ -44,7 +44,8 @@ class Core(object):
         self._wifi_endpoints_handler.register_endpoint(Movement(self._robot))
         self._wifi_endpoints_handler.register_endpoint(StopMovement(self._robot))
         self._wifi_endpoints_handler.register_endpoint(GetA1DataRequestHandler(self._robot))
-        self._wifi_endpoints_handler.register_endpoint(GetAlgorithmScriptsRequest(self._algorithm_manager))
+        self._wifi_endpoints_handler.register_endpoint(GetAlgorithmsRequest(self._algorithm_manager))
+        self._wifi_endpoints_handler.register_endpoint(SetAlgorithmScriptRequest(self._algorithm_manager, self._config))
 
     def run(self) -> None:
         self._logger.print_entry_point()
@@ -70,7 +71,7 @@ class Core(object):
                 raise error
 
     def _initialization(self) -> None:
-        self._algorithm_manager.set_script(self._config.get_selected_cleaning_algorithm())
+        self._algorithm_manager.set_algorithm(self._config.get_selected_cleaning_algorithm())
         #self._set_core_data_time()
 
     def _set_core_data_time(self) -> None:

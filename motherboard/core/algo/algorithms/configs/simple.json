@@ -1,0 +1,11 @@
+{
+    "speed": 50,
+    "test": "2",
+    "test2": 1,
+    "test22": 1.0,
+    "test3": false,
+    "test31": false,
+    "test32": false,
+    "test33": false,
+    "test4": "dupa"
+}

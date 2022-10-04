@@ -1,8 +1,8 @@
 from a1.models import A1Data
-from algo.scripts.script import Script, FieldParameter
+from algo.algorithms.algorithm import Algorithm, FieldParameter
 
 
-class Smart(Script):
+class Smart(Algorithm):
     NAME: str = 'smart'
     DESCRIPTION: str = 'Just smart algorithm of cleaning'
 

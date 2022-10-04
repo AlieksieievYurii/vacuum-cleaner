@@ -38,7 +38,7 @@ data class PidSettings(
 )
 
 @JsonClass(generateAdapter = true)
-data class ScriptArgument(
+data class AlgorithmParameter(
     val name: String,
     @Json(name = "value_type") val valueType: String,
     @Json(name = "current_value") val currentValue: Any,
@@ -86,17 +86,17 @@ data class ArgumentValue(
 data class AlgorithmScript(
     val name: String,
     val description: String,
-    val arguments: List<ScriptArgument>
+    val parameters: List<AlgorithmParameter>
 )
 
 @JsonClass(generateAdapter = true)
-data class AlgorithmScriptList(
-    @Json(name = "current_script") val currentScript: String,
-    val scripts: List<AlgorithmScript>
+data class AlgorithmList(
+    @Json(name = "current_algorithm") val currentAlgorithmName: String,
+    val algorithms: List<AlgorithmScript>
 )
 
 @JsonClass(generateAdapter = true)
 data class Algorithm(
-    @Json(name = "script_name") val name: String,
-    val parameters: List<ArgumentValue>
+    @Json(name = "algorithm_name") val name: String,
+    val arguments: List<ArgumentValue>
 )
