@@ -55,7 +55,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     fun openManualControlFragment() {
         viewModelScope.launch {
-            // _event.emit(Event.NavigateToControlFragment)
+             _event.emit(Event.NavigateToControlFragment)
         }
     }
 

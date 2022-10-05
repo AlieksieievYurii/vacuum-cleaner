@@ -26,8 +26,8 @@ object Injector {
     }
 
     fun providePanelViewModel(): PanelViewModel.Factory {
-        //return PanelViewModel.Factory(RobotConnection.getRobotAPI())
-        return PanelViewModel.Factory(RobotMockUpImpl())
+        return PanelViewModel.Factory(RobotConnection.getRobotAPI())
+        //return PanelViewModel.Factory(RobotMockUpImpl())
     }
 
     fun providePidSettingsViewModel(): PidSettingsViewModel.Factory {
