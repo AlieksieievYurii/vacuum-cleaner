@@ -49,17 +49,17 @@ class Core(object):
 
     def run(self) -> None:
         self._logger.print_entry_point()
-        #
-        # try:
-        #     self._robot.connect()
-        # except Exception as error:
-        #     self._logger.critical(f'Cannot establish connection with A1 module. Reason:{error}')
-        #     if self._debug:
-        #         raise error
-        #     return None
-        #
-        # self._robot.core_is_initialized(is_successful=True)
-        # self._robot.beep(3, 100)
+
+        try:
+            self._robot.connect()
+        except Exception as error:
+            self._logger.critical(f'Cannot establish connection with A1 module. Reason:{error}')
+            if self._debug:
+                raise error
+            return None
+
+        self._robot.core_is_initialized(is_successful=True)
+        self._robot.beep(3, 100)
 
         self._wifi_endpoints_handler.start()
         self._initialization()
@@ -72,7 +72,7 @@ class Core(object):
 
     def _initialization(self) -> None:
         self._algorithm_manager.set_algorithm(self._config.get_selected_cleaning_algorithm())
-        #self._set_core_data_time()
+        self._set_core_data_time()
 
     def _set_core_data_time(self) -> None:
         self._logger.info('Setting DateTime...')
@@ -86,12 +86,11 @@ class Core(object):
             self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
-        # self._voice.say_introduction()
+        self._voice.say_introduction()
         while True:
-            pass
-            # if self._is_shutting_down_triggered():
-            #     self._shut_down_core()
-            #     break
+            if self._is_shutting_down_triggered():
+                self._shut_down_core()
+                break
             #
             # but = self._robot.data.button_up
             # if but is ButtonState.CLICK:

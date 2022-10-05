@@ -4,8 +4,8 @@
     "test2": 1,
     "test22": 1.0,
     "test3": false,
-    "test31": false,
-    "test32": false,
+    "test31": true,
+    "test32": true,
     "test33": false,
     "test4": "dupa"
 }
