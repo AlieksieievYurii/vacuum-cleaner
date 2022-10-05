@@ -54,6 +54,8 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
                 viewModel.withBreak = isChecked
             }
         }
+
+        binding.headerWidget.observeBatteryState(viewModel.batteryState, viewLifecycleOwner)
     }
 
     private fun initSwitchSeekView(
@@ -82,7 +84,6 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
                     data.centerDistanceRange,
                     data.rightDistanceRange
                 )
-
                 binding.infBumper.text = getString(
                     R.string.label_bumper_hit, when {
                         data.leftBumperHit && data.rightBumperHit -> "Both"
@@ -91,6 +92,8 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
                         else -> "None"
                     }
                 )
+                binding.headerWidget.setLidStatus(!data.isLidClosed)
+                binding.headerWidget.setDustBoxStatus(!data.isDustBoxInserted)
             }
         }
     }

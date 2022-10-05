@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.Robot
 import com.yurii.vaccumcleaner.robot.RobotInputData
+import com.yurii.vaccumcleaner.screens.panel.widgets.HeaderWidget
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     private val _runTimeRobotData: MutableStateFlow<RobotInputData?> = MutableStateFlow(null)
     val runTimeRobotData = _runTimeRobotData.asStateFlow()
+
+    private val _batteryState: MutableStateFlow<HeaderWidget.BatteryState> = MutableStateFlow(HeaderWidget.BatteryState.Working(100, 16.7f))
+    val batteryState = _batteryState.asStateFlow()
 
     var wheelSpeed = 0
     var withBreak = false
@@ -23,7 +27,15 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     private fun startReadingAndHandlingRobotInputData() {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
-                _runTimeRobotData.value = robot.getRobotInputData()
+                val date = robot.getRobotInputData()
+                _runTimeRobotData.value = date
+
+                _batteryState.value = when (date.chargingState) {
+                    0 -> HeaderWidget.BatteryState.Working(date.batteryCapacity, date.batteryVoltage)
+                    1 -> HeaderWidget.BatteryState.Charging
+                    2 -> HeaderWidget.BatteryState.Charged
+                    else -> throw java.lang.IllegalStateException("Unhandled battery state ID '${date.chargingState}'")
+                }
                 delay(500)
             }
         }
