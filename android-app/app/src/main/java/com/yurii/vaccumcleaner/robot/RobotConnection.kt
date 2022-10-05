@@ -12,5 +12,10 @@ object RobotConnection {
         requestHandler.start()
     }
 
+    fun closeConnectionIfOpen() {
+        if (wifiCommunicator.isConnected())
+            wifiCommunicator.closeConnection()
+    }
+
     fun getRobotAPI() = robot
 }
