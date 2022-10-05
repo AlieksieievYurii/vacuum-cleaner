@@ -27,6 +27,7 @@ class Wheel {
   public:
     Wheel(uint8_t forward_pin, uint8_t backward_pin, uint8_t speed_sensor, uint8_t direction_sensor, void (*pulse_interupt)());
     WheelState wheel_state = IDLE;
+    volatile uint16_t speed = 0.0; // sm per minute
     void set_PID(float kp, float ki, float kd);
     void tick(); // Must be called every CALL_INTERVAL milliseconds
     void move(uint32_t distanse_sm, uint32_t speed, bool with_break, bool forward);
@@ -40,7 +41,6 @@ class Wheel {
     volatile float _integral = 0, _prev_err = 0;
     volatile uint32_t _wheel_pulses_for_speed = 0;
     volatile uint64_t _wheel_pulses_count = 0;
-    volatile float _speed = 0.0; // sm per minute
     volatile bool _direction_is_forward;
     volatile uint64_t _pulses_to_move = 0;
     volatile float _speed_setpoint = 0; // sm per minute

@@ -23,11 +23,13 @@ void Wheel::set_PID(float kp, float ki, float kd) {
 }
 
 void Wheel::tick() {
+
+  _measure_speed();
+  
   if (wheel_state == MOVING && _wheel_pulses_count >= _pulses_to_move)
     wheel_state = STOPPED;
 
   if (wheel_state == MOVING || wheel_state == ENDLESS_WALKING) {
-    _measure_speed();
     _measure_pid_and_set_speed();
   }
   else if (wheel_state == STOPPED) {
@@ -42,7 +44,7 @@ void Wheel::tick() {
 
 void Wheel::_measure_speed() {
   const float rpm = (float)((_wheel_pulses_for_speed * (60000 / CALL_INTERVAL)) / ENC_COUNT_REV);
-  _speed = rpm * FULL_ROTATION_DISTANCE / 10;
+  speed = rpm * FULL_ROTATION_DISTANCE / 10;
   _wheel_pulses_for_speed = 0;
 }
 
@@ -78,7 +80,7 @@ void Wheel::walk(uint32_t speed_sm_per_minute, bool forward) {
 }
 
 void Wheel::_measure_pid_and_set_speed() {
-  float err = _speed_setpoint - _speed;
+  float err = _speed_setpoint - speed;
   _integral = constrain(_integral + (float)err * CALL_INTERVAL_IN_SECONDS * _ki, 0, 255);
   float D = (err - _prev_err) / CALL_INTERVAL_IN_SECONDS;
   _prev_err = err;

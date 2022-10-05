@@ -381,6 +381,14 @@ uint8_t get_cliffs_status() {
   return res;
 }
 
+uint32_t get_wheels_speed_value(void) {
+  uint32_t res = 0;
+  res |= wheel_right.speed;
+  res |= (uint32_t)wheel_left.speed << 16;
+
+  return res;
+}
+
 void on_set_timer_to_turn_off(uint16_t id, char* input) {
   int8_t seconds = fetch_unsigned_hex_number(input, 0);
   VALIDATE_PARSING(seconds, 0x1);

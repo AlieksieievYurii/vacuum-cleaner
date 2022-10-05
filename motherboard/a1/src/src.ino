@@ -3,7 +3,7 @@
 #include "instruction-handler.h"
 #include "utils.h"
 
-InstructionHandler instruction_handler(Serial3);
+InstructionHandler instruction_handler(Serial);
 
 #include "implementation.h"
 
@@ -43,7 +43,7 @@ void setup() {
 void loop() {  
   instruction_handler.perform();
   propagandate_tick_signal();
- 
+
 #ifdef __ENABLE_SENSOR_READING__
   instruction_handler.reset_sensors_output_buffer();
   instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
@@ -52,6 +52,7 @@ void loop() {
   instruction_handler.add_sensor_output(0x04, get_cliffs_status());
   instruction_handler.add_sensor_output(0x05, get_power_controller_state());
   instruction_handler.add_sensor_output(0x06, get_battery_voltage_value());
+  instruction_handler.add_sensor_output(0x07, get_wheels_speed_value());
   instruction_handler.send_sensors_output();
 #endif
 }
