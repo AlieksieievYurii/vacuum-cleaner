@@ -71,8 +71,14 @@ class Core(object):
                 raise error
 
     def _initialization(self) -> None:
+        self._init_pid_settings()
         self._algorithm_manager.set_algorithm(self._config.get_selected_cleaning_algorithm())
         self._set_core_data_time()
+
+    def _init_pid_settings(self) -> None:
+        p, i, d = self._config.get_pid_settings()
+        self._logger.info(f'Setting up PID values for a1: P({p}) I({i}) D({d})')
+        self._robot.set_pid(p, i, d).expect()
 
     def _set_core_data_time(self) -> None:
         self._logger.info('Setting DateTime...')
@@ -91,6 +97,7 @@ class Core(object):
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
                 break
+
             #
             # but = self._robot.data.button_up
             # if but is ButtonState.CLICK:
@@ -136,7 +143,7 @@ class Core(object):
 def main():
     os: OperationSystem = get_operation_system()
     ##COM5 /dev/serial0
-    a1_socket = A1Socket("/dev/serial0")
+    a1_socket = A1Socket("COM5")
     robot = Robot(a1_socket)
     config = Configuration()
     wifi_communicator = WifiCommunicator(WIFI_SOCKET_PORT)
