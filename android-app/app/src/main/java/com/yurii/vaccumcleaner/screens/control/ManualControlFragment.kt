@@ -102,6 +102,7 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
                 )
                 binding.headerWidget.setLidStatus(!data.isLidClosed)
                 binding.headerWidget.setDustBoxStatus(!data.isDustBoxInserted)
+                binding.infWheelsSpeed.text = getString(R.string.label_wheels_speed, data.leftWheelSpeed, data.rightWheelSpeed)
             }
         }
     }

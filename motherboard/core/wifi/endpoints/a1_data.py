@@ -16,6 +16,8 @@ class A1DataResponseModel(object):
     bv: float  # Battery voltage
     bc: int  # Battery Capacity
     cs: int  # Charging State. NO CHARGING = 0, CHARGING = 1, CHARGED = 2
+    rws: int  # Right Wheel Speed
+    lws: int  # Left Wheel Speed
 
 
 class GetA1DataRequestHandler(RequestHandler):
@@ -37,5 +39,7 @@ class GetA1DataRequestHandler(RequestHandler):
             rrs=self._robot.data.rangefinder_right_value,
             bv=self._robot.data.battery_voltage,
             bc=self._robot.data.battery_capacity,
-            cs=self._robot.data.charging_state.value
+            cs=self._robot.data.charging_state.value,
+            rws=self._robot.data.right_wheel_speed,
+            lws=self._robot.data.left_wheel_speed
         )

@@ -55,5 +55,6 @@
     <string name="label_right_brush_motor">Right Brush Motor</string>
     <string name="label_left_brush_motor">Left Brush Motor</string>
     <string name="label_with_break">With break</string>
-    <string name="label_wheel_speed">Wheel speed:</string>
+    <string name="label_target_wheel_speed">Wheel speed:</string>
+    <string name="label_wheels_speed">Wheel speed(Sm\Min): Left(%d) Right(%d)</string>
 </resources>

@@ -28,6 +28,8 @@ data class RobotInputData(
     @Json(name = "bv") val batteryVoltage: Float,
     @Json(name = "bc") val batteryCapacity: Int,
     @Json(name = "cs") val chargingState: Int, // NO CHARGING = 0, CHARGING = 1, CHARGED = 2
+    @Json(name = "rws") val rightWheelSpeed: Int, // Sm per minute
+    @Json(name = "lws") val leftWheelSpeed: Int, // Sm per minute
 )
 
 @JsonClass(generateAdapter = true)

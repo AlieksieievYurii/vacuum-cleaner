@@ -34,10 +34,10 @@
             app:layout_constraintTop_toBottomOf="@+id/inf_range_radar_values" />
 
         <TextView
-            android:id="@+id/inf_speed"
+            android:id="@+id/inf_wheels_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Current Speed: 120 CM / Min"
+            tools:text="Speed: Left(120) Right(120) CM / Min"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/inf_bumper" />
 
@@ -47,7 +47,7 @@
             android:layout_height="wrap_content"
             android:text="Cliff trig: Left Back, Left Center"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/inf_speed" />
+            app:layout_constraintTop_toBottomOf="@+id/inf_wheels_speed" />
 
 
 
@@ -130,7 +130,8 @@
             android:id="@+id/tv_speed_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_wheel_speed"
+            android:text="@string/label_target_wheel_speed"
+            style="@style/TextAppearance.AppCompat.Body2"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/left_brush_motor_switch" />
 
