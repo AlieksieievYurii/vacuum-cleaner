@@ -23,7 +23,9 @@ void Wheel::set_PID(float kp, float ki, float kd) {
 }
 
 void Wheel::tick() {
-
+  //Serial.println(_kp);
+  //Serial.println(_ki);
+  //Serial.println(_kd);
   _measure_speed();
   
   if (wheel_state == MOVING && _wheel_pulses_count >= _pulses_to_move)

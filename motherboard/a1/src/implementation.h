@@ -404,6 +404,23 @@ void on_set_timer_to_turn_off(uint16_t id, char* input) {
   instruction_handler.on_finished(id);
 }
 
+void set_pid_settings(uint16_t id, char* input) {
+  bool parsing_failed = false;
+
+  float p = fetch_float_number(input, 0, &parsing_failed);
+  float i = fetch_float_number(input, 1, &parsing_failed);
+  float d = fetch_float_number(input, 2, &parsing_failed);
+
+  if (parsing_failed) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  wheel_left.set_PID(p, i, d);
+  wheel_right.set_PID(p, i, d);
+  instruction_handler.on_finished(id);
+}
+
 void propagandate_tick_signal() {
   if (time_to_turn_off > 0 && millis() >= time_to_turn_off) {
    power_controller.set_state_TURNED_OFF();

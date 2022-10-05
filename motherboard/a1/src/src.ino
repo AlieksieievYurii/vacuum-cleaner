@@ -31,13 +31,15 @@ void setup() {
   instruction_handler.add(0x12, on_main_brush_motor);
   instruction_handler.add(0x13, on_walk);
   instruction_handler.add(0x14, on_rotate);
+  instruction_handler.add(0x15, set_pid_settings);
   instruction_handler.add(0xff, on_set_timer_to_turn_off);
+
   
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
 
-  wheel_left.set_PID(0.1, 0.1, 0);
-  wheel_right.set_PID(0.1, 0.1, 0);
+  //wheel_left.set_PID(0.1, 0.1, 0);
+  //wheel_right.set_PID(0.1, 0.1, 0);
 }
 
 void loop() {  
