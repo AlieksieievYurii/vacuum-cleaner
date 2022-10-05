@@ -14,6 +14,7 @@ import com.yurii.vaccumcleaner.databinding.FragmentControlBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.setPressedUnpressedListener
 import com.yurii.vaccumcleaner.utils.setProgressListener
+import com.yurii.vaccumcleaner.utils.ui.showError
 
 class ManualControlFragment : Fragment(R.layout.fragment_control) {
     private val binding: FragmentControlBinding by viewBinding()
@@ -56,6 +57,13 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
         }
 
         binding.headerWidget.observeBatteryState(viewModel.batteryState, viewLifecycleOwner)
+
+        viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
+                is ManualControlViewModel.Event.ShowError -> showError(binding.root, getString(R.string.label_error_occurred), event.exception)
+            }
+
+        }
     }
 
     private fun initSwitchSeekView(

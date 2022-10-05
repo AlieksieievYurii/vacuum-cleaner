@@ -7,10 +7,16 @@ import com.yurii.vaccumcleaner.robot.Robot
 import com.yurii.vaccumcleaner.robot.RobotInputData
 import com.yurii.vaccumcleaner.screens.panel.widgets.HeaderWidget
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class ManualControlViewModel(private val robot: Robot) : ViewModel() {
+    sealed class Event {
+        data class ShowError(val exception: Throwable) : Event()
+    }
+
     private val _runTimeRobotData: MutableStateFlow<RobotInputData?> = MutableStateFlow(null)
     val runTimeRobotData = _runTimeRobotData.asStateFlow()
 
@@ -20,12 +26,24 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     var wheelSpeed = 0
     var withBreak = false
 
+    private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
+    val event = _event.asSharedFlow()
+
+    private val errorHandler = CoroutineExceptionHandler { _, exception ->
+        viewModelScope.launch {
+            _event.emit(Event.ShowError(exception))
+        }
+    }
+
+    private val viewModelJob = SupervisorJob()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + errorHandler)
+
     init {
         startReadingAndHandlingRobotInputData()
     }
 
     private fun startReadingAndHandlingRobotInputData() {
-        viewModelScope.launch(Dispatchers.IO) {
+        netWorkScope.launch {
             while (true) {
                 val date = robot.getRobotInputData()
                 _runTimeRobotData.value = date
@@ -42,57 +60,39 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun moveForward() {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.walkForward(wheelSpeed)
-        }
+        netWorkScope.launch { robot.walkForward(wheelSpeed) }
     }
 
     fun moveBackward() {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.walkBackward(wheelSpeed)
-        }
+        netWorkScope.launch { robot.walkBackward(wheelSpeed) }
     }
 
     fun turnLeft() {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.rotateLeft(wheelSpeed)
-        }
+        netWorkScope.launch { robot.rotateLeft(wheelSpeed) }
     }
 
     fun turnRight() {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.rotateRight(wheelSpeed)
-        }
+        netWorkScope.launch { robot.rotateRight(wheelSpeed) }
     }
 
     fun stop() {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.stopMovement(withBreak)
-        }
+        netWorkScope.launch { robot.stopMovement(withBreak) }
     }
 
     fun setVacuumMotorSpeed(speedInPercentage: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.setVacuumMotor(speedInPercentage)
-        }
+        netWorkScope.launch { robot.setVacuumMotor(speedInPercentage) }
     }
 
     fun setMainBrushMotorSpeed(speedInPercentage: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.setMainBrushMotor(speedInPercentage)
-        }
+        netWorkScope.launch { robot.setMainBrushMotor(speedInPercentage) }
     }
 
     fun setRightBrushSpeed(speedInPercentage: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.setRightBrushMotor(speedInPercentage)
-        }
+        netWorkScope.launch { robot.setRightBrushMotor(speedInPercentage) }
     }
 
     fun setLeftBrushSpeed(speedInPercentage: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            robot.setLeftBrushMotor(speedInPercentage)
-        }
+        netWorkScope.launch { robot.setLeftBrushMotor(speedInPercentage) }
     }
 
 
