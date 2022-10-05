@@ -1,10 +1,14 @@
 package com.yurii.vaccumcleaner.utils
 
+import android.app.Activity
+import android.content.Context
 import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.SeekBar
 import androidx.appcompat.widget.SwitchCompat
 import androidx.databinding.ObservableField
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -115,4 +119,17 @@ fun SeekBar.setProgressListener(onProgressChanged: (progress: Int) -> Unit, onPr
             onProgress(p0.progress)
         }
     })
+}
+
+fun Fragment.hideKeyboard() {
+    view?.let { activity?.hideKeyboard(it) }
+}
+
+fun Activity.hideKeyboard() {
+    hideKeyboard(currentFocus ?: View(this))
+}
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }

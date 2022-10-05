@@ -4,6 +4,7 @@ import android.content.Context
 import com.yurii.vaccumcleaner.robot.RobotConnection
 import com.yurii.vaccumcleaner.robot.RobotMockUpImpl
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
+import com.yurii.vaccumcleaner.screens.algo.AlgorithmSetupViewModel
 import com.yurii.vaccumcleaner.screens.binder.BinderViewModel
 import com.yurii.vaccumcleaner.screens.control.ManualControlViewModel
 
@@ -25,8 +26,8 @@ object Injector {
     }
 
     fun providePanelViewModel(): PanelViewModel.Factory {
-        //return PanelViewModel.Factory(RobotConnection.getRobotAPI())
-        return PanelViewModel.Factory(RobotMockUpImpl())
+        return PanelViewModel.Factory(RobotConnection.getRobotAPI())
+        //return PanelViewModel.Factory(RobotMockUpImpl())
     }
 
     fun providePidSettingsViewModel(): PidSettingsViewModel.Factory {
@@ -35,5 +36,9 @@ object Injector {
 
     fun provideManualControlViewModel(): ManualControlViewModel.Factory {
         return ManualControlViewModel.Factory(RobotConnection.getRobotAPI())
+    }
+
+    fun provideAlgorithmSetupViewModel(): AlgorithmSetupViewModel.Factory {
+        return AlgorithmSetupViewModel.Factory(RobotConnection.getRobotAPI())
     }
 }

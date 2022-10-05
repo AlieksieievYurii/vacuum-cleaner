@@ -3,11 +3,11 @@ import json
 import queue
 import threading
 from json import JSONDecodeError
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Any
 
 from utils.communicator import Communicator, CommunicatorConnectionClosed
 from utils.request_handler.exceptions import ParsingRequestErrorException, RequiredFieldIsNotFound
-from utils.request_handler.models import Request, RequestHandler, Field, Response, Status, AttributeHolder
+from utils.request_handler.models import Request, RequestHandler, Field, Response, Status, AttributeHolder, ListType
 
 
 class RequestHandlerService(object):
@@ -106,18 +106,19 @@ class RequestHandlerService(object):
             attrs = self._parse_fields(request_handler.request_model, request.parameters)
         else:
             attrs = AttributeHolder()
+            # TODO make better
             if request.parameters:
                 self._send_error(request, 'This endpoint does not require parameters')
-
+                return
         try:
+
             response = request_handler.perform(request, attrs)
         except Exception as error:
             self._send_error(request, str(error))
         else:
             self._send_successful_result(request, response)
 
-    @staticmethod
-    def _parse_fields(obj, data: Dict) -> AttributeHolder:
+    def _parse_fields(self, obj, data: Dict) -> AttributeHolder:
         """
         Uses given obj class/instance to fetch Fields and looks for the parameters in data.
         Then the following dict can be parsed and converted into object with defiled Fields.
@@ -136,10 +137,17 @@ class RequestHandlerService(object):
         fields = {var: val for var, val in obj.__dict__.items() if isinstance(val, Field)}
         attrs = AttributeHolder()
 
-        for field_name, field in fields.items():
-            if field.is_required and field_name not in data:
-                raise RequiredFieldIsNotFound(field_name, data)
-            setattr(attrs, field.name, field.type(data.get(field_name)))
+        for ref_field_name, field in fields.items():
+            if field.is_required and field.name not in data:
+                raise RequiredFieldIsNotFound(field.name, data)
+
+            if isinstance(field.type, ListType):
+                param_list = [self._parse_fields(field.type.value_type, args) for args in data.get(field.name)]
+                setattr(attrs, ref_field_name, param_list)
+            elif field.type == Any:
+                setattr(attrs, ref_field_name, data.get(field.name))
+            else:
+                setattr(attrs, ref_field_name, field.type(data.get(field.name)))
         return attrs
 
     def _find_corresponding_handler(self, request: Request) -> Optional[RequestHandler]:

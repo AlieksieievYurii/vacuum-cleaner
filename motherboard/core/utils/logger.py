@@ -83,5 +83,20 @@ class A1Logger(object):
         self._a1_logger.debug(message)
 
 
+class AlgorithmManagerLogger(object):
+    def __init__(self, console=False):
+        self._logger = _create_logger('algorithm-manager', console, formatter)
+
+    def debug(self, message: str) -> None:
+        self._logger.debug(message)
+
+    def error(self, message: str) -> None:
+        self._logger.error(message)
+
+    def info(self, message: str) -> None:
+        self._logger.info(message)
+
+
 a1_logger = A1Logger(True)
 wifi_module_logger = WifiModuleLogger(True)
+algorithm_manager_logger = AlgorithmManagerLogger(True)

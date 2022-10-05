@@ -13,4 +13,6 @@ interface Robot {
     suspend fun getRobotInputData(): RobotInputData
     suspend fun getCurrentPidSettings(): PidSettings
     suspend fun setPidSettings(pidSettings: PidSettings)
+    suspend fun getAlgorithms(): AlgorithmList
+    suspend fun setAlgorithm(algorithm: Algorithm)
 }

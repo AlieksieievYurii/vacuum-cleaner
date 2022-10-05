@@ -64,4 +64,12 @@ class RobotMockUpImpl : Robot {
         delay(1000)
         Timber.i("Setting up PID: $pidSettings")
     }
+
+    override suspend fun getAlgorithms(): AlgorithmList {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun setAlgorithm(algorithm: Algorithm) {
+        Timber.i("Setting algorithm $algorithm")
+    }
 }

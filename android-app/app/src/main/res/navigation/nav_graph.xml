@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/panelFragment">
+    app:startDestination="@id/initialFragment">
 
     <fragment
         android:id="@+id/bluetoothDevicesFragment"
@@ -70,6 +70,9 @@
         <action
             android:id="@+id/action_panelFragment_to_pidSettingsFragment"
             app:destination="@id/pidSettingsFragment" />
+        <action
+            android:id="@+id/action_panelFragment_to_algorithmSetupFragment"
+            app:destination="@id/algorithmSetupFragment" />
     </fragment>
     <fragment
         android:id="@+id/manualControlFragment"
@@ -86,4 +89,9 @@
         android:name="com.yurii.vaccumcleaner.screens.pid.PidSettingsFragment"
         android:label="PidSettingsFragment"
         tools:layout="@layout/fragment_pid_settings" />
+    <fragment
+        android:id="@+id/algorithmSetupFragment"
+        android:name="com.yurii.vaccumcleaner.screens.algo.AlgorithmSetupFragment"
+        android:label="AlgorithmSetupFragment"
+        tools:layout="@layout/fragment_algorithm_setup" />
 </navigation>
