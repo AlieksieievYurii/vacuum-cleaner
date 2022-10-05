@@ -7,17 +7,17 @@ import com.yurii.vaccumcleaner.robot.Algorithm
 import com.yurii.vaccumcleaner.robot.AlgorithmScript
 import com.yurii.vaccumcleaner.robot.ArgumentValue
 import com.yurii.vaccumcleaner.robot.Robot
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import java.lang.IllegalStateException
 
 class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
     sealed class Event {
         object CloseFragment : Event()
+        data class ShowError(val exception: Throwable) : Event()
     }
 
     private val _algorithmNames = MutableStateFlow<List<String>?>(null)
@@ -34,8 +34,16 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
     private val _event = MutableSharedFlow<Event>()
     val event = _event.asSharedFlow()
 
+    private val errorHandler = CoroutineExceptionHandler { _, error ->
+        _isLoading.value = false
+        sendEvent(Event.ShowError(error))
+    }
+
+    private val viewModelJob = SupervisorJob()
+    private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + errorHandler)
+
     init {
-        viewModelScope.launch {
+        netWorkScope.launch {
             delay(1000)
             val response = robot.getAlgorithms()
             _algorithms.apply {
@@ -55,7 +63,7 @@ class AlgorithmSetupViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun applySettings(arguments: List<ArgumentValue>) {
-        viewModelScope.launch {
+        netWorkScope.launch {
             _isLoading.value = true
             robot.setAlgorithm(Algorithm(name = _currentAlgorithm.value!!.name, arguments = arguments))
             delay(1000)
