@@ -3,13 +3,13 @@ package com.yurii.vaccumcleaner.screens.control
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.yurii.vaccumcleaner.robot.RobotWifiImplementation
+import com.yurii.vaccumcleaner.robot.Robot
 import com.yurii.vaccumcleaner.robot.RobotInputData
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class ManualControlViewModel(private val robot: RobotWifiImplementation) : ViewModel() {
+class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     private val _runTimeRobotData: MutableStateFlow<RobotInputData?> = MutableStateFlow(null)
     val runTimeRobotData = _runTimeRobotData.asStateFlow()
 
@@ -85,7 +85,7 @@ class ManualControlViewModel(private val robot: RobotWifiImplementation) : ViewM
 
 
     @Suppress("UNCHECKED_CAST")
-    class Factory(private val robot: RobotWifiImplementation) : ViewModelProvider.Factory {
+    class Factory(private val robot: Robot) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(ManualControlViewModel::class.java))
                 return ManualControlViewModel(robot) as T
