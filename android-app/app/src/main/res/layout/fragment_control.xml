@@ -7,110 +7,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/warnings_holder"
+        <com.yurii.vaccumcleaner.screens.panel.widgets.HeaderWidget
+            android:id="@+id/headerWidget"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_lid_warning"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:cardBackgroundColor="?attr/colorPrimaryVariant"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_white_warning_32"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:textColor="@color/white"
-                        android:text="Lid is opened!" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cv_dust_box_pulled"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                app:cardBackgroundColor="?attr/colorPrimaryVariant"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
-
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:padding="4dp">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_white_warning_32"
-                        tools:ignore="ContentDescription" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:textColor="@color/white"
-                        android:text="Dust box is not inserted!" />
-                </androidx.appcompat.widget.LinearLayoutCompat>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/inf_temperature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Temperature: 12 C"
-            app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/inf_battery" />
-
-        <TextView
-            android:id="@+id/inf_speed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Speed: 12 C"
-            app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/inf_bumper" />
-
-        <TextView
-            android:id="@+id/inf_battery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Battery: 12 C"
-            app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/inf_cliff_trig" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/inf_range_radar_values"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Range Sensors: Center(25 CM), Left(20 CM)"
+            android:layout_marginTop="8dp"
+            tools:text="Range Sensors: Center(25 CM), Left(20 CM)"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/warnings_holder" />
+            app:layout_constraintTop_toBottomOf="@+id/headerWidget" />
+
+        <TextView
+            android:id="@+id/inf_bumper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Bumper: Left, Right, Both"
+            app:layout_constraintStart_toStartOf="@+id/left_guide_line"
+            app:layout_constraintTop_toBottomOf="@+id/inf_range_radar_values" />
+
+        <TextView
+            android:id="@+id/inf_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Current Speed: 120 CM / Min"
+            app:layout_constraintStart_toStartOf="@+id/left_guide_line"
+            app:layout_constraintTop_toBottomOf="@+id/inf_bumper" />
 
         <TextView
             android:id="@+id/inf_cliff_trig"
@@ -120,13 +49,7 @@
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/inf_speed" />
 
-        <TextView
-            android:id="@+id/inf_bumper"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Bumper: Left, Right, Both"
-            app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/inf_range_radar_values" />
+
 
         <ImageButton
             android:id="@+id/btn_left"
@@ -198,7 +121,7 @@
             android:id="@+id/target_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="120 CM/Min"
+            tools:text="120 CM/Min"
             app:layout_constraintBottom_toBottomOf="@+id/wheel_speed"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintTop_toTopOf="@+id/wheel_speed" />
@@ -207,7 +130,7 @@
             android:id="@+id/tv_speed_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Wheel speed:"
+            android:text="@string/label_wheel_speed"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/left_brush_motor_switch" />
 
@@ -216,15 +139,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Vacuum Motor"
+            android:text="@string/label_vacuum_motor"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
-            app:layout_constraintTop_toBottomOf="@+id/inf_temperature" />
+            app:layout_constraintTop_toBottomOf="@+id/inf_cliff_trig" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/main_brush_motor_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Main Brush Motor"
+            android:text="@string/label_main_brush_motor"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/vacuum_motor_switch" />
 
@@ -232,7 +155,7 @@
             android:id="@+id/right_brush_motor_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Right Brush Motor"
+            android:text="@string/label_right_brush_motor"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/main_brush_motor_switch" />
 
@@ -240,7 +163,7 @@
             android:id="@+id/left_brush_motor_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Left Brush Motor"
+            android:text="@string/label_left_brush_motor"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/right_brush_motor_switch" />
 
@@ -287,7 +210,7 @@
             android:id="@+id/vacuum_motor_target_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="50 %"
+            tools:text="50 %"
             app:layout_constraintBottom_toBottomOf="@+id/vacuum_motor_speed"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintTop_toTopOf="@+id/vacuum_motor_speed"
@@ -297,7 +220,7 @@
             android:id="@+id/main_brush_motor_target_speed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="50 %"
+            tools:text="50 %"
             app:layout_constraintBottom_toBottomOf="@+id/main_brush_motor_speed"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintTop_toTopOf="@+id/main_brush_motor_speed" />
@@ -306,7 +229,7 @@
             android:id="@+id/right_brush_motor_target_speed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="50 %"
+            tools:text="50 %"
             app:layout_constraintBottom_toBottomOf="@+id/right_brush_motor_speed"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintTop_toTopOf="@+id/right_brush_motor_speed" />
@@ -315,7 +238,7 @@
             android:id="@+id/left_brush_motor_target_speed"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="50 %"
+            tools:text="50 %"
             app:layout_constraintBottom_toBottomOf="@+id/left_brush_motor_speed"
             app:layout_constraintEnd_toStartOf="@+id/right_guide_line"
             app:layout_constraintStart_toEndOf="@+id/left_brush_motor_speed"
@@ -325,7 +248,7 @@
             android:id="@+id/with_break"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="With break"
+            android:text="@string/label_with_break"
             app:layout_constraintStart_toStartOf="@+id/left_guide_line"
             app:layout_constraintTop_toBottomOf="@+id/tv_speed_label" />
     </androidx.constraintlayout.widget.ConstraintLayout>
