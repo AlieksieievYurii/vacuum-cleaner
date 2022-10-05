@@ -17,6 +17,7 @@ import java.lang.IllegalStateException
 
 class PidSettingsViewModel(private val robot: Robot) : ViewModel() {
     sealed class Event {
+        object CloseFragment : Event()
         data class ShowError(val exception: Throwable) : Event()
     }
 
@@ -59,7 +60,9 @@ class PidSettingsViewModel(private val robot: Robot) : ViewModel() {
                 derivative = derivative.value.toFloat(),
             )
             robot.setPidSettings(pidSettings)
+            delay(1000)
             _isLoading.value = false
+            sendEvent(Event.CloseFragment)
         }
     }
 
