@@ -2,7 +2,7 @@
     "PID": {
         "proportional": 0.1,
         "integral": 0.1,
-        "derivative": 0
+        "derivative": 1.0
     },
     "cleaning_algorithm": "simple"
 }

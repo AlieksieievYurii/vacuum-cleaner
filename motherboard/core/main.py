@@ -17,7 +17,7 @@ from wifi.endpoints.hello_world import HelloWorldRequest
 from utils.logger import wifi_module_logger, CoreLogger, algorithm_manager_logger
 from wifi.endpoints.motor import Motor
 from wifi.endpoints.movement import Movement, StopMovement
-from wifi.endpoints.pid import GetCurrentPidSettings
+from wifi.endpoints.pid import GetCurrentPidSettings, SetPidSettings
 from wifi.endpoints.sys_info import GetRobotSysInfo
 from wifi.handler import WifiEndpointsHandler
 
@@ -46,6 +46,7 @@ class Core(object):
         self._wifi_endpoints_handler.register_endpoint(StopMovement(self._robot))
         self._wifi_endpoints_handler.register_endpoint(GetA1DataRequestHandler(self._robot))
         self._wifi_endpoints_handler.register_endpoint(GetCurrentPidSettings(self._config))
+        self._wifi_endpoints_handler.register_endpoint(SetPidSettings(self._config))
         self._wifi_endpoints_handler.register_endpoint(GetAlgorithmsRequest(self._algorithm_manager))
         self._wifi_endpoints_handler.register_endpoint(SetAlgorithmScriptRequest(self._algorithm_manager, self._config))
 
