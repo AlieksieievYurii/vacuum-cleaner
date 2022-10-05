@@ -49,7 +49,7 @@ class ManualControlFragment : Fragment(R.layout.fragment_control) {
             ) { isChecked: Boolean, value: Int -> viewModel.setLeftBrushSpeed(if (isChecked) value else 0) }
 
             initSwitchSeekView(
-                withBreak, wheelSpeed, targetSpeed, 1500, R.string.template_speed_cm_per_minute
+                withBreak, wheelSpeed, targetSpeed, viewModel.wheelSpeed, R.string.template_speed_cm_per_minute
             ) { isChecked: Boolean, value: Int ->
                 viewModel.wheelSpeed = value
                 viewModel.withBreak = isChecked

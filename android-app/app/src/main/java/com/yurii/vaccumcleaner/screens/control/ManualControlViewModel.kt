@@ -23,7 +23,7 @@ class ManualControlViewModel(private val robot: Robot) : ViewModel() {
     private val _batteryState: MutableStateFlow<HeaderWidget.BatteryState> = MutableStateFlow(HeaderWidget.BatteryState.Working(100, 16.7f))
     val batteryState = _batteryState.asStateFlow()
 
-    var wheelSpeed = 0
+    var wheelSpeed = 1500
     var withBreak = false
 
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
