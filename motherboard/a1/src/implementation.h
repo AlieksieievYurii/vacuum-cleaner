@@ -381,6 +381,14 @@ uint8_t get_cliffs_status() {
   return res;
 }
 
+uint32_t get_wheels_speed_value(void) {
+  uint32_t res = 0;
+  res |= wheel_right.speed;
+  res |= (uint32_t)wheel_left.speed << 16;
+
+  return res;
+}
+
 void on_set_timer_to_turn_off(uint16_t id, char* input) {
   int8_t seconds = fetch_unsigned_hex_number(input, 0);
   VALIDATE_PARSING(seconds, 0x1);
@@ -393,6 +401,23 @@ void on_set_timer_to_turn_off(uint16_t id, char* input) {
   
   time_to_turn_off = millis() + seconds*1000;
   
+  instruction_handler.on_finished(id);
+}
+
+void set_pid_settings(uint16_t id, char* input) {
+  bool parsing_failed = false;
+
+  float p = fetch_float_number(input, 0, &parsing_failed);
+  float i = fetch_float_number(input, 1, &parsing_failed);
+  float d = fetch_float_number(input, 2, &parsing_failed);
+
+  if (parsing_failed) {
+    instruction_handler.on_failed(id, 0x1);
+    return;
+  }
+
+  wheel_left.set_PID(p, i, d);
+  wheel_right.set_PID(p, i, d);
   instruction_handler.on_finished(id);
 }
 

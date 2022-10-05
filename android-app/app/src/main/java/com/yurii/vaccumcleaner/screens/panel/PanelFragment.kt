@@ -19,15 +19,7 @@ class PanelFragment : Fragment(R.layout.fragment_panel) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
-
-        viewModel.batteryState.observeOnLifecycle(viewLifecycleOwner) {
-            when (it) {
-                PanelViewModel.BatteryState.Charged -> binding.headerWidget.setBatteryIsCharged()
-                PanelViewModel.BatteryState.Charging -> binding.headerWidget.setBatteryIsCharging()
-                is PanelViewModel.BatteryState.Working -> binding.headerWidget.setBatteryIsWorking(it.capacity, it.voltage)
-            }
-        }
-
+        binding.headerWidget.observeBatteryState(viewModel.batteryState, viewLifecycleOwner)
         viewModel.lidIsOpened.observeOnLifecycle(viewLifecycleOwner) { isLidOpened -> binding.headerWidget.setLidStatus(isLidOpened) }
         viewModel.dustBoxIsOut.observeOnLifecycle(viewLifecycleOwner) { isDustBoxOut -> binding.headerWidget.setDustBoxStatus(isDustBoxOut) }
 

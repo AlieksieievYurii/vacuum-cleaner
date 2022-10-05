@@ -22,7 +22,10 @@ class WifiCommunicator(Communicator):
         self._connection.sendall(f'{data}\n'.encode())
 
     def read(self) -> str:
-        line: Optional[str] = self._reader.readline()
+        try:
+            line: Optional[str] = self._reader.readline()
+        except ConnectionResetError:
+            raise CommunicatorConnectionClosed(f"Connection Reset!")
 
         if not line:
             raise CommunicatorConnectionClosed(f"Connection is closed")

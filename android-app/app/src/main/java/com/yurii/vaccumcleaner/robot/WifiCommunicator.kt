@@ -19,6 +19,10 @@ class WifiCommunicator : Communicator {
         socketReader = BufferedReader(InputStreamReader(socket.inputStream))
     }
 
+    fun isConnected() = socket.isConnected
+
+    fun closeConnection() = socket.close()
+
     override fun read(): String {
         return socketReader.readLine()
     }

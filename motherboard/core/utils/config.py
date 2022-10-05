@@ -5,6 +5,7 @@ from typing import Optional
 
 class Configuration(object):
     DEFAULT_CLEANING_ALGORITHM: str = 'simple'
+    DEFAULT_PID_SETTINGS = (0.1, 0.1, 0)
 
     def __init__(self, path: str = r'D:\vacuum-cleaner\motherboard\core\config.json'):
         self._config_file = Path(path)
@@ -12,8 +13,38 @@ class Configuration(object):
         if not self._config_file.exists():
             self._save_config({})
 
+    def get_pid_settings(self) -> tuple:
+        config: dict = self._get_config()
+
+        def setup_and_return_default_values() -> tuple:
+            config['PID'] = {
+                'proportional': self.DEFAULT_PID_SETTINGS[0],
+                'integral': self.DEFAULT_PID_SETTINGS[1],
+                'derivative': self.DEFAULT_PID_SETTINGS[2],
+            }
+            self._save_config(config)
+            return self.DEFAULT_PID_SETTINGS
+
+        pid_settings: Optional[dict] = config.get('PID')
+
+        if not pid_settings:
+            return setup_and_return_default_values()
+
+        p, i, d = pid_settings.get('proportional'), pid_settings.get('integral'), pid_settings.get('derivative')
+
+        if p and i and d:
+            return p, i, d
+        else:
+            return setup_and_return_default_values()
+
     def set_pid_settings(self, proportional: float, integral: float, derivative: float) -> None:
-        pass
+        config: dict = self._get_config()
+        config['PID'] = {
+            'proportional': proportional,
+            'integral': integral,
+            'derivative': derivative,
+        }
+        self._save_config(config)
 
     def set_target_cleaning_algorithm(self, name: str):
         config: dict = self._get_config()

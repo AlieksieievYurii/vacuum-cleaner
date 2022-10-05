@@ -50,4 +50,11 @@
     <string name="label_integral_value">Integral</string>
     <string name="label_derivative_value">Derivative</string>
     <string name="label_range">%s (Range %d..%d)</string>
+    <string name="label_vacuum_motor">Vacuum Motor</string>
+    <string name="label_main_brush_motor">Main Brush Motor</string>
+    <string name="label_right_brush_motor">Right Brush Motor</string>
+    <string name="label_left_brush_motor">Left Brush Motor</string>
+    <string name="label_with_break">With break</string>
+    <string name="label_target_wheel_speed">Wheel speed:</string>
+    <string name="label_wheels_speed">Wheel speed(Sm\Min): Left(%d) Right(%d)</string>
 </resources>

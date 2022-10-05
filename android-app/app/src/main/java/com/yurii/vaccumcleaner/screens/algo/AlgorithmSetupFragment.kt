@@ -24,6 +24,7 @@ import com.yurii.vaccumcleaner.robot.AlgorithmParameter
 import com.yurii.vaccumcleaner.utils.hideKeyboard
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
+import com.yurii.vaccumcleaner.utils.ui.showError
 import java.lang.IllegalStateException
 
 class InputFilterMinMax(private val min: Int, private val max: Int) : InputFilter {
@@ -70,9 +71,8 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
 
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
-                AlgorithmSetupViewModel.Event.CloseFragment -> {
-                    findNavController().popBackStack()
-                }
+                AlgorithmSetupViewModel.Event.CloseFragment -> findNavController().popBackStack()
+                is AlgorithmSetupViewModel.Event.ShowError -> showError(binding.root, getString(R.string.label_error_occurred), event.exception)
             }
         }
 
@@ -83,10 +83,12 @@ class AlgorithmSetupFragment : Fragment(R.layout.fragment_algorithm_setup) {
                 binding.description.text = script.description
                 argumentsViews.clear()
                 binding.parametersLayout.removeAllViews()
-                script.parameters.forEach {
-                    generateParameter(it)
-                }
 
+                try {
+                    script.parameters.forEach(this@AlgorithmSetupFragment::generateParameter)
+                } catch (error: Exception) {
+                    showError(binding.root, getString(R.string.label_error_occurred), error)
+                }
             }
         }
 

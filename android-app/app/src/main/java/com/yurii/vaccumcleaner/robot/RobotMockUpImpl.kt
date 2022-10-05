@@ -51,7 +51,9 @@ class RobotMockUpImpl : Robot {
             rightDistanceRange = 100,
             batteryVoltage = 16.4f,
             batteryCapacity = 100,
-            chargingState = 0
+            chargingState = 0,
+            leftWheelSpeed = 1000,
+            rightWheelSpeed = 1000
         )
     }
 

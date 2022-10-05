@@ -42,11 +42,11 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
     override suspend fun getRobotInputData() = requestHandler.send("/get-a1-data", null, RobotInputData::class.java)!!
 
     override suspend fun getCurrentPidSettings(): PidSettings {
-        TODO("Not yet implemented")
+        return requestHandler.send("/get-current-pid", null, PidSettings::class.java)!!
     }
 
     override suspend fun setPidSettings(pidSettings: PidSettings) {
-        TODO("Not yet implemented")
+        requestHandler.send<Any>("/set-current-pid", pidSettings, null)
     }
 
     override suspend fun getAlgorithms(): AlgorithmList {

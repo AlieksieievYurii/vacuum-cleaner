@@ -4,23 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.Robot
+import com.yurii.vaccumcleaner.screens.panel.widgets.HeaderWidget
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import timber.log.Timber
-import java.lang.Exception
 
 import java.lang.IllegalStateException
 
 class PanelViewModel(private val robot: Robot) : ViewModel() {
-    sealed class BatteryState {
-        object Charging : BatteryState()
-        object Charged : BatteryState()
-        data class Working(val capacity: Int, val voltage: Float) : BatteryState()
-    }
-
     sealed class Event {
         object NavigateToControlFragment : Event()
         object NavigateToPidSettingsFragment : Event()
@@ -28,7 +21,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
         data class ShowError(val exception: Throwable) : Event()
     }
 
-    private val _batteryState: MutableStateFlow<BatteryState> = MutableStateFlow(BatteryState.Working(100, 16.7f))
+    private val _batteryState: MutableStateFlow<HeaderWidget.BatteryState> = MutableStateFlow(HeaderWidget.BatteryState.Working(100, 16.7f))
     val batteryState = _batteryState.asStateFlow()
 
     private val _lidIsOpen: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -55,7 +48,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     fun openManualControlFragment() {
         viewModelScope.launch {
-             _event.emit(Event.NavigateToControlFragment)
+            _event.emit(Event.NavigateToControlFragment)
         }
     }
 
@@ -86,9 +79,9 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
             val robotData = robot.getRobotInputData()
 
             _batteryState.value = when (robotData.chargingState) {
-                0 -> BatteryState.Working(robotData.batteryCapacity, robotData.batteryVoltage)
-                1 -> BatteryState.Charging
-                2 -> BatteryState.Charged
+                0 -> HeaderWidget.BatteryState.Working(robotData.batteryCapacity, robotData.batteryVoltage)
+                1 -> HeaderWidget.BatteryState.Charging
+                2 -> HeaderWidget.BatteryState.Charged
                 else -> throw IllegalStateException("Unhandled battery state ID '${robotData.chargingState}'")
             }
 

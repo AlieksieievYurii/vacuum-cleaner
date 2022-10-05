@@ -17,6 +17,7 @@ import java.lang.IllegalStateException
 
 class PidSettingsViewModel(private val robot: Robot) : ViewModel() {
     sealed class Event {
+        object CloseFragment : Event()
         data class ShowError(val exception: Throwable) : Event()
     }
 
@@ -27,7 +28,10 @@ class PidSettingsViewModel(private val robot: Robot) : ViewModel() {
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
     val event = _event.asSharedFlow()
 
-    private val errorHandler = CoroutineExceptionHandler { _, error -> sendEvent(Event.ShowError(error)) }
+    private val errorHandler = CoroutineExceptionHandler { _, error ->
+        _isLoading.value = false
+        sendEvent(Event.ShowError(error))
+    }
 
     private val viewModelJob = SupervisorJob()
     private val netWorkScope = CoroutineScope(viewModelJob + Dispatchers.IO + errorHandler)
@@ -38,6 +42,7 @@ class PidSettingsViewModel(private val robot: Robot) : ViewModel() {
     init {
         netWorkScope.launch {
             _isLoading.value = true
+            delay(1000)
             val pidSettings = robot.getCurrentPidSettings()
             proportional.set(pidSettings.proportional.toString())
             integral.set(pidSettings.integral.toString())
@@ -55,7 +60,9 @@ class PidSettingsViewModel(private val robot: Robot) : ViewModel() {
                 derivative = derivative.value.toFloat(),
             )
             robot.setPidSettings(pidSettings)
+            delay(1000)
             _isLoading.value = false
+            sendEvent(Event.CloseFragment)
         }
     }
 

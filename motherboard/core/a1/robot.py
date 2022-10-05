@@ -75,6 +75,9 @@ class Robot(object):
                      f'{datetime.hour:x};{datetime.minute:x};{datetime.second:x}'
         return self._socket.send_instruction(0x0D, parameters)
 
+    def set_pid(self, p: float, i: float, d: float) -> Job:
+        return self._socket.send_instruction(0x15, f'{p};{i};{d}')
+
     def set_timer_to_cut_off_power(self, seconds: int) -> Job:
         return self._socket.send_instruction(0xFF, f'{seconds:x}')
 

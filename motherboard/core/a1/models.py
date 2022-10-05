@@ -137,6 +137,8 @@ class A1Data(object):
         self.battery_capacity: int = 0  # 0...100
         self.is_shut_down_button_triggered: bool = False
         self.charging_state: ChargingState = ChargingState.NO_CHARGING
+        self.right_wheel_speed: int = 0  # Sm per minute
+        self.left_wheel_speed: int = 0  # Sm per minute
 
     @property
     def button_up(self) -> ButtonState:
@@ -177,7 +179,8 @@ class A1Data(object):
             0x3: self._parse_dis_values,
             0x4: self._parse_cliffs,
             0x5: self._parse_power_controller_states,
-            0x6: self._parse_battery_voltage_value
+            0x6: self._parse_battery_voltage_value,
+            0x7: self._parse_wheels_speed
         }
         for result in self.__PATTERN.findall(string):
             sensor_id = int(result[0], 16)
@@ -185,6 +188,10 @@ class A1Data(object):
             f = parsers.get(sensor_id)
             if f:
                 f(value)
+
+    def _parse_wheels_speed(self, value: int) -> None:
+        self.right_wheel_speed = value & 0xFFFF
+        self.left_wheel_speed = (value >> 0x10) & 0xFFFF
 
     def _parse_power_controller_states(self, value: int) -> None:
         power_state = value & 0x3  # Fetch first 3 bits which represents power state

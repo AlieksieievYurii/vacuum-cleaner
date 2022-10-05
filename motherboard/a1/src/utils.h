@@ -62,7 +62,7 @@ int32_t fetch_unsigned_hex_number(char* input, uint8_t group) {
   //=====Find end index=======
   is_found = false;
   for (uint16_t i = start_index; i <= start_index + MAX_VALUE_SIZE; i++) {
-    if (input[i] == SEPARATOR || input[i] == '\n') {
+    if (input[i] == SEPARATOR || input[i] == '\n' || input[i] == '\r') {
       end_index = i;
       is_found = true;
       break;
@@ -79,6 +79,66 @@ int32_t fetch_unsigned_hex_number(char* input, uint8_t group) {
   if (endptr == buffer)
     return CANNOT_PARSE_NUMBER;
   
+  return result;
+}
+
+
+float fetch_float_number(char* input, uint8_t group, bool* parsing_failed) {
+#define MAX_VALUE_FLOAT_SIZE 6
+#define SEPARATOR ';'
+  char buffer[MAX_VALUE_FLOAT_SIZE] = {0};
+  uint16_t start_index = 0;
+  uint16_t end_index = 0;
+  uint16_t separator_count = 0;
+  bool is_found = false;
+  char* error = NULL;
+
+  //======Find start index======
+  if (group > 0) {
+    for (uint16_t i = 0; i < 100; i++) {
+      if (input[i] == SEPARATOR)
+        separator_count++;
+
+      if (separator_count == group) {
+        start_index = i;
+        is_found = true;
+        break;
+      }
+    }
+    if (!is_found) {
+      *parsing_failed = true;
+      return 0.0;
+    }
+
+    start_index += 1; // Skip the separator
+  }
+  //==============================
+
+  //=====Find end index=======
+  is_found = false;
+  for (uint16_t i = start_index; i <= start_index + MAX_VALUE_SIZE; i++) {
+    if (input[i] == SEPARATOR || input[i] == '\n' || input[i] == '\r') {
+      end_index = i;
+      is_found = true;
+      break;
+    }
+  }
+
+  if (!is_found) {
+    *parsing_failed = true;
+    return 0.0;
+  }
+  //==============================
+
+  strncpy(buffer, &input[start_index], end_index - start_index);
+
+  float result = strtod(buffer, &error);
+
+  if (*error != '\0') {
+    *parsing_failed = true;
+    return 0.0;
+  }
+ 
   return result;
 }
 

@@ -31,11 +31,12 @@ object Injector {
     }
 
     fun providePidSettingsViewModel(): PidSettingsViewModel.Factory {
-        return PidSettingsViewModel.Factory(RobotMockUpImpl())
+        return PidSettingsViewModel.Factory(RobotConnection.getRobotAPI())
     }
 
     fun provideManualControlViewModel(): ManualControlViewModel.Factory {
         return ManualControlViewModel.Factory(RobotConnection.getRobotAPI())
+        //return ManualControlViewModel.Factory(RobotMockUpImpl())
     }
 
     fun provideAlgorithmSetupViewModel(): AlgorithmSetupViewModel.Factory {

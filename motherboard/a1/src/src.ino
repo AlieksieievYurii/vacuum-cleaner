@@ -3,7 +3,7 @@
 #include "instruction-handler.h"
 #include "utils.h"
 
-InstructionHandler instruction_handler(Serial3);
+InstructionHandler instruction_handler(Serial);
 
 #include "implementation.h"
 
@@ -31,19 +31,21 @@ void setup() {
   instruction_handler.add(0x12, on_main_brush_motor);
   instruction_handler.add(0x13, on_walk);
   instruction_handler.add(0x14, on_rotate);
+  instruction_handler.add(0x15, set_pid_settings);
   instruction_handler.add(0xff, on_set_timer_to_turn_off);
+
   
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
 
-  wheel_left.set_PID(0.1, 0.1, 0);
-  wheel_right.set_PID(0.1, 0.1, 0);
+  //wheel_left.set_PID(0.1, 0.1, 0);
+  //wheel_right.set_PID(0.1, 0.1, 0);
 }
 
 void loop() {  
   instruction_handler.perform();
   propagandate_tick_signal();
- 
+
 #ifdef __ENABLE_SENSOR_READING__
   instruction_handler.reset_sensors_output_buffer();
   instruction_handler.add_sensor_output(0x01, get_controll_buttons_state());
@@ -52,6 +54,7 @@ void loop() {
   instruction_handler.add_sensor_output(0x04, get_cliffs_status());
   instruction_handler.add_sensor_output(0x05, get_power_controller_state());
   instruction_handler.add_sensor_output(0x06, get_battery_voltage_value());
+  instruction_handler.add_sensor_output(0x07, get_wheels_speed_value());
   instruction_handler.send_sensors_output();
 #endif
 }
