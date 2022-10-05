@@ -46,7 +46,7 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
     }
 
     override suspend fun setPidSettings(pidSettings: PidSettings) {
-        TODO("Not yet implemented")
+        requestHandler.send<Any>("/set-current-pid", pidSettings, null)
     }
 
     override suspend fun getAlgorithms(): AlgorithmList {
