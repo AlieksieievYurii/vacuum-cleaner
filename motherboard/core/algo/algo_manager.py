@@ -31,7 +31,16 @@ class AlgorithmManager(object):
         self._working_thread: Optional[Thread] = None
         self._configs_folder: Path = Path(__file__).parent / 'algorithms' / 'configs'
 
+        self._stop = False
+
     def set_algorithm(self, name: str) -> None:
+        """
+        Sets algorithm for execution. This function must be called firstly before start
+
+        :param name: algorithm's name
+        :return: None
+        """
+
         self._logger.info(f'Set Cleaning Algorithm: {name}')
         algorithm = self._get_algorithm_class(name)
         algorithm_arguments_holder = self._load_arguments(algorithm)
@@ -61,6 +70,12 @@ class AlgorithmManager(object):
         self._save_config_for(algorithm, res)
 
     def get_current_algorithm_name(self) -> str:
+        """
+        Gets current algorithm's name.
+
+        :return: algorithm's unique name
+        """
+
         if self._algorithm:
             return self._algorithm.get_name()
         raise AlgorithmManagerException('Algorithm is not set')
@@ -98,17 +113,41 @@ class AlgorithmManager(object):
 
         return algorithm_info
 
-    def start(self):
+    def start(self) -> None:
+        """
+        Starts selected algorithm execution in the separated thread.
+
+        :return: None
+        """
+
         if self._working_thread:
             raise AlgorithmManagerException('Algorithm is already executing')
         if not self._algorithm:
             raise AlgorithmManagerException('Can not start algorithm, because not selected')
 
-        self._working_thread = Thread('Algo', target=self._algorithm_loop, daemon=False)
+        self._working_thread = Thread('algorithm-execution', target=self._algorithm_loop, daemon=False)
         self._working_thread.start()
+
+    @property
+    def is_running(self) -> bool:
+        return self._working_thread is not None
+
+    def stop(self) -> None:
+        """
+        Stops algorithm execution and waits until thread is closed.
+
+        :return: None
+        """
+
+        self._stop = True
+        self._working_thread.join()
+        self._working_thread = None
 
     def _algorithm_loop(self) -> None:
         while True:
+            if self._stop:
+                break
+
             self._algorithm.loop(self._a1_data)
 
     def _get_algorithm_class(self, algorithm_name: str) -> Type[Algorithm]:
