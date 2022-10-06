@@ -46,7 +46,7 @@ class Core(object):
         self._wifi_endpoints_handler.register_endpoint(StopMovement(self._robot))
         self._wifi_endpoints_handler.register_endpoint(GetA1DataRequestHandler(self._robot))
         self._wifi_endpoints_handler.register_endpoint(GetCurrentPidSettings(self._config))
-        self._wifi_endpoints_handler.register_endpoint(SetPidSettings(self._config))
+        self._wifi_endpoints_handler.register_endpoint(SetPidSettings(self._config, self._robot))
         self._wifi_endpoints_handler.register_endpoint(GetAlgorithmsRequest(self._algorithm_manager))
         self._wifi_endpoints_handler.register_endpoint(SetAlgorithmScriptRequest(self._algorithm_manager, self._config))
 
