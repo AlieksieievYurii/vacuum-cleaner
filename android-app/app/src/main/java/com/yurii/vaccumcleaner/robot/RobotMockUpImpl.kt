@@ -74,4 +74,8 @@ class RobotMockUpImpl : Robot {
     override suspend fun setAlgorithm(algorithm: Algorithm) {
         Timber.i("Setting algorithm $algorithm")
     }
+
+    override suspend fun startCleaning() {
+        Timber.i("Start cleaning...")
+    }
 }
