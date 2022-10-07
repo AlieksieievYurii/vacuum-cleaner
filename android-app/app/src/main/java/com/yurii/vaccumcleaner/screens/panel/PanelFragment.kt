@@ -10,11 +10,13 @@ import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentPanelBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
 import com.yurii.vaccumcleaner.utils.ui.showError
 
 class PanelFragment : Fragment(R.layout.fragment_panel) {
     private val viewModel: PanelViewModel by viewModels { Injector.providePanelViewModel() }
     private val binding: FragmentPanelBinding by viewBinding()
+    private val loadingDialog by lazy { LoadingDialog(requireContext()) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,6 +24,7 @@ class PanelFragment : Fragment(R.layout.fragment_panel) {
         binding.headerWidget.observeBatteryState(viewModel.batteryState, viewLifecycleOwner)
         viewModel.lidIsOpened.observeOnLifecycle(viewLifecycleOwner) { isLidOpened -> binding.headerWidget.setLidStatus(isLidOpened) }
         viewModel.dustBoxIsOut.observeOnLifecycle(viewLifecycleOwner) { isDustBoxOut -> binding.headerWidget.setDustBoxStatus(isDustBoxOut) }
+        loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
 
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
