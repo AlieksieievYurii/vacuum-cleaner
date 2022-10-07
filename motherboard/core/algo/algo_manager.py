@@ -41,6 +41,9 @@ class AlgorithmManager(object):
         :return: None
         """
 
+        if self.is_running:
+            raise AlgorithmManagerException('Forbidden to set target algorithm during the execution ')
+
         self._logger.info(f'Set Cleaning Algorithm: {name}')
         algorithm = self._get_algorithm_class(name)
         algorithm_arguments_holder = self._load_arguments(algorithm)
@@ -125,12 +128,15 @@ class AlgorithmManager(object):
         if not self._algorithm:
             raise AlgorithmManagerException('Can not start algorithm, because not selected')
 
-        self._working_thread = Thread('algorithm-execution', target=self._algorithm_loop, daemon=False)
+        self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
         self._working_thread.start()
 
     @property
     def is_running(self) -> bool:
         return self._working_thread is not None
+
+    def is_paused(self) -> bool:
+        pass
 
     def stop(self) -> None:
         """
