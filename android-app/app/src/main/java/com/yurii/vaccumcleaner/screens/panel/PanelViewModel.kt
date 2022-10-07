@@ -30,11 +30,15 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
     private val _dustBoxIsOut: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val dustBoxIsOut = _dustBoxIsOut.asStateFlow()
 
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
     val event = _event.asSharedFlow()
 
     private val errorHandler = CoroutineExceptionHandler { _, exception ->
         viewModelScope.launch {
+            _isLoading.value = false
             _event.emit(Event.ShowError(exception))
         }
     }
@@ -65,7 +69,12 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
     fun openCleaningAlgoSettings() = sendEvent(Event.NavigateToAlgorithmSetupFragment)
 
     fun startCleaning() {
-
+        netWorkScope.launch {
+            _isLoading.value = true
+            delay(1000)
+            robot.startCleaning()
+            _isLoading.value = false
+        }
     }
 
     private fun sendEvent(event: Event) {
