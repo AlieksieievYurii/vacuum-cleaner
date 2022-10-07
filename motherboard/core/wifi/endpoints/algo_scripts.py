@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Any
+from typing import List, Any, Optional
 
 from algo.algo_manager import AlgorithmManager
 from utils.config import Configuration
@@ -77,3 +77,44 @@ class SetAlgorithmScriptRequest(RequestHandler):
         self._algorithm_manager.save_algorithm_arguments(data.algorithm_name, {a.name: a.value for a in data.arguments})
         self._config.set_target_cleaning_algorithm(data.algorithm_name)
         self._algorithm_manager.set_algorithm(data.algorithm_name)
+
+
+@dataclass
+class CleaningInfo(object):
+    algorithm_name: str
+    timestamp: str
+
+
+@dataclass
+class CleaningStatus(object):
+    status: str
+    cleaning_info: Optional[CleaningInfo]
+
+
+class StartCleaningRequest(RequestHandler):
+    endpoint = '/start-cleaning'
+    request_model = None
+    response_model = None
+
+    def __init__(self, algorithm_manager: AlgorithmManager):
+        self._algorithm_manager = algorithm_manager
+
+    def perform(self, request: Request, data: AttributeHolder):
+        self._algorithm_manager.start()
+
+
+class GetCurrentAlgorithmExecution(RequestHandler):
+    endpoint = '/get-current-algorithm-execution'
+    request_model = None
+    response_model = CleaningStatus
+
+    def __init__(self, algorithm_manager: AlgorithmManager):
+        self._algorithm_manager = algorithm_manager
+
+    def perform(self, request: Request, data: AttributeHolder) -> CleaningStatus:
+
+        if self._algorithm_manager.is_running:
+            return CleaningStatus(status='paused' if self._algorithm_manager.is_paused else 'running',
+                                  cleaning_info=CleaningInfo(self._algorithm_manager.get_current_algorithm_name(), ''))
+        else:
+            return CleaningStatus(status='none', cleaning_info=None)
