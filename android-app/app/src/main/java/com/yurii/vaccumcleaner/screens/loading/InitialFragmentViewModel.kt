@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.MyApplication
 import com.yurii.vaccumcleaner.Preferences
+import com.yurii.vaccumcleaner.robot.CleaningStatusEnum
+import com.yurii.vaccumcleaner.robot.Robot
 import com.yurii.vaccumcleaner.robot.RobotConnection
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import kotlinx.coroutines.delay
@@ -22,6 +24,7 @@ class InitialFragmentViewModel(
     sealed class Event {
         object NavigateToControlPanel : Event()
         object NavigateToBindRobot : Event()
+        object NavigateToExecutionScreen : Event()
     }
 
     sealed class State {
@@ -68,9 +71,14 @@ class InitialFragmentViewModel(
     }
 
     private suspend fun setConnectedStatus(robotIp: String) {
+        val robot: Robot = RobotConnection.getRobotAPI()
+        val status = robot.getCleaningStatus().status
         _state.value = State.Connected(robotIp)
         delay(2000)
-        _event.emit(Event.NavigateToControlPanel)
+        if (status == CleaningStatusEnum.NONE)
+            sendEvent(Event.NavigateToControlPanel)
+        else
+            sendEvent(Event.NavigateToExecutionScreen)
     }
 
     fun navigateToBindRobot() {
