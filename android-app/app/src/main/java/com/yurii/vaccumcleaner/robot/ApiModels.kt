@@ -125,3 +125,8 @@ data class CleaningStatus(
     val status: CleaningStatusEnum,
     @Json(name = "cleaning_info") val cleaningInfo: CleaningExecutionInfo?
 )
+
+@JsonClass(generateAdapter = true)
+data class ManageCleaningExecution(
+    val command: String
+)

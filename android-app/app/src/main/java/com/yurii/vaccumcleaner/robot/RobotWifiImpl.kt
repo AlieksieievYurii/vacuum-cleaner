@@ -49,6 +49,16 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
         requestHandler.send<Any>("/start-cleaning", null, null)
     }
 
+    override suspend fun pauseCleaning() = manageCleaningProcess("pause")
+
+    override suspend fun resumeCleaning() = manageCleaningProcess("resume")
+
+    override suspend fun stopCleaning() = manageCleaningProcess("stop")
+
+    private suspend fun manageCleaningProcess(command: String) {
+        requestHandler.send<Any>("/manage-cleaning", ManageCleaningExecution(command), null)
+    }
+
     override suspend fun getCleaningStatus(): CleaningStatus {
         return requestHandler.send("/get-cleaning-status", null, CleaningStatus::class.java)!!
     }
