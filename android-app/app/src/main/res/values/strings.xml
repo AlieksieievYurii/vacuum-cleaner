@@ -62,4 +62,11 @@
     <string name="label_pause">Pause</string>
     <string name="label_finish">Finish</string>
     <string name="label_shut_down">Shut down</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_reboot">Reboot</string>
+    <string name="label_shut_down_confirmation_title">Shut Down Confirmation</string>
+    <string name="label_shut_down_confirmation_message">Do you want to shut down the robot?</string>
+    <string name="label_reboot_confirmation_title">Reboot Confirmation</string>
+    <string name="label_reboot_confirmation_message">Do you want to reboot the robot?</string>
 </resources>

@@ -67,6 +67,22 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     }
 
+    fun shutDown() {
+        netWorkScope.launch {
+            _isLoading.emit(true)
+            robot.shutDown()
+            _isLoading.emit(false)
+        }
+    }
+
+    fun reboot() {
+        netWorkScope.launch {
+            _isLoading.emit(true)
+            robot.reboot()
+            _isLoading.emit(false)
+        }
+    }
+
     fun openCleaningAlgoSettings() = sendEvent(Event.NavigateToAlgorithmSetupFragment)
 
     fun startCleaning() {

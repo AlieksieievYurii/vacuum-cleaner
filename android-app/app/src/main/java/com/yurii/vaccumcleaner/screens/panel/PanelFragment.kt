@@ -3,6 +3,7 @@ package com.yurii.vaccumcleaner.screens.panel
 import android.os.Bundle
 import android.view.View
 import android.viewbinding.library.fragment.viewBinding
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -11,6 +12,7 @@ import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentPanelBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
+import com.yurii.vaccumcleaner.utils.ui.showConfirmation
 import com.yurii.vaccumcleaner.utils.ui.showError
 
 class PanelFragment : Fragment(R.layout.fragment_panel) {
@@ -26,6 +28,28 @@ class PanelFragment : Fragment(R.layout.fragment_panel) {
         viewModel.dustBoxIsOut.observeOnLifecycle(viewLifecycleOwner) { isDustBoxOut -> binding.headerWidget.setDustBoxStatus(isDustBoxOut) }
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
 
+        binding.shutDown.setOnClickListener { askToShutDown() }
+
+        binding.shutDown.setOnLongClickListener { button ->
+            val popupMenu = PopupMenu(requireContext(), button)
+            popupMenu.menuInflater.inflate(R.menu.power_options, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.shut_down -> {
+                        askToShutDown()
+                        true
+                    }
+                    R.id.reboot -> {
+                        askToReboot()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            popupMenu.show()
+            true
+        }
+
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) {
             when (it) {
                 PanelViewModel.Event.NavigateToControlFragment -> findNavController().navigate(R.id.action_panelFragment_to_manualControlFragment)
@@ -36,4 +60,17 @@ class PanelFragment : Fragment(R.layout.fragment_panel) {
             }
         }
     }
+
+    private fun askToShutDown() {
+        showConfirmation(requireContext(), R.string.label_shut_down_confirmation_title,  R.string.label_shut_down_confirmation_message) {
+            viewModel.shutDown()
+        }
+    }
+
+    private fun askToReboot() {
+        showConfirmation(requireContext(), R.string.label_reboot_confirmation_title, R.string.label_reboot_confirmation_message) {
+            viewModel.reboot()
+        }
+    }
+
 }
