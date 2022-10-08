@@ -18,6 +18,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
         object NavigateToControlFragment : Event()
         object NavigateToPidSettingsFragment : Event()
         object NavigateToAlgorithmSetupFragment : Event()
+        object NavigateToCleaningExecutionFragment : Event()
         data class ShowError(val exception: Throwable) : Event()
     }
 
@@ -74,6 +75,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
             delay(1000)
             robot.startCleaning()
             _isLoading.value = false
+            sendEvent(Event.NavigateToCleaningExecutionFragment)
         }
     }
 

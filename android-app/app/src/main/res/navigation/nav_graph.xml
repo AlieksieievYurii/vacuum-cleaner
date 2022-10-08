@@ -80,7 +80,9 @@
             app:destination="@id/algorithmSetupFragment" />
         <action
             android:id="@+id/action_panelFragment_to_cleaningExecutionFragment"
-            app:destination="@id/cleaningExecutionFragment" />
+            app:destination="@id/cleaningExecutionFragment"
+            app:popUpTo="@id/panelFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/manualControlFragment"

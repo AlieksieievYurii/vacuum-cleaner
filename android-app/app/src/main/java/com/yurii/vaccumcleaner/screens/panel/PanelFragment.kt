@@ -32,6 +32,7 @@ class PanelFragment : Fragment(R.layout.fragment_panel) {
                 is PanelViewModel.Event.ShowError -> showError(binding.root, getString(R.string.label_error_occurred), it.exception)
                 PanelViewModel.Event.NavigateToPidSettingsFragment -> findNavController().navigate(R.id.action_panelFragment_to_pidSettingsFragment)
                 PanelViewModel.Event.NavigateToAlgorithmSetupFragment -> findNavController().navigate(R.id.action_panelFragment_to_algorithmSetupFragment)
+                PanelViewModel.Event.NavigateToCleaningExecutionFragment -> findNavController().navigate(R.id.action_panelFragment_to_cleaningExecutionFragment)
             }
         }
     }
