@@ -61,4 +61,5 @@
     <string name="label_resume">Resume</string>
     <string name="label_pause">Pause</string>
     <string name="label_finish">Finish</string>
+    <string name="label_shut_down">Shut down</string>
 </resources>
