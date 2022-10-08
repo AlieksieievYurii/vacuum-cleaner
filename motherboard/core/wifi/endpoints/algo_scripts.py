@@ -91,20 +91,34 @@ class CleaningStatus(object):
     cleaning_info: Optional[CleaningInfo]
 
 
-class StartCleaningRequest(RequestHandler):
-    endpoint = '/start-cleaning'
-    request_model = None
+class ManageCleaningExecutionRequestModel(object):
+    command = Field('command', str, is_required=True)
+
+
+class ManageCleaningExecutionRequest(RequestHandler):
+    endpoint = '/manage-cleaning'
+    request_model = ManageCleaningExecutionRequestModel
     response_model = None
 
     def __init__(self, algorithm_manager: AlgorithmManager):
         self._algorithm_manager = algorithm_manager
 
     def perform(self, request: Request, data: AttributeHolder):
-        self._algorithm_manager.start()
+        command: Optional = {
+            'start': self._algorithm_manager.start,
+            'pause': self._algorithm_manager.pause,
+            'resume': self._algorithm_manager.resume,
+            'stop': self._algorithm_manager.stop
+        }[data.command]
+
+        if not command:
+            raise Exception(f'Wrong command: {data.command}')
+        else:
+            command()
 
 
-class GetCurrentAlgorithmExecution(RequestHandler):
-    endpoint = '/get-current-algorithm-execution'
+class GetCleaningStatusRequest(RequestHandler):
+    endpoint = '/get-cleaning-status'
     request_model = None
     response_model = CleaningStatus
 

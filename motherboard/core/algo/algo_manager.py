@@ -131,6 +131,12 @@ class AlgorithmManager(object):
         self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
         self._working_thread.start()
 
+    def pause(self):
+        pass
+
+    def resume(self):
+        pass
+
     @property
     def is_running(self) -> bool:
         return self._working_thread is not None

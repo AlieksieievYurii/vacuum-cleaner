@@ -12,7 +12,8 @@ from utils.speetch.voices import RudeMaximVoice
 from utils.utils import get_typed_arg
 from wifi.comunicator import WifiCommunicator
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
-from wifi.endpoints.algo_scripts import GetAlgorithmsRequest, SetAlgorithmScriptRequest
+from wifi.endpoints.algo_scripts import GetAlgorithmsRequest, SetAlgorithmScriptRequest, ManageCleaningExecutionRequest, \
+    GetCleaningStatusRequest
 from wifi.endpoints.hello_world import HelloWorldRequest
 from utils.logger import wifi_module_logger, CoreLogger, algorithm_manager_logger
 from wifi.endpoints.motor import Motor
@@ -49,20 +50,22 @@ class Core(object):
         self._wifi_endpoints_handler.register_endpoint(SetPidSettings(self._config, self._robot))
         self._wifi_endpoints_handler.register_endpoint(GetAlgorithmsRequest(self._algorithm_manager))
         self._wifi_endpoints_handler.register_endpoint(SetAlgorithmScriptRequest(self._algorithm_manager, self._config))
+        self._wifi_endpoints_handler.register_endpoint(ManageCleaningExecutionRequest(self._algorithm_manager))
+        self._wifi_endpoints_handler.register_endpoint(GetCleaningStatusRequest(self._algorithm_manager))
 
     def run(self) -> None:
         self._logger.print_entry_point()
-
-        try:
-            self._robot.connect()
-        except Exception as error:
-            self._logger.critical(f'Cannot establish connection with A1 module. Reason:{error}')
-            if self._debug:
-                raise error
-            return None
-
-        self._robot.core_is_initialized(is_successful=True)
-        self._robot.beep(3, 100)
+        #
+        # try:
+        #     self._robot.connect()
+        # except Exception as error:
+        #     self._logger.critical(f'Cannot establish connection with A1 module. Reason:{error}')
+        #     if self._debug:
+        #         raise error
+        #     return None
+        #
+        # self._robot.core_is_initialized(is_successful=True)
+        # self._robot.beep(3, 100)
 
         self._wifi_endpoints_handler.start()
         self._initialization()
@@ -74,9 +77,9 @@ class Core(object):
                 raise error
 
     def _initialization(self) -> None:
-        self._init_pid_settings()
+        # self._init_pid_settings()
         self._algorithm_manager.set_algorithm(self._config.get_selected_cleaning_algorithm())
-        self._set_core_data_time()
+        # self._set_core_data_time()
 
     def _init_pid_settings(self) -> None:
         p, i, d = self._config.get_pid_settings()
@@ -97,9 +100,10 @@ class Core(object):
     def _run_core_loop(self) -> None:
         self._voice.say_introduction()
         while True:
-            if self._is_shutting_down_triggered():
-                self._shut_down_core()
-                break
+            pass
+            # if self._is_shutting_down_triggered():
+            #     self._shut_down_core()
+            #     break
 
             #
             # but = self._robot.data.button_up
