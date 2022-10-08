@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Any, Optional
 
-from algo.algo_manager import AlgorithmManager
+from algo.algo_manager import AlgorithmManager, State
 from utils.config import Configuration
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field, ListType
 
@@ -126,9 +126,16 @@ class GetCleaningStatusRequest(RequestHandler):
         self._algorithm_manager = algorithm_manager
 
     def perform(self, request: Request, data: AttributeHolder) -> CleaningStatus:
-
-        if self._algorithm_manager.is_running:
-            return CleaningStatus(status='paused' if self._algorithm_manager.is_paused else 'running',
-                                  cleaning_info=CleaningInfo(self._algorithm_manager.get_current_algorithm_name(), ''))
+        if self._algorithm_manager.current_state is State.RUNNING:
+            return CleaningStatus(status='running', cleaning_info=self._get_cleaning_execution_info())
+        elif self._algorithm_manager.current_state is State.PAUSED:
+            return CleaningStatus(status='paused', cleaning_info=self._get_cleaning_execution_info())
         else:
             return CleaningStatus(status='none', cleaning_info=None)
+
+    def _get_cleaning_execution_info(self) -> CleaningInfo:
+        execution_info = self._algorithm_manager.get_current_execution_info()
+        return CleaningInfo(
+            algorithm_name=execution_info['algorithm_name'],
+            timestamp=execution_info['timestamp']
+        )
