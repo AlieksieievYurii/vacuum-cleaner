@@ -61,6 +61,14 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
         return requestHandler.send("/get-cleaning-status", null, CleaningStatus::class.java)!!
     }
 
+    override suspend fun shutDown() {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun reboot() {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun setPidSettings(pidSettings: PidSettings) {
         requestHandler.send<Any>("/set-current-pid", pidSettings, null)
     }

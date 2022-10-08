@@ -20,4 +20,6 @@ interface Robot {
     suspend fun resumeCleaning()
     suspend fun stopCleaning()
     suspend fun getCleaningStatus(): CleaningStatus
+    suspend fun shutDown()
+    suspend fun reboot()
 }
