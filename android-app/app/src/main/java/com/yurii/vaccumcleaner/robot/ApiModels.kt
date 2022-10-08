@@ -124,7 +124,14 @@ data class CleaningExecutionInfo(
 data class CleaningStatus(
     val status: CleaningStatusEnum,
     @Json(name = "cleaning_info") val cleaningInfo: CleaningExecutionInfo?
-)
+) {
+    fun requireCleaningInfo(): CleaningExecutionInfo {
+        if (status == CleaningStatusEnum.NONE)
+            throw IllegalStateException("Can not get Cleaning Info because it is not running")
+
+        return cleaningInfo!!
+    }
+}
 
 @JsonClass(generateAdapter = true)
 data class ManageCleaningExecution(

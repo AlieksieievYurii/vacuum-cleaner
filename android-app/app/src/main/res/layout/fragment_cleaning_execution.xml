@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.yurii.vaccumcleaner.screens.execution.CleaningExecutionViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -21,14 +28,15 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/algorithm_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Algorithm: Simple"
+            android:text="@{String.format(@string/label_algorithm_name, viewModel.algorithmName)}"
             app:layout_constraintEnd_toEndOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            tools:text="Algorithm: Simple" />
 
         <TextView
             style="@style/TextAppearance.AppCompat.Body1"
@@ -38,7 +46,7 @@
             android:text="Running time: 4:34"
             app:layout_constraintEnd_toEndOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/algorithm_name" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"
@@ -47,6 +55,7 @@
             android:clickable="true"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground"
+            android:onClick="@{() -> viewModel.stopCleaning()}"
             app:cardBackgroundColor="?android:attr/colorPrimary"
             app:cardCornerRadius="100dp"
             app:cardElevation="2dp"
@@ -60,7 +69,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Finish"
+                android:text="@string/label_finish"
                 android:textColor="@color/white"
                 android:textSize="40sp"
                 android:textStyle="bold" />
@@ -68,12 +77,14 @@
         </androidx.cardview.widget.CardView>
 
         <Button
+            android:id="@+id/pause_or_resume_button"
             style="@style/ButtonDarkLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:drawableEnd="@drawable/ic_pause_24"
-            android:text="Pause"
+            android:drawableEnd="@{viewModel.isPaused ? @drawable/ic_play_arrow_24 : @drawable/ic_pause_24}"
+            android:onClick="@{() -> viewModel.pauseOrResume()}"
+            android:text="@{ viewModel.isPaused ? @string/label_resume : @string/label_pause }"
             app:layout_constraintEnd_toEndOf="@+id/cardView2"
             app:layout_constraintStart_toStartOf="@+id/cardView2"
             app:layout_constraintTop_toBottomOf="@+id/cardView2" />
