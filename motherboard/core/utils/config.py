@@ -32,7 +32,7 @@ class Configuration(object):
 
         p, i, d = pid_settings.get('proportional'), pid_settings.get('integral'), pid_settings.get('derivative')
 
-        if p and i and d:
+        if p is not None and i is not None and d is not None:
             return p, i, d
         else:
             return setup_and_return_default_values()
@@ -44,6 +44,7 @@ class Configuration(object):
             'integral': integral,
             'derivative': derivative,
         }
+
         self._save_config(config)
 
     def set_target_cleaning_algorithm(self, name: str):
