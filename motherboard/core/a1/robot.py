@@ -88,12 +88,12 @@ class Robot(object):
     def _move(self, distance: int, speed: int, forward: bool, with_break: bool) -> Job:
         a1_logger.print_movement(forward, speed, distance, with_break)
         parameters = f'{"1" if forward else "2"};{distance:x};{speed:x};{"1" if with_break else "2"}'
-        return self._socket.send_instruction(0x06, parameters)
+        return self._socket.send_instruction(0x06, parameters, timeout=None)
 
     def _turn(self, left: bool, angle: int, speed: int, with_break: bool) -> Job:
         a1_logger.print_turn(left, speed, angle, with_break)
         parameters = f"{'1' if left else '2'};{angle:x};{speed:x};{'1' if with_break else '2'}"
-        return self._socket.send_instruction(0x07, parameters)
+        return self._socket.send_instruction(0x07, parameters, timeout=None)
 
     def _walk(self, forward: bool, speed: int) -> Job:
         a1_logger.print_movement(forward, speed, distance=None, with_stop=False)
