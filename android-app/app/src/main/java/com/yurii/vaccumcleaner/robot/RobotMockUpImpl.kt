@@ -92,7 +92,7 @@ class RobotMockUpImpl : Robot {
     }
 
     override suspend fun getCleaningStatus(): CleaningStatus {
-        return CleaningStatus(CleaningStatusEnum.RUNNING, CleaningExecutionInfo("simple", "12:00"))
+        return CleaningStatus(CleaningStatusEnum.RUNNING, CleaningExecutionInfo("simple", "12:00", null))
     }
 
     override suspend fun shutDown() {

@@ -20,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="Cleaning"
+            android:text="@string/label_cleaning"
             android:textColor="@color/black"
             android:textSize="40sp"
             app:layout_constraintEnd_toEndOf="@+id/cardView2"
@@ -32,21 +32,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@{String.format(@string/label_algorithm_name, viewModel.algorithmName)}"
+            android:text="@{String.format(@string/label_algorithm_name, viewModel.cleaningExecutionInfo.algorithmName)}"
             app:layout_constraintEnd_toEndOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/textView2"
             tools:text="Algorithm: Simple" />
 
         <TextView
+            android:id="@+id/start_time"
             style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Running time: 4:34"
+            android:text="@{String.format(@string/label_start_time, viewModel.cleaningExecutionInfo.timestamp)}"
+            tools:text="Start time: 12 23 43"
             app:layout_constraintEnd_toEndOf="@+id/textView2"
             app:layout_constraintStart_toStartOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/algorithm_name" />
+
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView2"

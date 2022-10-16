@@ -3,9 +3,9 @@ package com.yurii.vaccumcleaner.screens.execution
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.yurii.vaccumcleaner.robot.CleaningExecutionInfo
 import com.yurii.vaccumcleaner.robot.CleaningStatusEnum
 import com.yurii.vaccumcleaner.robot.Robot
-import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,8 +22,8 @@ class CleaningExecutionViewModel(private val robot: Robot) : ViewModel() {
     private val _isPaused: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isPaused = _isPaused.asStateFlow()
 
-    private val _algorithmName: MutableStateFlow<String> = MutableStateFlow("")
-    val algorithmName = _algorithmName.asStateFlow()
+    private val _cleaningExecutionInfo: MutableStateFlow<CleaningExecutionInfo?> = MutableStateFlow(null)
+    val cleaningExecutionInfo = _cleaningExecutionInfo.asStateFlow()
 
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
     val event = _event.asSharedFlow()
@@ -40,7 +40,7 @@ class CleaningExecutionViewModel(private val robot: Robot) : ViewModel() {
     init {
         netWorkScope.launch {
             val cleaningStatus = robot.getCleaningStatus()
-            _algorithmName.value = cleaningStatus.requireCleaningInfo().algorithmName
+            _cleaningExecutionInfo.value = cleaningStatus.requireCleaningInfo()
             _isPaused.value = cleaningStatus.status == CleaningStatusEnum.PAUSED
         }
     }

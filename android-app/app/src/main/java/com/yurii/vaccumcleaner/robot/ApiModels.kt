@@ -117,7 +117,8 @@ enum class CleaningStatusEnum(val value: String) {
 @JsonClass(generateAdapter = true)
 data class CleaningExecutionInfo(
     @Json(name = "algorithm_name") val algorithmName: String,
-    val timestamp: String
+    val timestamp: String,
+    @Json(name = "finish_time") val finishTime: String?
 )
 
 @JsonClass(generateAdapter = true)

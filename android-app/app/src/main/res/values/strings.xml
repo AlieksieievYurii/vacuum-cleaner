@@ -69,4 +69,6 @@
     <string name="label_shut_down_confirmation_message">Do you want to shut down the robot?</string>
     <string name="label_reboot_confirmation_title">Reboot Confirmation</string>
     <string name="label_reboot_confirmation_message">Do you want to reboot the robot?</string>
+    <string name="label_start_time">Start time: %s</string>
+    <string name="label_cleaning">Cleaning</string>
 </resources>
