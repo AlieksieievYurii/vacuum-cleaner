@@ -1,13 +1,11 @@
 import json
-
-from enum import Enum
 from pathlib import Path
 from threading import Thread
 from typing import Optional, List, Type, Any
 
-from a1.models import A1Data
+from a1.robot import Robot
 from algo.algorithms.smart import Smart
-from algo.algorithms.algorithm import Algorithm, ArgumentsHolder
+from algo.algorithms.algorithm import Algorithm, ArgumentsHolder, ExecutionState
 from algo.algorithms.simple import Simple
 from utils.logger import AlgorithmManagerLogger
 
@@ -20,23 +18,16 @@ class LoadingAlgorithmArgumentsException(AlgorithmManagerException):
     pass
 
 
-class State(Enum):
-    NONE = "none"
-    RUNNING = "running"
-    PAUSED = "paused"
-    STOPPED = "stopped"
-
-
 class AlgorithmManager(object):
     ALGORITHMS: List[Type[Algorithm]] = [
         Simple,
         Smart
     ]
 
-    def __init__(self, a1_data: A1Data, logger: AlgorithmManagerLogger):
-        self._a1_data = a1_data
+    def __init__(self, robot: Robot, logger: AlgorithmManagerLogger):
+        self._robot = robot
         self._logger = logger
-        self._state = State.NONE
+        self._state = ExecutionState()
 
         self._algorithm: Optional[Algorithm] = None
         self._working_thread: Optional[Thread] = None
@@ -51,9 +42,9 @@ class AlgorithmManager(object):
         :return: None
         """
 
-        if self._state is not State.NONE:
+        if not self._state.equals(ExecutionState.State.NONE):
             raise AlgorithmManagerException(
-                f'Forbidden to set target algorithm during the execution. Current state: {self._state}')
+                f'Forbidden to set target algorithm during the execution. Current state: {self._state.state}')
 
         self._logger.info(f'Set Cleaning Algorithm: {name}')
         algorithm = self._get_algorithm_class(name)
@@ -96,7 +87,7 @@ class AlgorithmManager(object):
         raise AlgorithmManagerException('Algorithm is not set')
 
     def get_current_execution_info(self) -> dict:
-        if self._state not in (State.RUNNING, State.PAUSED):
+        if not self._state.is_working:
             raise AlgorithmManagerException('Can not get execution info because not running')
 
         return {
@@ -144,29 +135,30 @@ class AlgorithmManager(object):
 
         :return: None
         """
-        if self._state is not State.NONE:
+        if self._state.is_working:
             raise AlgorithmManagerException('You can not start cleaning because it is already running')
         if self._working_thread:
             raise AlgorithmManagerException('Algorithm is already executing')
         if not self._algorithm:
             raise AlgorithmManagerException('Can not start algorithm, because not selected')
 
-        self._state = State.RUNNING
+        self._state.set_state(ExecutionState.State.RUNNING)
         self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
         self._working_thread.start()
 
     def pause(self):
-        if self._state is not State.RUNNING:
-            raise AlgorithmManagerException(f'Can not pause while the state is: {self._state.value}')
-        self._state = State.PAUSED
+        if not self._state.equals(ExecutionState.State.RUNNING):
+            raise AlgorithmManagerException(f'Can not pause while the state is: {self._state.state}')
+        self._state.set_state(ExecutionState.State.PAUSED)
+        print(f'Set paused: {self._state} {id(self._state)}')
 
     def resume(self):
-        if self._state is not State.PAUSED:
-            raise AlgorithmManagerException(f'Can not resume running while the state is: {self._state.value}')
-        self._state = State.RUNNING
+        if not self._state.equals(ExecutionState.State.PAUSED):
+            raise AlgorithmManagerException(f'Can not resume running while the state is: {self._state.state}')
+        self._state.set_state(ExecutionState.State.RUNNING)
 
     @property
-    def current_state(self) -> State:
+    def current_state(self) -> ExecutionState:
         return self._state
 
     def stop(self) -> None:
@@ -176,21 +168,33 @@ class AlgorithmManager(object):
         :return: None
         """
 
-        if self._state in (State.NONE, State.STOPPED):
-            raise AlgorithmManagerException(f'You can not stop execution while state: {self._state.value}')
+        if self._state.equals(ExecutionState.State.NONE) or self._state.equals(ExecutionState.State.STOPPED):
+            raise AlgorithmManagerException(f'You can not stop execution while state: {self._state.state}')
 
-        self._state = State.STOPPED
+        self._state.set_state(ExecutionState.State.STOPPED)
         self._working_thread.join()
         self._working_thread = None
+        self._state.set_state(ExecutionState.State.NONE)
 
     def _algorithm_loop(self) -> None:
+        self._algorithm.on_prepare(self._robot)
+
+        # Endless loop to handle 'pause' and 'stop' actions
         while True:
-            if self._state == State.STOPPED:
-                self._state = State.NONE
+            self._algorithm.loop(self._robot, self._state)
+            if self._state.equals(ExecutionState.State.PAUSED):
+                self._algorithm.on_pause(self._robot)
+                self._block_while_is_paused()
+            if self._state.equals(ExecutionState.State.STOPPED):
+                self._algorithm.on_finish(self._robot)
                 break
 
-            if self._state == State.RUNNING:
-                self._algorithm.loop(self._a1_data)
+    def _block_while_is_paused(self):
+        while True:
+            if self._state.equals(ExecutionState.State.RUNNING):
+                self._algorithm.on_resume(self._robot)
+            if self._state.equals(ExecutionState.State.STOPPED) or self._state.equals(ExecutionState.State.RUNNING):
+                break
 
     def _get_algorithm_class(self, algorithm_name: str) -> Type[Algorithm]:
         for algorithm in self.ALGORITHMS:
