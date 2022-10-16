@@ -421,6 +421,11 @@ void set_pid_settings(uint16_t id, char* input) {
   instruction_handler.on_finished(id);
 }
 
+void on_set_booting_up_state(uint16_t id, char*) {
+  power_controller.set_state_BOOTING_UP();
+  instruction_handler.on_finished(id);
+}
+
 void propagandate_tick_signal() {
   if (time_to_turn_off > 0 && millis() >= time_to_turn_off) {
    power_controller.set_state_TURNED_OFF();
