@@ -1,4 +1,6 @@
 import json
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from threading import Thread
 from typing import Optional, List, Type, Any
@@ -18,6 +20,21 @@ class LoadingAlgorithmArgumentsException(AlgorithmManagerException):
     pass
 
 
+@dataclass
+class AlgorithmExecutionInfo(object):
+    algorithm_name: str
+    timestamp: str
+    finish_time: Optional[str]
+
+    @classmethod
+    def create(cls, algorithm_name: str):
+        return cls(
+            algorithm_name=algorithm_name,
+            timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            finish_time=None
+        )
+
+
 class AlgorithmManager(object):
     ALGORITHMS: List[Type[Algorithm]] = [
         Simple,
@@ -29,6 +46,7 @@ class AlgorithmManager(object):
         self._logger = logger
         self._state = ExecutionState()
 
+        self._algorithm_execution_info: Optional[AlgorithmManagerException] = None
         self._algorithm: Optional[Algorithm] = None
         self._working_thread: Optional[Thread] = None
         self._configs_folder: Path = Path(__file__).parent / 'algorithms' / 'configs'
@@ -86,15 +104,6 @@ class AlgorithmManager(object):
             return self._algorithm.get_name()
         raise AlgorithmManagerException('Algorithm is not set')
 
-    def get_current_execution_info(self) -> dict:
-        if not self._state.is_working:
-            raise AlgorithmManagerException('Can not get execution info because not running')
-
-        return {
-            'algorithm_name': self.get_current_algorithm_name(),
-            'timestamp': '12:00'
-        }
-
     def get_algorithms(self) -> List[dict]:
         """
         Returns the list of dicts containing all registered algorithms.
@@ -143,6 +152,7 @@ class AlgorithmManager(object):
             raise AlgorithmManagerException('Can not start algorithm, because not selected')
 
         self._state.set_state(ExecutionState.State.RUNNING)
+        self._algorithm_execution_info = AlgorithmExecutionInfo.create(self.get_current_algorithm_name())
         self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
         self._working_thread.start()
 
@@ -160,6 +170,10 @@ class AlgorithmManager(object):
     def current_state(self) -> ExecutionState:
         return self._state
 
+    @property
+    def algorithm_execution_info(self):
+        return self._algorithm_execution_info
+
     def stop(self) -> None:
         """
         Stops algorithm execution and waits until thread is closed.
@@ -173,6 +187,9 @@ class AlgorithmManager(object):
         self._state.set_state(ExecutionState.State.STOPPED)
         self._working_thread.join()
         self._working_thread = None
+        self._algorithm_execution_info.finish_time = datetime.now()
+        self._add_execution_to_history(self._algorithm_execution_info)
+        self._algorithm_execution_info = None
         self._state.set_state(ExecutionState.State.NONE)
 
     def _algorithm_loop(self) -> None:
@@ -301,3 +318,6 @@ class AlgorithmManager(object):
     def _save_config_for(self, algorithm: Algorithm, parameters: dict) -> None:
         config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         config_file.write_text(json.dumps(parameters, indent=4))
+
+    def _add_execution_to_history(self, record: AlgorithmExecutionInfo):
+        pass

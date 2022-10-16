@@ -3,6 +3,18 @@ from algo.algorithms.algorithm import Algorithm, FieldParameter, ExecutionState
 
 
 class Smart(Algorithm):
+    def on_prepare(self, robot: Robot):
+        pass
+
+    def on_pause(self, robot: Robot):
+        pass
+
+    def on_resume(self, robot: Robot):
+        pass
+
+    def on_finish(self, robot: Robot):
+        pass
+
     NAME: str = 'smart'
     DESCRIPTION: str = 'Just smart algorithm of cleaning'
 

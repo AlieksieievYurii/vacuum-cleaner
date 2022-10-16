@@ -39,7 +39,6 @@ class Simple(Algorithm):
 
     def _check_bumpers(self, robot: Robot, state: ExecutionState) -> bool:
         if robot.data.end_right_trig or robot.data.end_left_trig:
-            print(f'State: {state} {id(state)}')
             self._move_backward(robot)
             if state.is_break_event:
                 return False

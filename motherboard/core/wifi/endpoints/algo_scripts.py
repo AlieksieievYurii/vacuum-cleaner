@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List, Any, Optional
 
-from algo.algo_manager import AlgorithmManager
+from algo.algo_manager import AlgorithmManager, AlgorithmExecutionInfo
 from algo.algorithms.algorithm import ExecutionState
 from utils.config import Configuration
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field, ListType
@@ -81,15 +81,9 @@ class SetAlgorithmScriptRequest(RequestHandler):
 
 
 @dataclass
-class CleaningInfo(object):
-    algorithm_name: str
-    timestamp: str
-
-
-@dataclass
 class CleaningStatus(object):
     status: str
-    cleaning_info: Optional[CleaningInfo]
+    cleaning_info: Optional[AlgorithmExecutionInfo]
 
 
 class ManageCleaningExecutionRequestModel(object):
@@ -128,15 +122,10 @@ class GetCleaningStatusRequest(RequestHandler):
 
     def perform(self, request: Request, data: AttributeHolder) -> CleaningStatus:
         if self._algorithm_manager.current_state.equals(ExecutionState.State.RUNNING):
-            return CleaningStatus(status='running', cleaning_info=self._get_cleaning_execution_info())
+            status = 'running'
         elif self._algorithm_manager.current_state.equals(ExecutionState.State.PAUSED):
-            return CleaningStatus(status='paused', cleaning_info=self._get_cleaning_execution_info())
+            status = 'paused'
         else:
-            return CleaningStatus(status='none', cleaning_info=None)
+            status = 'none'
 
-    def _get_cleaning_execution_info(self) -> CleaningInfo:
-        execution_info = self._algorithm_manager.get_current_execution_info()
-        return CleaningInfo(
-            algorithm_name=execution_info['algorithm_name'],
-            timestamp=execution_info['timestamp']
-        )
+        return CleaningStatus(status=status, cleaning_info=self._algorithm_manager.algorithm_execution_info)
