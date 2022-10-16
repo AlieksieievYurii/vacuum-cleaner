@@ -19,6 +19,7 @@ from utils.logger import wifi_module_logger, CoreLogger, algorithm_manager_logge
 from wifi.endpoints.motor import Motor
 from wifi.endpoints.movement import Movement, StopMovement
 from wifi.endpoints.pid import GetCurrentPidSettings, SetPidSettings
+from wifi.endpoints.power import PowerRequestHandler
 from wifi.endpoints.sys_info import GetRobotSysInfo
 from wifi.handler import WifiEndpointsHandler
 
@@ -32,6 +33,7 @@ class Core(object):
         self._os: OperationSystem = get_typed_arg('os', OperationSystem, kwargs)
         self._robot: Robot = get_typed_arg('robot', Robot, kwargs)
         self._config: Configuration = get_typed_arg('config', Configuration, kwargs)
+        self._operation_shut_down = False
         self._wifi_endpoints_handler: WifiEndpointsHandler = get_typed_arg('wifi_endpoints_handler',
                                                                            WifiEndpointsHandler, kwargs)
         self._bluetooth_endpoint_handler: BluetoothEndpointsHandler = get_typed_arg('bl_endpoint_handler',
@@ -52,20 +54,28 @@ class Core(object):
         self._wifi_endpoints_handler.register_endpoint(SetAlgorithmScriptRequest(self._algorithm_manager, self._config))
         self._wifi_endpoints_handler.register_endpoint(ManageCleaningExecutionRequest(self._algorithm_manager))
         self._wifi_endpoints_handler.register_endpoint(GetCleaningStatusRequest(self._algorithm_manager))
+        self._wifi_endpoints_handler.register_endpoint(PowerRequestHandler(self._on_shut_down, self._on_reboot))
+
+    def _on_reboot(self):
+        self._robot.set_booting_up_led().expect()
+        self._os.reboot()
+
+    def _on_shut_down(self):
+        self._operation_shut_down = True
 
     def run(self) -> None:
         self._logger.print_entry_point()
-        #
-        # try:
-        #     self._robot.connect()
-        # except Exception as error:
-        #     self._logger.critical(f'Cannot establish connection with A1 module. Reason:{error}')
-        #     if self._debug:
-        #         raise error
-        #     return None
-        #
-        # self._robot.core_is_initialized(is_successful=True)
-        # self._robot.beep(3, 100)
+
+        try:
+            self._robot.connect()
+        except Exception as error:
+            self._logger.critical(f'Cannot establish connection with A1 module. Reason:{error}')
+            if self._debug:
+                raise error
+            return None
+
+        self._robot.core_is_initialized(is_successful=True)
+        self._robot.beep(3, 100)
 
         self._wifi_endpoints_handler.start()
         self._initialization()
@@ -77,9 +87,9 @@ class Core(object):
                 raise error
 
     def _initialization(self) -> None:
-        # self._init_pid_settings()
+        self._init_pid_settings()
         self._algorithm_manager.set_algorithm(self._config.get_selected_cleaning_algorithm())
-        # self._set_core_data_time()
+        self._set_core_data_time()
 
     def _init_pid_settings(self) -> None:
         p, i, d = self._config.get_pid_settings()
@@ -100,10 +110,9 @@ class Core(object):
     def _run_core_loop(self) -> None:
         self._voice.say_introduction()
         while True:
-            pass
-            # if self._is_shutting_down_triggered():
-            #     self._shut_down_core()
-            #     break
+            if self._is_shutting_down_triggered():
+                self._shut_down_core()
+                break
 
             #
             # but = self._robot.data.button_up
@@ -131,7 +140,7 @@ class Core(object):
             #     print('B LONG PRESS')
 
     def _is_shutting_down_triggered(self) -> bool:
-        return self._robot.data.is_shut_down_button_triggered
+        return self._robot.data.is_shut_down_button_triggered or self._operation_shut_down
 
     def _shut_down_core(self) -> None:
         self._logger.info('Preparing to shutdown')
@@ -140,6 +149,7 @@ class Core(object):
         self._logger.info('Stop Bluetooth Service...')
         # self._bluetooth_endpoints_handler.stop() TODO
         self._logger.info('Send signal to turn off the robot in 10 seconds to A1...')
+        self._robot.set_shutting_down_led().expect()
         self._robot.set_timer_to_cut_off_power(15).expect()
         self._logger.info('Close A1 Connection...')
         # TODO
@@ -156,7 +166,7 @@ def main():
     wifi_communicator = WifiCommunicator(WIFI_SOCKET_PORT)
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_module_logger)
     bl_endpoint_handler = BluetoothEndpointsHandler()
-    algorithm_manager = AlgorithmManager(None, algorithm_manager_logger)
+    algorithm_manager = AlgorithmManager(robot, algorithm_manager_logger)
     voice: Voice = RudeMaximVoice(os)
     core = Core(os=os,
                 robot=robot,
