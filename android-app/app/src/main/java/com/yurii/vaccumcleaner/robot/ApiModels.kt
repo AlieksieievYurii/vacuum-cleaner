@@ -138,3 +138,16 @@ data class CleaningStatus(
 data class ManageCleaningExecution(
     val command: String
 )
+
+enum class Power(val value: String) {
+    @Json(name = "shutdown")
+    SHUT_DOWN("shutdown"),
+
+    @Json(name = "reboot")
+    REBOOT("reboot"),
+}
+
+@JsonClass(generateAdapter = true)
+data class PowerCommand(
+    @Json(name = "command") val powerCommand: Power
+)

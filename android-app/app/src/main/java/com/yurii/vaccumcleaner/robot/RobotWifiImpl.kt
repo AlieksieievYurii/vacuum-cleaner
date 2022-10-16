@@ -62,11 +62,11 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
     }
 
     override suspend fun shutDown() {
-        TODO("Not yet implemented")
+        requestHandler.send<Any>("/power", PowerCommand(Power.SHUT_DOWN), null)
     }
 
     override suspend fun reboot() {
-        TODO("Not yet implemented")
+        requestHandler.send<Any>("/power", PowerCommand(Power.REBOOT), null)
     }
 
     override suspend fun setPidSettings(pidSettings: PidSettings) {
