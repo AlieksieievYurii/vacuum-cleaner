@@ -36,6 +36,15 @@ class OperationSystem(ABC):
         pass
 
     @abstractmethod
+    def reboot(self) -> None:
+        """
+        Abstract function that is supposed to perform reboot the OS
+
+        :return: None
+        """
+        pass
+
+    @abstractmethod
     def play_sound(self, file: Path) -> None:
         """
         Abstract function that is supposed to play given media file
@@ -46,6 +55,9 @@ class OperationSystem(ABC):
 
 
 class WindowsOperationSystem(OperationSystem):
+
+    def reboot(self) -> None:
+        print('Perform reboot')
 
     def play_sound(self, file: Path) -> None:
         pass
@@ -61,6 +73,9 @@ class WindowsOperationSystem(OperationSystem):
 
 
 class LinuxOperationSystem(OperationSystem):
+    def reboot(self) -> None:
+        subprocess.run(['reboot'])
+
     def play_sound(self, file: Path) -> None:
         subprocess.run(['omxplayer', file.as_posix()])
 
