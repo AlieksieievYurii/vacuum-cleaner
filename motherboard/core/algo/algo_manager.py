@@ -150,7 +150,6 @@ class AlgorithmManager(object):
         if not self._state.equals(ExecutionState.State.RUNNING):
             raise AlgorithmManagerException(f'Can not pause while the state is: {self._state.state}')
         self._state.set_state(ExecutionState.State.PAUSED)
-        print(f'Set paused: {self._state} {id(self._state)}')
 
     def resume(self):
         if not self._state.equals(ExecutionState.State.PAUSED):

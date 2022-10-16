@@ -1,5 +1,5 @@
-from a1.models import A1Data
-from algo.algorithms.algorithm import Algorithm, FieldParameter
+from a1.robot import Robot
+from algo.algorithms.algorithm import Algorithm, FieldParameter, ExecutionState
 
 
 class Smart(Algorithm):
@@ -9,9 +9,8 @@ class Smart(Algorithm):
     speed_argument = FieldParameter('speed', range(0, 1000), default=50)
     test = FieldParameter('test3', float, default=1.0)
 
-
     def init(self, arguments):
         pass
 
-    def loop(self, data: A1Data):
+    def loop(self, robot: Robot, state: ExecutionState):
         pass
