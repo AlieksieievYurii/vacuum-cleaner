@@ -1,5 +1,10 @@
+import random
 import time
 from typing import Any
+
+
+def random_true():
+    return bool(random.getrandbits(1))
 
 
 def get_typed_arg(name: str, t: Any, kwargs: dict) -> Any:
