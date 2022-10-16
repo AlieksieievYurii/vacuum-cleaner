@@ -1,13 +1,44 @@
 import abc
 from abc import ABC
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any
 
 from a1.models import A1Data
+from a1.robot import Robot
 
 
 class AlgorithmException(Exception):
     pass
+
+
+class ExecutionState(object):
+    class State(Enum):
+        NONE = "none"
+        RUNNING = "running"
+        PAUSED = "paused"
+        STOPPED = "stopped"
+
+    def __init__(self, init_value=State.NONE):
+        self._state = init_value
+
+    @property
+    def is_break_event(self) -> bool:
+        return self._state in (self.State.PAUSED, self.State.STOPPED)
+
+    @property
+    def is_working(self) -> bool:
+        return self._state is not self.State.NONE
+
+    def set_state(self, state: State):
+        self._state = state
+
+    def equals(self, state: State) -> bool:
+        return self._state == state
+
+    @property
+    def state(self) -> State:
+        return self._state
 
 
 @dataclass
@@ -33,10 +64,26 @@ class Algorithm(ABC):
     """
 
     def __init__(self, arguments: ArgumentsHolder):
-        self._arguments = arguments
+        self._args = arguments
 
     @abc.abstractmethod
-    def loop(self, data: A1Data):
+    def on_prepare(self, robot: Robot):
+        pass
+
+    @abc.abstractmethod
+    def loop(self, robot: Robot, state: ExecutionState):
+        pass
+
+    @abc.abstractmethod
+    def on_pause(self, robot: Robot):
+        pass
+
+    @abc.abstractmethod
+    def on_resume(self, robot: Robot):
+        pass
+
+    @abc.abstractmethod
+    def on_finish(self, robot: Robot):
         pass
 
     @classmethod
