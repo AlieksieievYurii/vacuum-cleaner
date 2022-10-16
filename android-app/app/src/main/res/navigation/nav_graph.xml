@@ -111,6 +111,8 @@
         tools:layout="@layout/fragment_cleaning_execution" >
         <action
             android:id="@+id/action_cleaningExecutionFragment_to_panelFragment"
-            app:destination="@id/panelFragment" />
+            app:destination="@id/panelFragment"
+            app:popUpTo="@id/cleaningExecutionFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
