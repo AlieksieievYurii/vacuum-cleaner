@@ -81,6 +81,12 @@ class Robot(object):
     def set_timer_to_cut_off_power(self, seconds: int) -> Job:
         return self._socket.send_instruction(0xFF, f'{seconds:x}')
 
+    def set_booting_up_led(self) -> Job:
+        return self._socket.send_instruction(0x16, '')
+
+    def set_shutting_down_led(self) -> Job:
+        return self._socket.send_instruction(0x0F, '')
+
     def _rotate(self, left: bool, speed: int) -> Job:
         parameters = f'{"1" if left else "2"};{speed:x}'
         return self._socket.send_instruction(0x14, parameters)
