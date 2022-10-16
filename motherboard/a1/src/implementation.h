@@ -404,7 +404,7 @@ void on_set_timer_to_turn_off(uint16_t id, char* input) {
   instruction_handler.on_finished(id);
 }
 
-void set_pid_settings(uint16_t id, char* input) {
+void on_set_pid_settings(uint16_t id, char* input) {
   bool parsing_failed = false;
 
   float p = fetch_float_number(input, 0, &parsing_failed);
