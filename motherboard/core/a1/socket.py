@@ -58,8 +58,8 @@ class SerialA1Communicator(LineReader):
 
 
 class A1Socket(object):
-    def __init__(self, port: str):
-        self._serial_con = serial.Serial(baudrate=9600)
+    def __init__(self, port: str, speed: int):
+        self._serial_con = serial.Serial(baudrate=speed)
         self._serial_con.port = port
         self._reader_thread = ReaderThread(self._serial_con, SerialA1Communicator)
 
