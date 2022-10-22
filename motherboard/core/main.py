@@ -1,6 +1,6 @@
 import settings
 
-from a1.robot import Robot
+from a1.robot import Robot, RobotUART, RobotMockUp
 from a1.socket import A1Socket
 from algo.algo_manager import AlgorithmManager
 from bluetooth.handler import BluetoothEndpointsHandler
@@ -12,11 +12,19 @@ from utils.speetch.voices import RudeMaximVoice
 
 from wifi.comunicator import WifiCommunicator
 
-from utils.logger import LoggerFactory
+from utils.logger import LoggerFactory, Logger
 from wifi.handler import WifiEndpointsHandler
 
 
-def main():
+def get_robot(robot_logger: Logger, a1_logger: Logger) -> Robot:
+    if settings.get('A1_MOCKUP'):
+        return RobotMockUp(robot_logger)
+    else:
+        a1_socket = A1Socket(settings.get('UART_PORT'), settings.get('UART_SPEED'), a1_logger)
+        return RobotUART(a1_socket, robot_logger)
+
+
+def main() -> None:
     logger_factory = LoggerFactory(settings.get('LOGS_FOLDER'))
     core_logger = logger_factory.get_logger('core', True)
     wifi_logger = logger_factory.get_logger('wifi', True)
@@ -25,8 +33,7 @@ def main():
     algorithm_manager_logger = logger_factory.get_logger('algo-manager', True)
 
     operation_system: OperationSystem = get_operation_system()
-    a1_socket = A1Socket(settings.get('UART_PORT'), settings.get('UART_SPEED'), a1_socket_logger)
-    robot = Robot(a1_socket, robot_logger)
+    robot = get_robot(robot_logger, a1_socket_logger)
     config = Configuration(settings.get('CORE_CONFIG'))
     wifi_communicator = WifiCommunicator(settings.get('SOCKET_PORT'))
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_logger)

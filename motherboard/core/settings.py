@@ -6,7 +6,8 @@ settings_prod = {
     'UART_PORT': '/dev/serial0',
     'UART_SPEED': 9600,
     'LOGS_FOLDER': '/home/pi/logs',
-    'CORE_CONFIG': '/home/pi/config.json'
+    'CORE_CONFIG': '/home/pi/config.json',
+    'A1_MOCKUP': False
 }
 
 settings_development = {
@@ -14,7 +15,8 @@ settings_development = {
     'UART_PORT': 'COM5',
     'UART_SPEED': 9600,
     'LOGS_FOLDER': r'D:\vacuum-cleaner\motherboard\core\logs',
-    'CORE_CONFIG': r'D:\vacuum-cleaner\motherboard\core\config.json'
+    'CORE_CONFIG': r'D:\vacuum-cleaner\motherboard\core\config.json',
+    'A1_MOCKUP': False
 }
 
 is_production = os.getenv('VACUUM_ROBOT_CLEANER_PRODUCTION') is not None
@@ -23,7 +25,7 @@ is_production = os.getenv('VACUUM_ROBOT_CLEANER_PRODUCTION') is not None
 def get(name: str) -> Any:
     settings = settings_prod if is_production else settings_development
     value: Optional = settings.get(name)
-    if not value:
+    if value is None:
         raise RuntimeError(
             f'Can not get setting attribute: {name}. Settings mode: {"production" if is_production else "development"}')
     return value
