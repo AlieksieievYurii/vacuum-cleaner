@@ -77,7 +77,7 @@ class LinuxOperationSystem(OperationSystem):
         subprocess.run(['reboot'])
 
     def play_sound(self, file: Path) -> None:
-        subprocess.run(['omxplayer', file.as_posix()])
+        subprocess.run(['omxplayer', file.as_posix()], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def shutdown(self) -> None:
         subprocess.run(['shutdown', '-r', 'now'], check=True)
