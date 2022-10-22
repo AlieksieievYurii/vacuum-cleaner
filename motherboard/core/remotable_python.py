@@ -42,7 +42,7 @@ class SSHClient(object):
         :return: None
         """
 
-        command = ['sudo'] + command if as_root else command
+        command = ['sudo -E'] + command if as_root else command
 
         _, stdout, stderr = self._ssh_client.exec_command(' '.join(command), get_pty=print_continuously)
 
