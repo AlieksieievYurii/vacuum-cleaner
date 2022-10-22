@@ -7,7 +7,7 @@ class Configuration(object):
     DEFAULT_CLEANING_ALGORITHM: str = 'simple'
     DEFAULT_PID_SETTINGS = (0.1, 0.1, 0)
 
-    def __init__(self, path: str = r'D:\vacuum-cleaner\motherboard\core\config.json'):
+    def __init__(self, path: str):
         self._config_file = Path(path)
 
         if not self._config_file.exists():
