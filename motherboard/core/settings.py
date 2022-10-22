@@ -7,7 +7,12 @@ settings_prod = {
     'UART_SPEED': 9600,
     'LOGS_FOLDER': '/home/pi/logs',
     'CORE_CONFIG': '/home/pi/config.json',
-    'A1_MOCKUP': False
+    'A1_MOCKUP': False,
+    'CAPTURE_CORE_LOG': True,
+    'CAPTURE_WIFI_LOG': False,
+    'CAPTURE_ROBOT_LOG': False,
+    'CAPTURE_A1_LOG': False,
+    'CAPTURE_ALGO_MANAGER_LOG': False
 }
 
 settings_development = {
@@ -16,7 +21,12 @@ settings_development = {
     'UART_SPEED': 9600,
     'LOGS_FOLDER': r'D:\vacuum-cleaner\motherboard\core\logs',
     'CORE_CONFIG': r'D:\vacuum-cleaner\motherboard\core\config.json',
-    'A1_MOCKUP': False
+    'A1_MOCKUP': False,
+    'CAPTURE_CORE_LOG': True,
+    'CAPTURE_WIFI_LOG': True,
+    'CAPTURE_ROBOT_LOG': True,
+    'CAPTURE_A1_LOG': True,
+    'CAPTURE_ALGO_MANAGER_LOG': True
 }
 
 is_production = os.getenv('VACUUM_ROBOT_CLEANER_PRODUCTION') is not None

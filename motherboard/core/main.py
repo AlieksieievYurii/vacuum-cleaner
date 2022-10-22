@@ -26,11 +26,11 @@ def get_robot(robot_logger: Logger, a1_logger: Logger) -> Robot:
 
 def main() -> None:
     logger_factory = LoggerFactory(settings.get('LOGS_FOLDER'))
-    core_logger = logger_factory.get_logger('core', True)
-    wifi_logger = logger_factory.get_logger('wifi', True)
-    robot_logger = logger_factory.get_logger('robot', True)
-    a1_socket_logger = logger_factory.get_logger('a1-socket', True)
-    algorithm_manager_logger = logger_factory.get_logger('algo-manager', True)
+    core_logger = logger_factory.get_logger('core', settings.get('CAPTURE_CORE_LOG'))
+    wifi_logger = logger_factory.get_logger('wifi', settings.get('CAPTURE_WIFI_LOG'))
+    robot_logger = logger_factory.get_logger('robot', settings.get('CAPTURE_ROBOT_LOG'))
+    a1_socket_logger = logger_factory.get_logger('a1-socket', settings.get('CAPTURE_A1_LOG'))
+    algorithm_manager_logger = logger_factory.get_logger('algo-manager', settings.get('CAPTURE_ALGO_MANAGER_LOG'))
 
     operation_system: OperationSystem = get_operation_system()
     robot = get_robot(robot_logger, a1_socket_logger)
