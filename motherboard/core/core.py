@@ -14,7 +14,7 @@ from wifi.endpoints.a1_data import GetA1DataRequestHandler
 from wifi.endpoints.algo_scripts import GetAlgorithmsRequest, SetAlgorithmScriptRequest, \
     ManageCleaningExecutionRequest, GetCleaningStatusRequest
 from wifi.endpoints.hello_world import HelloWorldRequest
-from utils.logger import CoreLogger
+from utils.logger import Logger
 from wifi.endpoints.motor import Motor
 from wifi.endpoints.movement import Movement, StopMovement
 from wifi.endpoints.pid import GetCurrentPidSettings, SetPidSettings
@@ -37,7 +37,7 @@ class Core(object):
                                                                                     BluetoothEndpointsHandler, kwargs)
         self._algorithm_manager: AlgorithmManager = get_typed_arg('algorithm_manager', AlgorithmManager, kwargs)
         self._voice: Voice = get_typed_arg('voice', Voice, kwargs)
-        self._logger: CoreLogger = get_typed_arg('logger', CoreLogger, kwargs)
+        self._logger: Logger = get_typed_arg('logger', Logger, kwargs)
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
         self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
         self._wifi_endpoints_handler.register_endpoint(GetRobotSysInfo())
@@ -61,7 +61,7 @@ class Core(object):
         self._operation_shut_down = True
 
     def run(self) -> None:
-        self._logger.print_entry_point()
+        self._logger.info('====== START ======')
 
         try:
             self._robot.connect()

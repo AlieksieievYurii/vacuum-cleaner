@@ -6,12 +6,13 @@ from json import JSONDecodeError
 from typing import Optional, List, Dict, Any
 
 from utils.communicator import Communicator, CommunicatorConnectionClosed
+from utils.logger import Logger
 from utils.request_handler.exceptions import ParsingRequestErrorException, RequiredFieldIsNotFound
 from utils.request_handler.models import Request, RequestHandler, Field, Response, Status, AttributeHolder, ListType
 
 
 class RequestHandlerService(object):
-    def __init__(self, communicator: Communicator, logger):
+    def __init__(self, communicator: Communicator, logger: Logger):
         self._communicator = communicator
         self._request_handlers: List[RequestHandler] = []
         self._queue = queue.Queue()

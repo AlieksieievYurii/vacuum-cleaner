@@ -1,6 +1,6 @@
 from threading import Thread
 
-from utils.logger import WifiModuleLogger
+from utils.logger import Logger
 from utils.request_handler.handler import RequestHandlerService
 from utils.request_handler.models import RequestHandler
 from wifi.comunicator import WifiCommunicator
@@ -12,7 +12,7 @@ class WifiEndpointsHandler(Thread):
     firstly it accepts connection, then starts executing incoming requests in the same thread
     """
 
-    def __init__(self, wifi_communicator: WifiCommunicator, logger: WifiModuleLogger):
+    def __init__(self, wifi_communicator: WifiCommunicator, logger: Logger):
         self._wifi_communicator = wifi_communicator
         self._logger = logger
         self._request_handler = RequestHandlerService(self._wifi_communicator, logger)

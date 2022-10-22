@@ -9,7 +9,7 @@ from a1.robot import Robot
 from algo.algorithms.smart import Smart
 from algo.algorithms.algorithm import Algorithm, ArgumentsHolder, ExecutionState
 from algo.algorithms.simple import Simple
-from utils.logger import AlgorithmManagerLogger
+from utils.logger import Logger
 
 
 class AlgorithmManagerException(Exception):
@@ -41,7 +41,7 @@ class AlgorithmManager(object):
         Smart
     ]
 
-    def __init__(self, robot: Robot, logger: AlgorithmManagerLogger):
+    def __init__(self, robot: Robot, logger: Logger):
         self._robot = robot
         self._logger = logger
         self._state = ExecutionState()

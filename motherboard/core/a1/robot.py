@@ -1,11 +1,12 @@
 from a1.models import Job, A1Data
 from a1.socket import A1Socket
-from utils.logger import a1_logger
+from utils.logger import Logger
 
 
 class Robot(object):
-    def __init__(self, socket: A1Socket):
+    def __init__(self, socket: A1Socket, logger: Logger):
         self._socket = socket
+        self._logger = logger
 
     def core_is_initialized(self, is_successful: bool) -> None:
         """
@@ -92,17 +93,17 @@ class Robot(object):
         return self._socket.send_instruction(0x14, parameters)
 
     def _move(self, distance: int, speed: int, forward: bool, with_break: bool) -> Job:
-        a1_logger.print_movement(forward, speed, distance, with_break)
+        self._logger.info(f'Move: {"F" if forward else "B"}; Dis: {distance} CM; Speed: {speed}; Break: {with_break}')
         parameters = f'{"1" if forward else "2"};{distance:x};{speed:x};{"1" if with_break else "2"}'
         return self._socket.send_instruction(0x06, parameters, timeout=None)
 
     def _turn(self, left: bool, angle: int, speed: int, with_break: bool) -> Job:
-        a1_logger.print_turn(left, speed, angle, with_break)
+        self._logger.info(f'Turn: {"L" if left else "R"}; Angle: {angle}; Speed: {speed}; Break: {with_break}')
         parameters = f"{'1' if left else '2'};{angle:x};{speed:x};{'1' if with_break else '2'}"
         return self._socket.send_instruction(0x07, parameters, timeout=None)
 
     def _walk(self, forward: bool, speed: int) -> Job:
-        a1_logger.print_movement(forward, speed, distance=None, with_stop=False)
+        self._logger.info(f'Walk: {"F" if forward else "B"}; Speed: {speed}')
         return self._socket.send_instruction(0x13, f"{'1' if forward else '2'};{speed:x}")
 
     @property
