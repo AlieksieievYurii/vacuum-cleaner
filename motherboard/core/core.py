@@ -82,6 +82,8 @@ class Core(object):
             self._logger.critical(f'Core loop is failed. Reason: {error}')
             if self._debug:
                 raise error
+        else:
+            self._logger.info('==== Core has been finished successfully ===')
 
     def _initialization(self) -> None:
         self._init_pid_settings()
@@ -105,7 +107,7 @@ class Core(object):
             self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
-        self._voice.say_introduction()
+        #self._voice.say_introduction()
         while True:
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
@@ -147,7 +149,7 @@ class Core(object):
         # self._bluetooth_endpoints_handler.stop() TODO
         self._logger.info('Send signal to turn off the robot in 10 seconds to A1...')
         self._robot.set_shutting_down_led().expect()
-        sleep(500)
+        sleep(0.5)
         self._robot.set_timer_to_cut_off_power(15).expect()
         self._logger.info('Close A1 Connection...')
         # TODO

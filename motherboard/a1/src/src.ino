@@ -3,7 +3,7 @@
 #include "instruction-handler.h"
 #include "utils.h"
 
-InstructionHandler instruction_handler(Serial);
+InstructionHandler instruction_handler(Serial3);
 
 #include "implementation.h"
 
@@ -38,9 +38,6 @@ void setup() {
   
   enable_Timer5(20, CHANNEL_A);
   ds3231_clock.begin();
-
-  //wheel_left.set_PID(0.1, 0.1, 0);
-  //wheel_right.set_PID(0.1, 0.1, 0);
 }
 
 void loop() {  
