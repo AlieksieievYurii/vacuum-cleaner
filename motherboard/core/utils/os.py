@@ -36,6 +36,15 @@ class OperationSystem(ABC):
         pass
 
     @abstractmethod
+    def reboot(self) -> None:
+        """
+        Abstract function that is supposed to perform reboot the OS
+
+        :return: None
+        """
+        pass
+
+    @abstractmethod
     def play_sound(self, file: Path) -> None:
         """
         Abstract function that is supposed to play given media file
@@ -46,6 +55,9 @@ class OperationSystem(ABC):
 
 
 class WindowsOperationSystem(OperationSystem):
+
+    def reboot(self) -> None:
+        print('Perform reboot')
 
     def play_sound(self, file: Path) -> None:
         pass
@@ -61,8 +73,11 @@ class WindowsOperationSystem(OperationSystem):
 
 
 class LinuxOperationSystem(OperationSystem):
+    def reboot(self) -> None:
+        subprocess.run(['reboot'])
+
     def play_sound(self, file: Path) -> None:
-        subprocess.run(['omxplayer', file.as_posix()])
+        subprocess.run(['omxplayer', file.as_posix()], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def shutdown(self) -> None:
         subprocess.run(['shutdown', '-r', 'now'], check=True)
@@ -72,7 +87,8 @@ class LinuxOperationSystem(OperationSystem):
 
     def is_ntp_synchronized(self) -> bool:
         out: str = subprocess.run(['timedatectl', 'status'], capture_output=True, text=True, check=True).stdout
-        match = re.findall(r'\s+(System clock synchronized: yes)\s+', out)
+
+        match = re.findall(r'\s+(NTP service: active)\s+', out)
 
         return bool(match)
 

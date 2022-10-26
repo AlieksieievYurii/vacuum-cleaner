@@ -27,6 +27,7 @@
 
 //======== Input Commands ===========
 // Commands for the board through I2C. For more information refer to the documentation(power-controller/README.md)
+#define SET_BOOTING_UP_STATE 0x06
 #define SET_TURNED_ON_STATE 0x01
 #define SET_SHUTTING_DOWN_STATE 0x02
 #define SET_TURNED_OFF_STATE 0x03
@@ -101,6 +102,9 @@ void loop(void) {
 
 void on_receive_command(uint8_t command) {
   switch (command) {
+    case SET_BOOTING_UP_STATE:
+      current_status = BOOTING_UP;
+      break;
     case SET_TURNED_ON_STATE:
       if (current_status == BOOTING_UP)
         current_status = TURNED_ON;

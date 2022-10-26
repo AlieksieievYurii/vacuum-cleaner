@@ -102,3 +102,52 @@ data class Algorithm(
     @Json(name = "algorithm_name") val name: String,
     val arguments: List<ArgumentValue>
 )
+
+enum class CleaningStatusEnum(val value: String) {
+    @Json(name = "none")
+    NONE("none"),
+
+    @Json(name = "running")
+    RUNNING("running"),
+
+    @Json(name = "paused")
+    PAUSED("paused")
+}
+
+@JsonClass(generateAdapter = true)
+data class CleaningExecutionInfo(
+    @Json(name = "algorithm_name") val algorithmName: String,
+    val timestamp: String,
+    @Json(name = "finish_time") val finishTime: String?
+)
+
+@JsonClass(generateAdapter = true)
+data class CleaningStatus(
+    val status: CleaningStatusEnum,
+    @Json(name = "cleaning_info") val cleaningInfo: CleaningExecutionInfo?
+) {
+    fun requireCleaningInfo(): CleaningExecutionInfo {
+        if (status == CleaningStatusEnum.NONE)
+            throw IllegalStateException("Can not get Cleaning Info because it is not running")
+
+        return cleaningInfo!!
+    }
+}
+
+@JsonClass(generateAdapter = true)
+data class ManageCleaningExecution(
+    val command: String
+)
+
+enum class Power(val value: String) {
+    @Json(name = "shutdown")
+    SHUT_DOWN("shutdown"),
+
+    @Json(name = "reboot")
+    REBOOT("reboot"),
+}
+
+@JsonClass(generateAdapter = true)
+data class PowerCommand(
+    @Json(name = "command") val powerCommand: Power
+)

@@ -56,6 +56,11 @@
         <action
             android:id="@+id/action_initialFragment_to_binderFragment"
             app:destination="@id/binderFragment" />
+        <action
+            android:id="@+id/action_initialFragment_to_cleaningExecutionFragment"
+            app:destination="@id/cleaningExecutionFragment"
+            app:popUpTo="@id/initialFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/panelFragment"
@@ -73,6 +78,11 @@
         <action
             android:id="@+id/action_panelFragment_to_algorithmSetupFragment"
             app:destination="@id/algorithmSetupFragment" />
+        <action
+            android:id="@+id/action_panelFragment_to_cleaningExecutionFragment"
+            app:destination="@id/cleaningExecutionFragment"
+            app:popUpTo="@id/panelFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/manualControlFragment"
@@ -94,4 +104,15 @@
         android:name="com.yurii.vaccumcleaner.screens.algo.AlgorithmSetupFragment"
         android:label="AlgorithmSetupFragment"
         tools:layout="@layout/fragment_algorithm_setup" />
+    <fragment
+        android:id="@+id/cleaningExecutionFragment"
+        android:name="com.yurii.vaccumcleaner.screens.execution.CleaningExecutionFragment"
+        android:label="CleaningExecutionFragment"
+        tools:layout="@layout/fragment_cleaning_execution" >
+        <action
+            android:id="@+id/action_cleaningExecutionFragment_to_panelFragment"
+            app:destination="@id/panelFragment"
+            app:popUpTo="@id/cleaningExecutionFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

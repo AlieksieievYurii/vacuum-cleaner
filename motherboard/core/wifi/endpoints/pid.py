@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from a1.robot import Robot
 from utils.config import Configuration
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field
 
@@ -36,8 +37,9 @@ class SetPidSettings(RequestHandler):
     request_model = PidSettingsRequestModel
     response_model = None
 
-    def __init__(self, config: Configuration):
+    def __init__(self, config: Configuration, robot: Robot):
         self._config = config
+        self._robot = robot
 
     def perform(self, request: Request, data: AttributeHolder):
         self._config.set_pid_settings(
@@ -45,3 +47,4 @@ class SetPidSettings(RequestHandler):
             integral=data.integral,
             derivative=data.derivative
         )
+        self._robot.set_pid(data.proportional, data.integral, data.derivative)

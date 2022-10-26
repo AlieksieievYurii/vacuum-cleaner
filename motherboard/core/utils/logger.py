@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
 from typing import Optional
+from datetime import datetime
 
 formatter = logging.Formatter('%(asctime)s%(msecs)03d %(name)s %(levelname)s %(message)s', '%H:%M:%S:')
 
@@ -13,18 +14,28 @@ def _create_logger(name: str, console: bool, _formatter):
         handler.setFormatter(_formatter)
         logger.addHandler(handler)
     else:
-        logs_folder = Path('logs')
-        logs = logs_folder.joinpath(f'{name}.txt')
-        logs.parent.mkdir(parents=True, exist_ok=True)
+        logs_folder = Path(__file__).parent / 'logs'
+        print(logs_folder)
+        logs_folder.mkdir(parents=True, exist_ok=True)
+        logs = logs_folder.joinpath(f'{name}_{datetime.now().strftime("%d_%m_%Y-%H_%M_%S")}.txt')
         handler = logging.FileHandler(logs)
         handler.setFormatter(formatter)
         logger.addHandler(handler)
     return logger
 
 
-class CoreLogger(object):
-    def __init__(self, console=False):
-        self._logger = _create_logger('core', console, formatter)
+class Logger(object):
+    def __init__(self, name: str, log_file: Optional[Path]):
+        self._logger = logging.getLogger(name)
+        self._logger.setLevel(logging.DEBUG)
+        if log_file:
+            handler = logging.FileHandler(log_file)
+            handler.setFormatter(formatter)
+            self._logger.addHandler(handler)
+        else:
+            handler = logging.StreamHandler()
+            handler.setFormatter(formatter)
+            self._logger.addHandler(handler)
 
     def debug(self, message: str) -> None:
         self._logger.debug(message)
@@ -38,65 +49,18 @@ class CoreLogger(object):
     def critical(self, message: str) -> None:
         self._logger.critical(message)
 
-    def print_entry_point(self) -> None:
-        self.info("======================")
-        self.info("=== Start the Core ===")
-        self.info("======================")
 
+class LoggerFactory(object):
+    def __init__(self, logs_folder: str):
+        self._path = Path(logs_folder)
+        self._session_log_folder_path = None
 
-class WifiModuleLogger(object):
-    def __init__(self, console=False):
-        self._logger = _create_logger('wifi-module', console, formatter)
+    @property
+    def _session_log_folder(self) -> Path:
+        if self._session_log_folder_path is None:
+            self._session_log_folder_path = self._path.joinpath(datetime.now().strftime("%d_%m_%Y-%H_%M_%S"))
+            self._session_log_folder_path.mkdir(parents=True, exist_ok=True)
+        return self._session_log_folder_path
 
-    def debug(self, message: str) -> None:
-        self._logger.debug(message)
-
-    def error(self, message: str) -> None:
-        self._logger.error(message)
-
-    def info(self, message: str) -> None:
-        self._logger.info(message)
-
-
-class A1Logger(object):
-    def __init__(self, console=False):
-        self._robot_movement_logger = _create_logger('robot-movement', console, formatter)
-        self._a1_logger = _create_logger('a1', console, formatter)
-
-    def print_movement(self, forward: bool, speed: int, distance: Optional[int] = None,
-                       with_stop: bool = False) -> None:
-        direction_and_speed = f"direction:{'F' if forward else 'B'};speed:{speed}"
-        distance = f'distance:{distance};' if distance else 'distance:infinitive'
-        with_stop = f'with_stop:true' if with_stop else ''
-        self._robot_movement_logger.info(f'MOVE: {direction_and_speed};{distance};{with_stop};')
-
-    def print_turn(self, left: bool, speed: int, angle: int, with_stop: bool = False) -> None:
-        side_speed_angle = f"side:{'L' if left else 'R'};speed:{speed};angle:{angle}"
-        with_stop = f'with_stop:true' if with_stop else ''
-
-        self._robot_movement_logger.info(f'TURN: {side_speed_angle};{with_stop};')
-
-    def info(self, message: str) -> None:
-        self._a1_logger.info(message)
-
-    def debug(self, message: str) -> None:
-        self._a1_logger.debug(message)
-
-
-class AlgorithmManagerLogger(object):
-    def __init__(self, console=False):
-        self._logger = _create_logger('algorithm-manager', console, formatter)
-
-    def debug(self, message: str) -> None:
-        self._logger.debug(message)
-
-    def error(self, message: str) -> None:
-        self._logger.error(message)
-
-    def info(self, message: str) -> None:
-        self._logger.info(message)
-
-
-a1_logger = A1Logger(True)
-wifi_module_logger = WifiModuleLogger(True)
-algorithm_manager_logger = AlgorithmManagerLogger(True)
+    def get_logger(self, name: str, console: bool) -> Logger:
+        return Logger(name, log_file=None if console else self._session_log_folder.joinpath(f'{name}.txt'))

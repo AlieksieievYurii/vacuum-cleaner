@@ -1,11 +1,6 @@
 {
-    "speed": 50,
-    "test": "2",
-    "test2": 1,
-    "test22": 1.0,
-    "test3": false,
-    "test31": true,
-    "test32": true,
-    "test33": false,
-    "test4": "dupa"
+    "speed": 1000,
+    "reverse_distance": 20,
+    "reverse_distance_speed": 1000,
+    "reverse_with_break": true
 }

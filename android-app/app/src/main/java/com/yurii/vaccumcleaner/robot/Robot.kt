@@ -15,4 +15,11 @@ interface Robot {
     suspend fun setPidSettings(pidSettings: PidSettings)
     suspend fun getAlgorithms(): AlgorithmList
     suspend fun setAlgorithm(algorithm: Algorithm)
+    suspend fun startCleaning()
+    suspend fun pauseCleaning()
+    suspend fun resumeCleaning()
+    suspend fun stopCleaning()
+    suspend fun getCleaningStatus(): CleaningStatus
+    suspend fun shutDown()
+    suspend fun reboot()
 }

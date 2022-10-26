@@ -9,6 +9,7 @@
 
 
 //======== Comands IDs ========
+#define SET_BOOTING_UP_STATE 0x06
 #define SET_TURNED_ON_STATE 0x1
 #define SET_SHUTTING_DOWN_STATE 0x2
 #define SET_TURNED_OFF_STATE 0x3
@@ -24,6 +25,7 @@ class PowerController {
             battery_voltage_dec_part;
 
     void tick();
+    void set_state_BOOTING_UP();
     void set_state_TURNED_ON();
     void set_state_SHUTTING_DOWN();
     void set_state_TURNED_OFF();

@@ -32,6 +32,7 @@
     <string name="label_range_sensors">Range Radar: L(%d) C(%d) R(%d)</string>
     <string name="label_bumper_hit">Bumper hit: %s</string>
     <string name="label_algorithm">Algorithm</string>
+    <string name="label_algorithm_name">Algorithm: %s</string>
     <string name="label_pid_settings">PID Settings</string>
     <string name="label_wifi">WIFI</string>
     <string name="label_history">History</string>
@@ -57,4 +58,17 @@
     <string name="label_with_break">With break</string>
     <string name="label_target_wheel_speed">Wheel speed:</string>
     <string name="label_wheels_speed">Wheel speed(Sm\Min): Left(%d) Right(%d)</string>
+    <string name="label_resume">Resume</string>
+    <string name="label_pause">Pause</string>
+    <string name="label_finish">Finish</string>
+    <string name="label_shut_down">Shut down</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_cancel">Cancel</string>
+    <string name="label_reboot">Reboot</string>
+    <string name="label_shut_down_confirmation_title">Shut Down Confirmation</string>
+    <string name="label_shut_down_confirmation_message">Do you want to shut down the robot?</string>
+    <string name="label_reboot_confirmation_title">Reboot Confirmation</string>
+    <string name="label_reboot_confirmation_message">Do you want to reboot the robot?</string>
+    <string name="label_start_time">Start time: %s</string>
+    <string name="label_cleaning">Cleaning</string>
 </resources>

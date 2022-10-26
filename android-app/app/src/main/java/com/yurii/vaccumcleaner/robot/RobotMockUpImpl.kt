@@ -74,4 +74,32 @@ class RobotMockUpImpl : Robot {
     override suspend fun setAlgorithm(algorithm: Algorithm) {
         Timber.i("Setting algorithm $algorithm")
     }
+
+    override suspend fun startCleaning() {
+        Timber.i("Start cleaning...")
+    }
+
+    override suspend fun pauseCleaning() {
+        Timber.i("Pause cleaning...")
+    }
+
+    override suspend fun resumeCleaning() {
+        Timber.i("Resume cleaning...")
+    }
+
+    override suspend fun stopCleaning() {
+        Timber.i("Stop cleaning...")
+    }
+
+    override suspend fun getCleaningStatus(): CleaningStatus {
+        return CleaningStatus(CleaningStatusEnum.RUNNING, CleaningExecutionInfo("simple", "12:00", null))
+    }
+
+    override suspend fun shutDown() {
+        Timber.i("Shut down")
+    }
+
+    override suspend fun reboot() {
+        Timber.i("Reboot")
+    }
 }

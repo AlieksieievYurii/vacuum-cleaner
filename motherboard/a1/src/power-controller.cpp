@@ -27,6 +27,10 @@ void PowerController::_send_byte(uint8_t command) {
   Wire.endTransmission();
 }
 
+void PowerController::set_state_BOOTING_UP() {
+   _send_byte(SET_BOOTING_UP_STATE);
+}
+
 void PowerController::set_state_TURNED_ON() {
   _send_byte(SET_TURNED_ON_STATE);
 }

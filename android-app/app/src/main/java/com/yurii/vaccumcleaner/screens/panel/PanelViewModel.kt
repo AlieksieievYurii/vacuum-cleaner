@@ -18,6 +18,7 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
         object NavigateToControlFragment : Event()
         object NavigateToPidSettingsFragment : Event()
         object NavigateToAlgorithmSetupFragment : Event()
+        object NavigateToCleaningExecutionFragment : Event()
         data class ShowError(val exception: Throwable) : Event()
     }
 
@@ -30,11 +31,15 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
     private val _dustBoxIsOut: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val dustBoxIsOut = _dustBoxIsOut.asStateFlow()
 
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
     val event = _event.asSharedFlow()
 
     private val errorHandler = CoroutineExceptionHandler { _, exception ->
         viewModelScope.launch {
+            _isLoading.value = false
             _event.emit(Event.ShowError(exception))
         }
     }
@@ -62,10 +67,32 @@ class PanelViewModel(private val robot: Robot) : ViewModel() {
 
     }
 
+    fun shutDown() {
+        netWorkScope.launch {
+            _isLoading.emit(true)
+            robot.shutDown()
+            _isLoading.emit(false)
+        }
+    }
+
+    fun reboot() {
+        netWorkScope.launch {
+            _isLoading.emit(true)
+            robot.reboot()
+            _isLoading.emit(false)
+        }
+    }
+
     fun openCleaningAlgoSettings() = sendEvent(Event.NavigateToAlgorithmSetupFragment)
 
     fun startCleaning() {
-
+        netWorkScope.launch {
+            _isLoading.value = true
+            delay(1000)
+            robot.startCleaning()
+            _isLoading.value = false
+            sendEvent(Event.NavigateToCleaningExecutionFragment)
+        }
     }
 
     private fun sendEvent(event: Event) {

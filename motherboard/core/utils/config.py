@@ -7,7 +7,7 @@ class Configuration(object):
     DEFAULT_CLEANING_ALGORITHM: str = 'simple'
     DEFAULT_PID_SETTINGS = (0.1, 0.1, 0)
 
-    def __init__(self, path: str = r'D:\vacuum-cleaner\motherboard\core\config.json'):
+    def __init__(self, path: str):
         self._config_file = Path(path)
 
         if not self._config_file.exists():
@@ -32,7 +32,7 @@ class Configuration(object):
 
         p, i, d = pid_settings.get('proportional'), pid_settings.get('integral'), pid_settings.get('derivative')
 
-        if p and i and d:
+        if p is not None and i is not None and d is not None:
             return p, i, d
         else:
             return setup_and_return_default_values()
@@ -44,6 +44,7 @@ class Configuration(object):
             'integral': integral,
             'derivative': derivative,
         }
+
         self._save_config(config)
 
     def set_target_cleaning_algorithm(self, name: str):

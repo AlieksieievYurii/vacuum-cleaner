@@ -7,10 +7,12 @@ from serial.threaded import LineReader, ReaderThread
 from a1.exceptions import A1Exception
 from a1.models import A1Data, Job, Response, Request
 
-from utils.logger import a1_logger
+from utils.logger import Logger
 
 
 class SerialA1Communicator(LineReader):
+    logger = None
+
     def __init__(self):
         self.data = A1Data()
         self._responses: List[Response] = []
@@ -19,7 +21,7 @@ class SerialA1Communicator(LineReader):
 
     def connection_made(self, transport):
         super().connection_made(transport)
-        a1_logger.debug('Connected')
+        self.logger.debug('Connected')
 
     def handle_line(self, line: str):
         initial_byte = line[0]
@@ -29,14 +31,14 @@ class SerialA1Communicator(LineReader):
         elif initial_byte == '$':
             self._handle_request_response(line)
         else:
-            a1_logger.debug(f'Unknown: {line}')
+            self.logger.debug(f'Unknown: {line}')
 
     def send_instruction(self, instruction_id: int, parameters: str, timeout: Optional[int] = None) -> Job:
         instruction_id = f'{instruction_id:x}'.rjust(2, '0')
         request_id = self._generate_uid()
         line = f'#{instruction_id}:{request_id}:{parameters if parameters else ""}'
 
-        a1_logger.debug(f'Send Instruction:{line}')
+        self.logger.debug(f'Send Instruction:{line}')
 
         self.write_line(line)
         request = Request(int(request_id, 16), int(instruction_id, 16), parameters)
@@ -53,15 +55,17 @@ class SerialA1Communicator(LineReader):
 
     def _handle_request_response(self, line):
         response = Response.parse(line)
-        a1_logger.debug(f'Receive Response: {line}')
+        self.logger.debug(f'Receive Response: {line}')
         self._responses.append(response)
 
 
 class A1Socket(object):
-    def __init__(self, port: str):
-        self._serial_con = serial.Serial(baudrate=9600)
+    def __init__(self, port: str, speed: int, logger: Logger):
+        self._serial_con = serial.Serial(baudrate=speed)
         self._serial_con.port = port
-        self._reader_thread = ReaderThread(self._serial_con, SerialA1Communicator)
+        serial_communicator = SerialA1Communicator
+        serial_communicator.logger = logger
+        self._reader_thread = ReaderThread(self._serial_con, serial_communicator)
 
     def open(self):
         self._serial_con.open()

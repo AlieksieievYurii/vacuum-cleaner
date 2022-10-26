@@ -1,13 +1,15 @@
 import json
+from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from threading import Thread
 from typing import Optional, List, Type, Any
 
-from a1.models import A1Data
+from a1.robot import Robot
 from algo.algorithms.smart import Smart
-from algo.algorithms.algorithm import Algorithm, ArgumentsHolder
+from algo.algorithms.algorithm import Algorithm, ArgumentsHolder, ExecutionState
 from algo.algorithms.simple import Simple
-from utils.logger import AlgorithmManagerLogger
+from utils.logger import Logger
 
 
 class AlgorithmManagerException(Exception):
@@ -18,20 +20,50 @@ class LoadingAlgorithmArgumentsException(AlgorithmManagerException):
     pass
 
 
+@dataclass
+class AlgorithmExecutionInfo(object):
+    algorithm_name: str
+    timestamp: str
+    finish_time: Optional[str]
+
+    @classmethod
+    def create(cls, algorithm_name: str):
+        return cls(
+            algorithm_name=algorithm_name,
+            timestamp=datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            finish_time=None
+        )
+
+
 class AlgorithmManager(object):
     ALGORITHMS: List[Type[Algorithm]] = [
         Simple,
         Smart
     ]
 
-    def __init__(self, a1_data: A1Data, logger: AlgorithmManagerLogger):
-        self._a1_data = a1_data
+    def __init__(self, robot: Robot, logger: Logger):
+        self._robot = robot
         self._logger = logger
+        self._state = ExecutionState()
+
+        self._algorithm_execution_info: Optional[AlgorithmManagerException] = None
         self._algorithm: Optional[Algorithm] = None
         self._working_thread: Optional[Thread] = None
         self._configs_folder: Path = Path(__file__).parent / 'algorithms' / 'configs'
 
     def set_algorithm(self, name: str) -> None:
+        """
+        Sets algorithm for execution. This function must be called firstly before start. AlgorithmManagerException is
+        raised if you try to call this function during algorithm execution.
+
+        :param name: algorithm's name
+        :return: None
+        """
+
+        if not self._state.equals(ExecutionState.State.NONE):
+            raise AlgorithmManagerException(
+                f'Forbidden to set target algorithm during the execution. Current state: {self._state.state}')
+
         self._logger.info(f'Set Cleaning Algorithm: {name}')
         algorithm = self._get_algorithm_class(name)
         algorithm_arguments_holder = self._load_arguments(algorithm)
@@ -39,7 +71,8 @@ class AlgorithmManager(object):
 
     def save_algorithm_arguments(self, algorithm_name: str, arguments: dict) -> None:
         """
-        Saves arguments for the given algorithm to the file, BUT NOT APPLIED to the selected algorithm
+        Saves arguments for the given algorithm to the file, BUT NOT APPLIED to the selected algorithm. You can call
+        this function during the execution. However, you need to call `set_algorithm` in order to apply the arguments
 
         :param algorithm_name: target algorithm to apply for
         :param arguments: dict of arguments e.g {"parameter_name": param_value}
@@ -61,6 +94,12 @@ class AlgorithmManager(object):
         self._save_config_for(algorithm, res)
 
     def get_current_algorithm_name(self) -> str:
+        """
+        Gets current algorithm's name.
+
+        :return: algorithm's unique name
+        """
+
         if self._algorithm:
             return self._algorithm.get_name()
         raise AlgorithmManagerException('Algorithm is not set')
@@ -98,18 +137,80 @@ class AlgorithmManager(object):
 
         return algorithm_info
 
-    def start(self):
+    def start(self) -> None:
+        """
+        Starts selected algorithm execution in the separated thread. You can not call this function when the execution
+        is running or paused.
+
+        :return: None
+        """
+        if self._state.is_working:
+            raise AlgorithmManagerException('You can not start cleaning because it is already running')
         if self._working_thread:
             raise AlgorithmManagerException('Algorithm is already executing')
         if not self._algorithm:
             raise AlgorithmManagerException('Can not start algorithm, because not selected')
 
-        self._working_thread = Thread('Algo', target=self._algorithm_loop, daemon=False)
+        self._state.set_state(ExecutionState.State.RUNNING)
+        self._algorithm_execution_info = AlgorithmExecutionInfo.create(self.get_current_algorithm_name())
+        self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
         self._working_thread.start()
 
+    def pause(self):
+        if not self._state.equals(ExecutionState.State.RUNNING):
+            raise AlgorithmManagerException(f'Can not pause while the state is: {self._state.state}')
+        self._state.set_state(ExecutionState.State.PAUSED)
+
+    def resume(self):
+        if not self._state.equals(ExecutionState.State.PAUSED):
+            raise AlgorithmManagerException(f'Can not resume running while the state is: {self._state.state}')
+        self._state.set_state(ExecutionState.State.RUNNING)
+
+    @property
+    def current_state(self) -> ExecutionState:
+        return self._state
+
+    @property
+    def algorithm_execution_info(self):
+        return self._algorithm_execution_info
+
+    def stop(self) -> None:
+        """
+        Stops algorithm execution and waits until thread is closed.
+
+        :return: None
+        """
+
+        if self._state.equals(ExecutionState.State.NONE) or self._state.equals(ExecutionState.State.STOPPED):
+            raise AlgorithmManagerException(f'You can not stop execution while state: {self._state.state}')
+
+        self._state.set_state(ExecutionState.State.STOPPED)
+        self._working_thread.join()
+        self._working_thread = None
+        self._algorithm_execution_info.finish_time = datetime.now()
+        self._add_execution_to_history(self._algorithm_execution_info)
+        self._algorithm_execution_info = None
+        self._state.set_state(ExecutionState.State.NONE)
+
     def _algorithm_loop(self) -> None:
+        self._algorithm.on_prepare(self._robot)
+
+        # Endless loop to handle 'pause' and 'stop' actions
         while True:
-            self._algorithm.loop(self._a1_data)
+            self._algorithm.loop(self._robot, self._state)
+            if self._state.equals(ExecutionState.State.PAUSED):
+                self._algorithm.on_pause(self._robot)
+                self._block_while_is_paused()
+            if self._state.equals(ExecutionState.State.STOPPED):
+                self._algorithm.on_finish(self._robot)
+                break
+
+    def _block_while_is_paused(self):
+        while True:
+            if self._state.equals(ExecutionState.State.RUNNING):
+                self._algorithm.on_resume(self._robot)
+            if self._state.equals(ExecutionState.State.STOPPED) or self._state.equals(ExecutionState.State.RUNNING):
+                break
 
     def _get_algorithm_class(self, algorithm_name: str) -> Type[Algorithm]:
         for algorithm in self.ALGORITHMS:
@@ -217,3 +318,6 @@ class AlgorithmManager(object):
     def _save_config_for(self, algorithm: Algorithm, parameters: dict) -> None:
         config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         config_file.write_text(json.dumps(parameters, indent=4))
+
+    def _add_execution_to_history(self, record: AlgorithmExecutionInfo):
+        pass

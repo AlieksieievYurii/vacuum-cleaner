@@ -7,6 +7,7 @@ import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import com.yurii.vaccumcleaner.screens.algo.AlgorithmSetupViewModel
 import com.yurii.vaccumcleaner.screens.binder.BinderViewModel
 import com.yurii.vaccumcleaner.screens.control.ManualControlViewModel
+import com.yurii.vaccumcleaner.screens.execution.CleaningExecutionViewModel
 
 import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
@@ -32,6 +33,10 @@ object Injector {
 
     fun providePidSettingsViewModel(): PidSettingsViewModel.Factory {
         return PidSettingsViewModel.Factory(RobotConnection.getRobotAPI())
+    }
+
+    fun provideCleaningExecutionViewModel() : CleaningExecutionViewModel.Factory {
+        return CleaningExecutionViewModel.Factory(RobotConnection.getRobotAPI())
     }
 
     fun provideManualControlViewModel(): ManualControlViewModel.Factory {

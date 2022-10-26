@@ -51,48 +51,59 @@
             app:layout_constraintEnd_toStartOf="@+id/right_vertical_guideline"
             app:layout_constraintTop_toBottomOf="@+id/headerWidget" />
 
-                <com.yurii.vaccumcleaner.screens.panel.widgets.WifiSettingsButton
-                    android:id="@+id/wifiSettingsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:onClick="@{() -> viewModel.openWifiSettings()}"
-                    app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/manual_control_button" />
+        <com.yurii.vaccumcleaner.screens.panel.widgets.ShutDownButton
+            android:id="@+id/shut_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/algoSettingsButton"
+            app:layout_constraintEnd_toStartOf="@+id/right_vertical_guideline"
+            app:layout_constraintStart_toStartOf="@+id/pidSettingsButton"
+            app:layout_constraintTop_toBottomOf="@+id/pidSettingsButton" />
 
-                <com.yurii.vaccumcleaner.screens.panel.widgets.AlgoSettingsButton
-                    android:id="@+id/algoSettingsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:onClick="@{() -> viewModel.openCleaningAlgoSettings()}"
-                    app:layout_constraintEnd_toEndOf="@+id/history_button"
-                    app:layout_constraintStart_toStartOf="@+id/history_button"
-                    app:layout_constraintTop_toBottomOf="@+id/history_button" />
+        <com.yurii.vaccumcleaner.screens.panel.widgets.WifiSettingsButton
+            android:id="@+id/wifiSettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="@{() -> viewModel.openWifiSettings()}"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/manual_control_button" />
 
-                <com.yurii.vaccumcleaner.screens.panel.widgets.StartButton
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:onClick="@{() -> viewModel.startCleaning()}"
-                    app:layout_constraintEnd_toStartOf="@+id/right_vertical_guideline"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
-                    app:layout_constraintTop_toBottomOf="@+id/algoSettingsButton" />
+        <com.yurii.vaccumcleaner.screens.panel.widgets.AlgoSettingsButton
+            android:id="@+id/algoSettingsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="@{() -> viewModel.openCleaningAlgoSettings()}"
+            app:layout_constraintEnd_toEndOf="@+id/history_button"
+            app:layout_constraintStart_toStartOf="@+id/history_button"
+            app:layout_constraintTop_toBottomOf="@+id/history_button" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/left_vertical_guideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_begin="16dp" />
+        <com.yurii.vaccumcleaner.screens.panel.widgets.StartButton
+            android:id="@+id/startButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="@{() -> viewModel.startCleaning()}"
+            app:layout_constraintEnd_toStartOf="@+id/right_vertical_guideline"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/left_vertical_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/algoSettingsButton" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/right_vertical_guideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_end="16dp" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/left_vertical_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="16dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/right_vertical_guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="16dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

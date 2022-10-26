@@ -52,6 +52,7 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
             when (event) {
                 InitialFragmentViewModel.Event.NavigateToBindRobot -> findNavController().navigate(R.id.action_initialFragment_to_binderFragment)
                 InitialFragmentViewModel.Event.NavigateToControlPanel -> findNavController().navigate(R.id.action_initialFragment_to_panelFragment)
+                InitialFragmentViewModel.Event.NavigateToExecutionScreen -> findNavController().navigate(R.id.action_initialFragment_to_cleaningExecutionFragment)
             }
         }
     }
