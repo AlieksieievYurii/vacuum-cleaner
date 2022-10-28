@@ -2,6 +2,8 @@ package com.yurii.vaccumcleaner.utils
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.os.Parcelable
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 
 class FlowObserver<T>(
     private val lifecycleOwner: LifecycleOwner,
@@ -132,4 +135,8 @@ fun Activity.hideKeyboard() {
 fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun <T : Parcelable> Intent.requireParcelableExtra(name: String): T {
+    return this.getParcelableExtra(name) ?: throw IllegalArgumentException("Parcelable extra '$name' is required")
 }
