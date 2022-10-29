@@ -8,7 +8,9 @@ import androidx.fragment.app.viewModels
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentWifiSettingsBinding
+import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
+import com.yurii.vaccumcleaner.utils.ui.showError
 
 
 class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {
@@ -22,5 +24,11 @@ class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {
         binding.lifecycleOwner = viewLifecycleOwner
 
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
+
+        viewModel.event.observeOnLifecycle(viewLifecycleOwner) {event ->
+            when(event) {
+                is WifiSettingsViewModel.Event.ShowError -> showError(binding.root, getString(R.string.label_error_occurred), event.error)
+            }
+        }
     }
 }

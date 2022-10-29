@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.Robot
+import com.yurii.vaccumcleaner.robot.WifiSettingsRequestModel
 import com.yurii.vaccumcleaner.utils.Empty
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 
 
 class WifiSettingsViewModel(private val robot: Robot) : ViewModel() {
@@ -47,7 +49,15 @@ class WifiSettingsViewModel(private val robot: Robot) : ViewModel() {
     }
 
     fun applyWifiSettings() {
+        netWorkScope.launch {
+            _isLoading.value = true
+            val networkInfo = robot.setWifiSettings(
+                WifiSettingsRequestModel(ssid = ssidField.get() ?: String.Empty, password = passwordField.get() ?: String.Empty)
+            )
 
+            Timber.i(networkInfo.toString())
+            _isLoading.value = false
+        }
     }
 
     class Factory(private val robot: Robot) : ViewModelProvider.Factory {
