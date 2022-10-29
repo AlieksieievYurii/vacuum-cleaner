@@ -1,6 +1,7 @@
 package com.yurii.vaccumcleaner
 
 import android.content.Context
+import com.yurii.vaccumcleaner.robot.RobotBluetoothConnection
 import com.yurii.vaccumcleaner.robot.RobotConnection
 import com.yurii.vaccumcleaner.robot.RobotMockUpImpl
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
@@ -12,6 +13,7 @@ import com.yurii.vaccumcleaner.screens.execution.CleaningExecutionViewModel
 import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
 import com.yurii.vaccumcleaner.screens.pid.PidSettingsViewModel
+import com.yurii.vaccumcleaner.screens.wifi.WifiSettingsViewModel
 
 object Injector {
 
@@ -26,6 +28,11 @@ object Injector {
         )
     }
 
+    fun provideWifiSettingsViewModel(bluetoothProvider: Boolean): WifiSettingsViewModel.Factory {
+        val apiProvider = if (bluetoothProvider) RobotBluetoothConnection.getRobotAPI() else RobotConnection.getRobotAPI()
+        return WifiSettingsViewModel.Factory(apiProvider)
+    }
+
     fun providePanelViewModel(): PanelViewModel.Factory {
         return PanelViewModel.Factory(RobotConnection.getRobotAPI())
         //return PanelViewModel.Factory(RobotMockUpImpl())
@@ -35,7 +42,7 @@ object Injector {
         return PidSettingsViewModel.Factory(RobotConnection.getRobotAPI())
     }
 
-    fun provideCleaningExecutionViewModel() : CleaningExecutionViewModel.Factory {
+    fun provideCleaningExecutionViewModel(): CleaningExecutionViewModel.Factory {
         return CleaningExecutionViewModel.Factory(RobotConnection.getRobotAPI())
     }
 
