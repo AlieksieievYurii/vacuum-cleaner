@@ -23,6 +23,8 @@ class BluetoothCommunicator : Communicator {
         socketReader = BufferedReader(InputStreamReader(bluetoothSocket!!.inputStream))
     }
 
+    fun isConnected() = bluetoothSocket?.isConnected ?: false
+
     override fun read(): String {
         return socketReader!!.readLine()
     }
