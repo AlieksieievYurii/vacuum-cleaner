@@ -4,13 +4,13 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.yurii.vaccumcleaner.robot.RobotWifiImplementation
+import com.yurii.vaccumcleaner.robot.Robot
 import com.yurii.vaccumcleaner.utils.Empty
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
 
-class WifiSettingsViewModel(private val robot: RobotWifiImplementation) : ViewModel() {
+class WifiSettingsViewModel(private val robot: Robot) : ViewModel() {
     sealed class Event {
         data class ShowError(val error: Throwable) : Event()
     }
@@ -50,7 +50,7 @@ class WifiSettingsViewModel(private val robot: RobotWifiImplementation) : ViewMo
 
     }
 
-    class Factory(private val robot: RobotWifiImplementation) : ViewModelProvider.Factory {
+    class Factory(private val robot: Robot) : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(WifiSettingsViewModel::class.java)) {
                 @Suppress("UNCHECKED_CAST")
