@@ -64,8 +64,19 @@ class OperationSystem(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_wpa_config(self) -> dict:
+        """
+        Abstract function that is supposed to return a dict containing WPA configuration
+
+        :return: dict containing WPA config
+        """
+
 
 class WindowsOperationSystem(OperationSystem):
+    """
+    The class is used just as mock up. It is called so because the development of the Core is done on Windows OS
+    """
 
     def reboot(self) -> None:
         print('Perform reboot')
@@ -85,8 +96,19 @@ class WindowsOperationSystem(OperationSystem):
     def is_ntp_synchronized(self) -> bool:
         return False
 
+    def get_wpa_config(self) -> dict:
+        return {
+            'ssid': 'toya334234',
+            'psk': '123ffwsdcv34',
+            'key_mgmt': 'WPA-PSK'
+        }
+
 
 class LinuxOperationSystem(OperationSystem):
+
+    def __init__(self):
+        self._wpa_supplicant_conf_file = Path('/etc/wpa_supplicant/wpa_supplicant.conf')
+
     def set_wifi_credentials(self, ssid: str, password: str) -> None:
         print(f'Set/Save Wi-fi credentials: SSID: {ssid}; Password: {password}')
 
@@ -108,6 +130,18 @@ class LinuxOperationSystem(OperationSystem):
         match = re.findall(r'\s+(NTP service: active)\s+', out)
 
         return bool(match)
+
+    def get_wpa_config(self) -> dict:
+        wpa_conf_content = self._wpa_supplicant_conf_file.read_text()
+        ssid = re.search(r'ssid\s*=\s*\"(\S+)\"', wpa_conf_content)
+        psk = re.search(r'psk\s*=\s*\"(\S+)\"', wpa_conf_content)
+        key_mgmt = re.search(r'key_mgmt\s*=\s*(\S+)', wpa_conf_content)
+
+        return {
+            'ssid': ssid.group(1),
+            'psk': psk.group(1),
+            'key_mgmt': key_mgmt.group(1)
+        }
 
 
 def get_operation_system() -> OperationSystem:
