@@ -85,6 +85,15 @@ class OperationSystem(ABC):
         """
         pass
 
+    @abstractmethod
+    def apply_wifi_settings(self) -> None:
+        """
+        Abstract function that is supposed to apply/refresh network settings
+
+        :return: None
+        """
+        pass
+
 
 class WindowsOperationSystem(OperationSystem):
     """
@@ -118,6 +127,9 @@ class WindowsOperationSystem(OperationSystem):
 
     def get_ip_address(self) -> str:
         return "192.168.18.12"
+
+    def apply_wifi_settings(self) -> None:
+        print('apply_wifi_settings')
 
 
 class LinuxOperationSystem(OperationSystem):
@@ -167,11 +179,17 @@ class LinuxOperationSystem(OperationSystem):
     def get_ip_address(self) -> str:
         output = subprocess.run(['ifconfig', 'wlan0'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         response = output.stdout.decode("utf-8")
-        match = re.search(r'inet\s(\d+.f\d+.\d+.\d+)', response)
+        match = re.search(r'inet\s(\d+.\d+.\d+.\d+)', response)
         if match:
             return match.group(1)
         else:
             raise OperationSystemException('Can not get IP. The robot is not connected to a network')
+
+    def apply_wifi_settings(self) -> None:
+        output = subprocess.run(['wpa_cli', '-i', 'wlan0', 'reconfigure'], stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT)
+        if output.stdout.decode("utf-8").strip() != 'OK':
+            raise OperationSystemException(f'Applying Wi-fi settings has failed: {output.stdout}')
 
 
 def get_operation_system() -> OperationSystem:
