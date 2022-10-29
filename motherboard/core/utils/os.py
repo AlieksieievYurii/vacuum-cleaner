@@ -53,6 +53,17 @@ class OperationSystem(ABC):
         """
         pass
 
+    @abstractmethod
+    def set_wifi_credentials(self, ssid: str, password: str) -> None:
+        """
+        Abstract function that is supposed to save/set Wifi credentials without applying
+
+        :param ssid: SSID of WI-FI access point
+        :param password: password
+        :return: None
+        """
+        pass
+
 
 class WindowsOperationSystem(OperationSystem):
 
@@ -61,6 +72,9 @@ class WindowsOperationSystem(OperationSystem):
 
     def play_sound(self, file: Path) -> None:
         pass
+
+    def set_wifi_credentials(self, ssid: str, password: str) -> None:
+        print(f'Set/Save Wi-fi credentials: SSID: {ssid}; Password: {password}')
 
     def shutdown(self) -> None:
         print('TEST. Perform shutdown')
@@ -73,6 +87,9 @@ class WindowsOperationSystem(OperationSystem):
 
 
 class LinuxOperationSystem(OperationSystem):
+    def set_wifi_credentials(self, ssid: str, password: str) -> None:
+        print(f'Set/Save Wi-fi credentials: SSID: {ssid}; Password: {password}')
+
     def reboot(self) -> None:
         subprocess.run(['reboot'])
 
