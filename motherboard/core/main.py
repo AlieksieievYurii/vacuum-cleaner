@@ -4,7 +4,7 @@ from a1.robot import Robot, RobotUART, RobotMockUp
 from a1.socket import A1Socket
 from algo.algo_manager import AlgorithmManager
 from blservice.communicator import BluetoothCommunicator
-from blservice.handler import BluetoothService
+from blservice.service import BluetoothService
 from core import Core
 from utils.config import Configuration
 from utils.os import OperationSystem, get_operation_system
@@ -14,7 +14,7 @@ from utils.speetch.voices import RudeMaximVoice
 from wifi.comunicator import WifiCommunicator
 
 from utils.logger import LoggerFactory, Logger
-from wifi.handler import WifiEndpointsHandler
+from wifi.service import WifiService
 
 
 def get_robot(robot_logger: Logger, a1_logger: Logger) -> Robot:
@@ -38,7 +38,7 @@ def main() -> None:
     robot = get_robot(robot_logger, a1_socket_logger)
     config = Configuration(settings.get('CORE_CONFIG'))
     wifi_communicator = WifiCommunicator(settings.get('SOCKET_PORT'))
-    wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_logger)
+    wifi_service = WifiService(wifi_communicator, wifi_logger)
     bluetooth_communicator = BluetoothCommunicator()
     bluetooth_service = BluetoothService(bluetooth_communicator, bluetooth_logger)
     algorithm_manager = AlgorithmManager(robot, algorithm_manager_logger)
@@ -46,7 +46,7 @@ def main() -> None:
     core = Core(os=operation_system,
                 robot=robot,
                 config=config,
-                wifi_endpoints_handler=wifi_endpoints_handler,
+                wifi_service=wifi_service,
                 bluetooth_service=bluetooth_service,
                 algorithm_manager=algorithm_manager,
                 voice=voice,

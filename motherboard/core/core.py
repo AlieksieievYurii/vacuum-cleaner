@@ -5,7 +5,7 @@ from a1.models import ButtonState
 from a1.robot import Robot
 from algo.algo_manager import AlgorithmManager
 from blservice.endpoints.wifi import SetWifiCredentialsRequestHandler, GetCurrentWifiCredentialsRequestHandler
-from blservice.handler import BluetoothService
+from blservice.service import BluetoothService
 from utils.config import Configuration
 from utils.os import OperationSystem
 from utils.speetch.voice import Voice
@@ -22,7 +22,7 @@ from wifi.endpoints.movement import Movement, StopMovement
 from wifi.endpoints.pid import GetCurrentPidSettings, SetPidSettings
 from wifi.endpoints.power import PowerRequestHandler
 from wifi.endpoints.sys_info import GetRobotSysInfo
-from wifi.handler import WifiEndpointsHandler
+from wifi.service import WifiService
 
 
 class Core(object):
@@ -33,29 +33,30 @@ class Core(object):
         self._robot: Robot = get_typed_arg('robot', Robot, kwargs)
         self._config: Configuration = get_typed_arg('config', Configuration, kwargs)
         self._operation_shut_down = False
-        self._wifi_endpoints_handler: WifiEndpointsHandler = get_typed_arg('wifi_endpoints_handler',
-                                                                           WifiEndpointsHandler, kwargs)
-        self._bluetooth_service: BluetoothService = get_typed_arg('bluetooth_service',
-                                                                           BluetoothService, kwargs)
-        self._bluetooth_service.register_endpoint(SetWifiCredentialsRequestHandler(self._os))
-        self._bluetooth_service.register_endpoint(GetCurrentWifiCredentialsRequestHandler(self._os))
+        self._wifi_service: WifiService = get_typed_arg('wifi_service', WifiService, kwargs)
+        self._bluetooth_service: BluetoothService = get_typed_arg('bluetooth_service', BluetoothService, kwargs)
         self._algorithm_manager: AlgorithmManager = get_typed_arg('algorithm_manager', AlgorithmManager, kwargs)
         self._voice: Voice = get_typed_arg('voice', Voice, kwargs)
         self._logger: Logger = get_typed_arg('logger', Logger, kwargs)
-        self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
-        self._wifi_endpoints_handler.register_endpoint(HelloWorldRequest())
-        self._wifi_endpoints_handler.register_endpoint(GetRobotSysInfo())
-        self._wifi_endpoints_handler.register_endpoint(Motor(self._robot))
-        self._wifi_endpoints_handler.register_endpoint(Movement(self._robot))
-        self._wifi_endpoints_handler.register_endpoint(StopMovement(self._robot))
-        self._wifi_endpoints_handler.register_endpoint(GetA1DataRequestHandler(self._robot))
-        self._wifi_endpoints_handler.register_endpoint(GetCurrentPidSettings(self._config))
-        self._wifi_endpoints_handler.register_endpoint(SetPidSettings(self._config, self._robot))
-        self._wifi_endpoints_handler.register_endpoint(GetAlgorithmsRequest(self._algorithm_manager))
-        self._wifi_endpoints_handler.register_endpoint(SetAlgorithmScriptRequest(self._algorithm_manager, self._config))
-        self._wifi_endpoints_handler.register_endpoint(ManageCleaningExecutionRequest(self._algorithm_manager))
-        self._wifi_endpoints_handler.register_endpoint(GetCleaningStatusRequest(self._algorithm_manager))
-        self._wifi_endpoints_handler.register_endpoint(PowerRequestHandler(self._on_shut_down, self._on_reboot))
+
+        self.__register_endpoints()
+
+    def __register_endpoints(self):
+        self._bluetooth_service.register_endpoint(SetWifiCredentialsRequestHandler(self._os))
+        self._bluetooth_service.register_endpoint(GetCurrentWifiCredentialsRequestHandler(self._os))
+        self._wifi_service.register_endpoint(HelloWorldRequest())
+        self._wifi_service.register_endpoint(GetRobotSysInfo())
+        self._wifi_service.register_endpoint(Motor(self._robot))
+        self._wifi_service.register_endpoint(Movement(self._robot))
+        self._wifi_service.register_endpoint(StopMovement(self._robot))
+        self._wifi_service.register_endpoint(GetA1DataRequestHandler(self._robot))
+        self._wifi_service.register_endpoint(GetCurrentPidSettings(self._config))
+        self._wifi_service.register_endpoint(SetPidSettings(self._config, self._robot))
+        self._wifi_service.register_endpoint(GetAlgorithmsRequest(self._algorithm_manager))
+        self._wifi_service.register_endpoint(SetAlgorithmScriptRequest(self._algorithm_manager, self._config))
+        self._wifi_service.register_endpoint(ManageCleaningExecutionRequest(self._algorithm_manager))
+        self._wifi_service.register_endpoint(GetCleaningStatusRequest(self._algorithm_manager))
+        self._wifi_service.register_endpoint(PowerRequestHandler(self._on_shut_down, self._on_reboot))
 
     def _on_reboot(self):
         self._robot.set_booting_up_led().expect()

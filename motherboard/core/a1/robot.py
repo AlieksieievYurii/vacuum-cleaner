@@ -1,10 +1,17 @@
 import abc
 from abc import ABC
+from enum import Enum
 from typing import Optional
 
 from a1.models import Job, A1Data, Response, Request
 from utils.logger import Logger
 from utils.utils import millis
+
+
+class LedState(Enum):
+    OFF = 0
+    ON = 1
+    BLINKING = 2
 
 
 class Robot(ABC):
@@ -14,6 +21,10 @@ class Robot(ABC):
 
     @abc.abstractmethod
     def beep(self, count: int = 3, period: int = 100) -> None:
+        pass
+
+    @abc.abstractmethod
+    def set_bluetooth_led_state(self, state: LedState) -> None:
         pass
 
     @abc.abstractmethod
@@ -128,6 +139,10 @@ class RobotUART(Robot):
         """
         self._socket.send_instruction(0x05, f'{count:x};{period:x}', timeout=None).expect().raise_if_failed()
 
+    def set_bluetooth_led_state(self, state: LedState) -> None:
+        pass
+        # self._socket.send_instruction(0x05, f'{count:x};{period:x}', timeout=None).expect().raise_if_failed()
+
     def set_vacuum_motor(self, value: int) -> Job:
         return self._socket.send_instruction(0x08, f'{value:x}')
 
@@ -224,6 +239,9 @@ class RobotMockUp(Robot):
     def beep(self, count: int = 3, period: int = 100) -> None:
         self._logger.debug(f'Send: Beep -> Count: {count}; period: {period}')
 
+    def set_bluetooth_led_state(self, state: LedState) -> None:
+        self._logger.debug(f'Send: Set Bluetooth led state -> state: {state}')
+
     def set_vacuum_motor(self, value: int) -> Job:
         self._logger.debug(f'Send: set_vacuum_motor. Value: {value}')
         return self._send_instruction(1)
@@ -297,7 +315,7 @@ class RobotMockUp(Robot):
         return self._send_instruction(18)
 
     def set_shutting_down_led(self) -> Job:
-        elf._logger.debug(f'Send: set_shutting_down_led')
+        self._logger.debug(f'Send: set_shutting_down_led')
         return self._send_instruction(19)
 
     def _send_instruction(self, instruction_id: int, response: Optional[str] = None) -> Job:

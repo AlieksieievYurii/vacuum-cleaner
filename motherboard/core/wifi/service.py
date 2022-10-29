@@ -6,9 +6,9 @@ from utils.request_handler.models import RequestHandler
 from wifi.comunicator import WifiCommunicator
 
 
-class WifiEndpointsHandler(Thread):
+class WifiService(Thread):
     """
-    Class that handles Wifi connection and executes registered endpoints. It works in separated thread where
+    Class that handles Wi-fi connection and executes registered endpoints. It works in separated thread where
     firstly it accepts connection, then starts executing incoming requests in the same thread
     """
 
