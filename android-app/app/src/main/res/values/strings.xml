@@ -87,4 +87,5 @@
     <string name="label_pairing_required">Robot is found but is not paired. You need to pair. First of all enable pairing process by long click Bluetooth button on the robot. Note: pairing process lives max 3 minutes</string>
     <string name="label_robot_found_and_paired">Robot is found and paired</string>
     <string name="label_bluetooth_connection">Bluetooth connection</string>
+    <string name="label_wifi_setup">Wifi Setup</string>
 </resources>
