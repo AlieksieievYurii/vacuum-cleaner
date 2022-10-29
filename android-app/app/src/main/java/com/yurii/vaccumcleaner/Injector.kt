@@ -15,8 +15,8 @@ import com.yurii.vaccumcleaner.screens.pid.PidSettingsViewModel
 
 object Injector {
 
-    fun provideBinderViewModel(): BinderViewModel.Factory {
-        return BinderViewModel.Factory()
+    fun provideBinderViewModel(context: Context): BinderViewModel.Factory {
+        return BinderViewModel.Factory(context)
     }
 
     fun provideInitialFragmentViewModel(context: Context): InitialFragmentViewModel.Factory {
