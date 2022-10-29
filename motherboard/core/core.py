@@ -1,9 +1,11 @@
-
 from datetime import datetime
 from time import sleep
+
+from a1.models import ButtonState
 from a1.robot import Robot
 from algo.algo_manager import AlgorithmManager
-from bluetooth.handler import BluetoothEndpointsHandler
+from blservice.endpoints.wifi import SetWifiCredentialsRequestHandler, GetCurrentWifiCredentialsRequestHandler
+from blservice.handler import BluetoothService
 from utils.config import Configuration
 from utils.os import OperationSystem
 from utils.speetch.voice import Voice
@@ -33,8 +35,10 @@ class Core(object):
         self._operation_shut_down = False
         self._wifi_endpoints_handler: WifiEndpointsHandler = get_typed_arg('wifi_endpoints_handler',
                                                                            WifiEndpointsHandler, kwargs)
-        self._bluetooth_endpoint_handler: BluetoothEndpointsHandler = get_typed_arg('bl_endpoint_handler',
-                                                                                    BluetoothEndpointsHandler, kwargs)
+        self._bluetooth_service: BluetoothService = get_typed_arg('bluetooth_service',
+                                                                           BluetoothService, kwargs)
+        self._bluetooth_service.register_endpoint(SetWifiCredentialsRequestHandler(self._os))
+        self._bluetooth_service.register_endpoint(GetCurrentWifiCredentialsRequestHandler(self._os))
         self._algorithm_manager: AlgorithmManager = get_typed_arg('algorithm_manager', AlgorithmManager, kwargs)
         self._voice: Voice = get_typed_arg('voice', Voice, kwargs)
         self._logger: Logger = get_typed_arg('logger', Logger, kwargs)
@@ -73,9 +77,11 @@ class Core(object):
 
         self._robot.core_is_initialized(is_successful=True)
         self._robot.beep(3, 100)
-
-        self._wifi_endpoints_handler.start()
-        self._initialization()
+        self._bluetooth_service.start()
+        #
+        # self._wifi_endpoints_handler.start()
+        #
+        # self._initialization()
         try:
             self._run_core_loop()
         except Exception as error:
@@ -107,36 +113,39 @@ class Core(object):
             self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
-        #self._voice.say_introduction()
+        # self._voice.say_introduction()
         while True:
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
                 break
+            bl_button = self._robot.data.bluetooth_button
 
-            #
-            # but = self._robot.data.button_up
-            # if but is ButtonState.CLICK:
-            #     print('UP CLICK')
-            # elif but is ButtonState.LONG_PRESS:
-            #     print('UP LONG PRESS')
-            #
-            # but2 = self._robot.data.button_down
-            # if but2 is ButtonState.CLICK:
-            #     print('DOWN CLICK')
-            # elif but2 is ButtonState.LONG_PRESS:
-            #     print('DOWN LONG PRESS')
-            #
-            # but3 = self._robot.data.button_ok
-            # if but3 is ButtonState.CLICK:
-            #     print('OK CLICK')
-            # elif but3 is ButtonState.LONG_PRESS:
-            #     print('OK LONG PRESS')
-            #
-            # but4 = self._robot.data.bluetooth_button
-            # if but4 is ButtonState.CLICK:
-            #     print('B CLICK')
-            # elif but4 is ButtonState.LONG_PRESS:
-            #     print('B LONG PRESS')
+            if bl_button is ButtonState.LONG_PRESS:
+                self._bluetooth_service.enable_pairing()
+        #
+        # but = self._robot.data.button_up
+        # if but is ButtonState.CLICK:
+        #     print('UP CLICK')
+        # elif but is ButtonState.LONG_PRESS:
+        #     print('UP LONG PRESS')
+        #
+        # but2 = self._robot.data.button_down
+        # if but2 is ButtonState.CLICK:
+        #     print('DOWN CLICK')
+        # elif but2 is ButtonState.LONG_PRESS:
+        #     print('DOWN LONG PRESS')
+        #
+        # but3 = self._robot.data.button_ok
+        # if but3 is ButtonState.CLICK:
+        #     print('OK CLICK')
+        # elif but3 is ButtonState.LONG_PRESS:
+        #     print('OK LONG PRESS')
+        #
+        # but4 = self._robot.data.bluetooth_button
+        # if but4 is ButtonState.CLICK:
+        #     print('B CLICK')
+        # elif but4 is ButtonState.LONG_PRESS:
+        #     print('B LONG PRESS')
 
     def _is_shutting_down_triggered(self) -> bool:
         return self._robot.data.is_shut_down_button_triggered or self._operation_shut_down

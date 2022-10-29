@@ -3,7 +3,8 @@ import settings
 from a1.robot import Robot, RobotUART, RobotMockUp
 from a1.socket import A1Socket
 from algo.algo_manager import AlgorithmManager
-from bluetooth.handler import BluetoothEndpointsHandler
+from blservice.communicator import BluetoothCommunicator
+from blservice.handler import BluetoothService
 from core import Core
 from utils.config import Configuration
 from utils.os import OperationSystem, get_operation_system
@@ -30,6 +31,7 @@ def main() -> None:
     wifi_logger = logger_factory.get_logger('wifi', settings.get('CAPTURE_WIFI_LOG'))
     robot_logger = logger_factory.get_logger('robot', settings.get('CAPTURE_ROBOT_LOG'))
     a1_socket_logger = logger_factory.get_logger('a1-socket', settings.get('CAPTURE_A1_LOG'))
+    bluetooth_logger = logger_factory.get_logger('blservice', settings.get('CAPTURE_A1_LOG'))
     algorithm_manager_logger = logger_factory.get_logger('algo-manager', settings.get('CAPTURE_ALGO_MANAGER_LOG'))
 
     operation_system: OperationSystem = get_operation_system()
@@ -37,14 +39,15 @@ def main() -> None:
     config = Configuration(settings.get('CORE_CONFIG'))
     wifi_communicator = WifiCommunicator(settings.get('SOCKET_PORT'))
     wifi_endpoints_handler = WifiEndpointsHandler(wifi_communicator, wifi_logger)
-    bl_endpoint_handler = BluetoothEndpointsHandler()
+    bluetooth_communicator = BluetoothCommunicator()
+    bluetooth_service = BluetoothService(bluetooth_communicator, bluetooth_logger)
     algorithm_manager = AlgorithmManager(robot, algorithm_manager_logger)
     voice: Voice = RudeMaximVoice(operation_system)
     core = Core(os=operation_system,
                 robot=robot,
                 config=config,
                 wifi_endpoints_handler=wifi_endpoints_handler,
-                bl_endpoint_handler=bl_endpoint_handler,
+                bluetooth_service=bluetooth_service,
                 algorithm_manager=algorithm_manager,
                 voice=voice,
                 logger=core_logger,
