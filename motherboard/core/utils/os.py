@@ -5,6 +5,10 @@ import re
 import subprocess
 
 
+class OperationSystemException(Exception):
+    pass
+
+
 class OperationSystem(ABC):
     @abstractmethod
     def set_date_time(self, data_time: str) -> None:
@@ -56,7 +60,7 @@ class OperationSystem(ABC):
     @abstractmethod
     def set_wifi_credentials(self, ssid: str, password: str) -> None:
         """
-        Abstract function that is supposed to save/set Wifi credentials without applying
+        Abstract function that is supposed to save/set Wi-fi credentials without applying
 
         :param ssid: SSID of WI-FI access point
         :param password: password
@@ -82,7 +86,7 @@ class WindowsOperationSystem(OperationSystem):
         print('Perform reboot')
 
     def play_sound(self, file: Path) -> None:
-        pass
+        print(f'Play sound: {file}')
 
     def set_wifi_credentials(self, ssid: str, password: str) -> None:
         print(f'Set/Save Wi-fi credentials: SSID: {ssid}; Password: {password}')
@@ -132,16 +136,21 @@ class LinuxOperationSystem(OperationSystem):
         return bool(match)
 
     def get_wpa_config(self) -> dict:
+        if not self._wpa_supplicant_conf_file.exists():
+            raise OperationSystemException('WPA file does not exist')
+
         wpa_conf_content = self._wpa_supplicant_conf_file.read_text()
         ssid = re.search(r'ssid\s*=\s*\"(\S+)\"', wpa_conf_content)
         psk = re.search(r'psk\s*=\s*\"(\S+)\"', wpa_conf_content)
         key_mgmt = re.search(r'key_mgmt\s*=\s*(\S+)', wpa_conf_content)
-
-        return {
-            'ssid': ssid.group(1),
-            'psk': psk.group(1),
-            'key_mgmt': key_mgmt.group(1)
-        }
+        try:
+            return {
+                'ssid': ssid.group(1),
+                'psk': psk.group(1),
+                'key_mgmt': key_mgmt.group(1)
+            }
+        except Exception as error:
+            raise OperationSystemException(f'Can not load WPA config: {error}')
 
 
 def get_operation_system() -> OperationSystem:
@@ -150,4 +159,4 @@ def get_operation_system() -> OperationSystem:
     elif platform == "win32":
         return WindowsOperationSystem()
     else:
-        raise Exception('Unhandled OS. Trying to get OperationSystem handler for unknown OS')
+        raise OperationSystemException('Unhandled OS. Trying to get OperationSystem handler for unknown OS')
