@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Bluetooth connection"
+            android:text="@string/label_bluetooth_connection"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -85,7 +85,7 @@
                 android:layout_centerInParent="true"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/allow_location_permission_info"
@@ -140,7 +140,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Found" />
+                    android:text="@string/label_robot_found_and_paired"
+                    android:textAlignment="center" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -149,18 +150,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:visibility="gone">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Robot needs to be paired" />
+                    android:text="@string/label_pairing_required"
+                    android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/pair"
+                    style="@style/ButtonDarkLight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pair" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/label_pair" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -174,7 +181,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Robot is pairing. Please accept" />
+                    android:text="@string/label_robot_pairing_info"
+                    android:textAlignment="center" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -183,20 +191,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Not Found" />
+                    android:text="@string/label_robot_not_found"
+                    android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/rescan"
+                    style="@style/ButtonDarkLight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Rescan" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/label_rescan" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -205,20 +217,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:gravity="center"
                 android:orientation="vertical"
                 android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pairing failed" />
+                    android:text="@string/label_pairing_failed"
+                    android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/retry_pairing"
+                    style="@style/ButtonDarkLight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
                     android:gravity="center"
-                    android:text="Retry" />
+                    android:text="@string/label_retry" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
