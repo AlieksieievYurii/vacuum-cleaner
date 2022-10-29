@@ -159,6 +159,17 @@ data class WpaConfig(
 )
 
 @JsonClass(generateAdapter = true)
+data class WifiSettingsRequestModel(
+    val ssid: String,
+    val password: String
+)
+
+@JsonClass(generateAdapter = true)
+data class NetworkInfo(
+    @Json(name = "ip_address") val ipAddress: String
+)
+
+@JsonClass(generateAdapter = true)
 data class MotorRequestModule(@Json(name = "motor_name") val motorName: String, val value: Int)
 
 @JsonClass(generateAdapter = true)

@@ -107,4 +107,9 @@ class RobotMockUpImpl : Robot {
         Timber.i("getCurrentWpaConfig")
         return WpaConfig("toya343245", "fewbf87gh2")
     }
+
+    override suspend fun setWifiSettings(wifiSettings: WifiSettingsRequestModel): NetworkInfo {
+        Timber.i("setWifiSettings")
+        return NetworkInfo("192.168.18.14")
+    }
 }

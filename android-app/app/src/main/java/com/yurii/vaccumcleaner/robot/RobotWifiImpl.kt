@@ -1,4 +1,5 @@
 package com.yurii.vaccumcleaner.robot
+
 import com.yurii.vaccumcleaner.utils.requesthandler.RequestHandler
 
 class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robot {
@@ -59,6 +60,10 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
 
     override suspend fun getCurrentWpaConfig(): WpaConfig {
         return requestHandler.send("/get-current-wifi-credentials", null, WpaConfig::class.java)!!
+    }
+
+    override suspend fun setWifiSettings(wifiSettings: WifiSettingsRequestModel): NetworkInfo {
+        return requestHandler.send("/setup-wifi", wifiSettings, NetworkInfo::class.java, timeout = 15000)!!
     }
 
     override suspend fun setPidSettings(pidSettings: PidSettings) {
