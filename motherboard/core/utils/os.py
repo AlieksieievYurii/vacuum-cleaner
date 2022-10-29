@@ -9,6 +9,19 @@ class OperationSystemException(Exception):
     pass
 
 
+WPA_SETTINS_CONTENT = """ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=US
+
+network={{
+    ssid="{ssid}"
+    scan_ssid=1
+    psk="{psk}"
+    key_mgmt=WPA-PSK
+}}
+"""
+
+
 class OperationSystem(ABC):
     @abstractmethod
     def set_date_time(self, data_time: str) -> None:
@@ -138,7 +151,8 @@ class LinuxOperationSystem(OperationSystem):
         self._wpa_supplicant_conf_file = Path('/etc/wpa_supplicant/wpa_supplicant.conf')
 
     def set_wifi_credentials(self, ssid: str, password: str) -> None:
-        print(f'Set/Save Wi-fi credentials: SSID: {ssid}; Password: {password}')
+        content = WPA_SETTINS_CONTENT.format(ssid=ssid, psk=password)
+        self._wpa_supplicant_conf_file.write_text(content)
 
     def reboot(self) -> None:
         subprocess.run(['reboot'])
