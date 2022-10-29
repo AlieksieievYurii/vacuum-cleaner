@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
@@ -183,6 +184,14 @@ class BinderViewModel(private val context: Context) : ViewModel() {
 
     companion object {
         const val ROBOT_MAC_ADDRESS = "B8:27:EB:B8:34:3E"
+
+        val REQUIRED_BROADCAST_FILTERS = IntentFilter().apply {
+            addAction(BluetoothDevice.ACTION_FOUND)
+            addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+            addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+        }
     }
 
     @Suppress("UNCHECKED_CAST")

@@ -8,16 +8,16 @@
       android:fillColor="@android:color/transparent"/>
   <path
       android:pathData="M630.601,470.427m17.613,-0a17.613,17.613 0,1 1,-35.226 -0a17.613,17.613 0,1 1,35.226 -0"
-      android:fillColor="#666AF6"/>
+      android:fillColor="#0070a7"/>
   <path
       android:pathData="M653.565,124.969m13.62,-0a13.62,13.62 45,1 1,-27.24 -0a13.62,13.62 135,1 1,27.24 -0"
-      android:fillColor="#666AF6"/>
+      android:fillColor="#0070a7"/>
   <path
       android:pathData="M350.48,303.205m14.499,-0a14.499,14.499 0,1 1,-28.998 -0a14.499,14.499 0,1 1,28.998 -0"
-      android:fillColor="#666AF6"/>
+      android:fillColor="#0070a7"/>
   <path
       android:pathData="M181.512,356.457m16.512,0a16.512,16.512 0,1 0,-33.024 0a16.512,16.512 0,1 0,33.024 0"
-      android:fillColor="#666AF6"/>
+      android:fillColor="#0070a7"/>
   <path
       android:pathData="M681.222,423.388m-4.953,8.58a9.907,9.907 75,1 0,9.907 -17.159a9.907,9.907 75,1 0,-9.907 17.159"
       android:fillColor="#E1E4E5"/>
@@ -45,14 +45,14 @@
       android:fillType="evenOdd"/>
   <path
       android:pathData="M444.196,95.804c43.739,43.739 43.739,114.653 0,158.392 -43.739,43.739 -114.653,43.739 -158.392,0 -43.739,-43.739 -43.739,-114.653 0,-158.392 43.739,-43.739 114.653,-43.739 158.392,0z"
-      android:fillColor="#666AF6"
+      android:fillColor="#0070a7"
       android:fillType="evenOdd"/>
   <path
       android:pathData="M444.196,95.804c43.739,43.739 43.739,114.653 0,158.392 -43.739,43.739 -114.653,43.739 -158.392,0 -43.739,-43.739 -43.739,-114.653 0,-158.392 43.739,-43.739 114.653,-43.739 158.392,0"
       android:strokeLineJoin="round"
       android:strokeWidth="10.562"
       android:fillColor="#00000000"
-      android:strokeColor="#666AF6"
+      android:strokeColor="#0070a7"
       android:strokeLineCap="round"/>
   <path
       android:pathData="M365,221.095c2.091,0 3.796,1.642 3.796,3.658s-1.705,3.659 -3.796,3.659c-2.09,0 -3.795,-1.643 -3.795,-3.659s1.705,-3.658 3.795,-3.658m60.667,-66.339c-35.38,-27.615 -85.954,-27.615 -121.334,0m25.288,35.326c20.633,-16.09 50.126,-16.09 70.771,0"

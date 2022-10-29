@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentBinderBinding
-import com.yurii.vaccumcleaner.screens.devices.BluetoothDevicesViewModel
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.runAnimation
 
@@ -31,7 +30,7 @@ class BinderFragment : Fragment(R.layout.fragment_binder) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().registerReceiver(viewModel.broadcastReceiver, BluetoothDevicesViewModel.REQUIRED_BROADCAST_FILTERS)
+        requireActivity().registerReceiver(viewModel.broadcastReceiver, BinderViewModel.REQUIRED_BROADCAST_FILTERS)
 
         binding.apply {
             findRobot.setOnClickListener { viewModel.startDiscoveringRobot() }
