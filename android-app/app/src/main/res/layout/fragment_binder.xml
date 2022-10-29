@@ -44,8 +44,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
-                tools:visibility="gone"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -55,10 +55,10 @@
 
                 <Button
                     android:id="@+id/find_robot"
+                    style="@style/ButtonDarkLight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    style="@style/ButtonDarkLight"
                     android:layout_marginBottom="16dp"
                     android:text="@string/label_find_robot" />
             </LinearLayout>
@@ -68,14 +68,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/discovering_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="@string/label_discovering_info" />
+                    android:text="@string/label_discovering_info"
+                    android:textAlignment="center" />
             </LinearLayout>
 
             <LinearLayout
@@ -83,13 +83,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:visibility="gone">
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/allow_location_permission_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_location_permission_explained"
+                    android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/give_access"
+                    style="@style/ButtonDarkLight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Give access" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/label_allow" />
             </LinearLayout>
 
             <LinearLayout
@@ -97,13 +109,25 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
+                android:gravity="center"
+                android:orientation="vertical"
                 android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/enable_bluetooth_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_turn_on_bluetooth"
+                    android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/turn_on_bluetooth"
+                    style="@style/ButtonDarkLight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Turn on Bluetooth" />
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/label_turn_on" />
             </LinearLayout>
 
             <androidx.appcompat.widget.LinearLayoutCompat
