@@ -3,18 +3,40 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true">
 
         <LinearLayout
-            android:id="@+id/layout_loading"
+            android:id="@+id/layout_init"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Loading..." />
+                android:text="Please turn on the Bluetooth in the robot" />
+
+            <Button
+                android:id="@+id/find_robot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find the robot" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_scaning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scanning..." />
         </LinearLayout>
 
         <LinearLayout
@@ -46,7 +68,7 @@
         </LinearLayout>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/layout_robot_is_found"
+            android:id="@+id/layout_robot_is_paired"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -56,6 +78,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Found" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/layout_robot_requires_to_be_paired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Robot needs to be paired" />
+
+            <Button
+                android:id="@+id/pair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pair" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/layout_robot_is_pairing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Robot is pairing. Please accept" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -77,8 +133,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Rescan"/>
+                android:text="Rescan" />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/layout_robot_pairing_failed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pairing failed" />
+
+            <Button
+                android:id="@+id/retry_pairing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Retry" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </RelativeLayout>
 </layout>
