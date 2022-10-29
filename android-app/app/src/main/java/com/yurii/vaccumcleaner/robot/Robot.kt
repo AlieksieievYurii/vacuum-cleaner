@@ -22,4 +22,5 @@ interface Robot {
     suspend fun getCleaningStatus(): CleaningStatus
     suspend fun shutDown()
     suspend fun reboot()
+    suspend fun getCurrentWpaConfig(): WpaConfig
 }

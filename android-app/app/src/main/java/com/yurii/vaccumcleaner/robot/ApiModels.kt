@@ -151,3 +151,9 @@ enum class Power(val value: String) {
 data class PowerCommand(
     @Json(name = "command") val powerCommand: Power
 )
+
+@JsonClass(generateAdapter = true)
+data class WpaConfig(
+    val ssid: String,
+    val password: String
+)

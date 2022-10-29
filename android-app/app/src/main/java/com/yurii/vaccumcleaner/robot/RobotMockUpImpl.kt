@@ -102,4 +102,9 @@ class RobotMockUpImpl : Robot {
     override suspend fun reboot() {
         Timber.i("Reboot")
     }
+
+    override suspend fun getCurrentWpaConfig(): WpaConfig {
+        Timber.i("getCurrentWpaConfig")
+        return WpaConfig("toya343245", "fewbf87gh2")
+    }
 }

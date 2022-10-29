@@ -69,6 +69,10 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
         requestHandler.send<Any>("/power", PowerCommand(Power.REBOOT), null)
     }
 
+    override suspend fun getCurrentWpaConfig(): WpaConfig {
+        return requestHandler.send("/get-current-wifi-credentials", null, WpaConfig::class.java)!!
+    }
+
     override suspend fun setPidSettings(pidSettings: PidSettings) {
         requestHandler.send<Any>("/set-current-pid", pidSettings, null)
     }
