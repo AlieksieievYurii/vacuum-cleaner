@@ -76,6 +76,15 @@ class OperationSystem(ABC):
         :return: dict containing WPA config
         """
 
+    @abstractmethod
+    def get_ip_address(self) -> str:
+        """
+        Abstract function that is supposed to return robot's IP address in the local network
+
+        :return: ip address
+        """
+        pass
+
 
 class WindowsOperationSystem(OperationSystem):
     """
@@ -106,6 +115,9 @@ class WindowsOperationSystem(OperationSystem):
             'psk': '123ffwsdcv34',
             'key_mgmt': 'WPA-PSK'
         }
+
+    def get_ip_address(self) -> str:
+        return "192.168.18.12"
 
 
 class LinuxOperationSystem(OperationSystem):
@@ -151,6 +163,15 @@ class LinuxOperationSystem(OperationSystem):
             }
         except Exception as error:
             raise OperationSystemException(f'Can not load WPA config: {error}')
+
+    def get_ip_address(self) -> str:
+        output = subprocess.run(['ifconfig', 'wlan0'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        response = output.stdout.decode("utf-8")
+        match = re.search(r'inet\s(\d+.f\d+.\d+.\d+)', response)
+        if match:
+            return match.group(1)
+        else:
+            raise OperationSystemException('Can not get IP. The robot is not connected to a network')
 
 
 def get_operation_system() -> OperationSystem:
