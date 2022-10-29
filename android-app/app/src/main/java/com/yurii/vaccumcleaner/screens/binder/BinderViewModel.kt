@@ -11,21 +11,29 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.yurii.vaccumcleaner.robot.RobotBluetoothConnection
 import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.utils.requireParcelableExtra
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.IllegalStateException
 
 class BinderViewModel(private val context: Context) : ViewModel() {
     sealed class State {
+        object Initial : State()
         object BluetoothIsDisabled : State()
         object PermissionDenied : State()
         data class Discovering(val found: Int = 0) : State()
-        object RobotFound : State()
+        object RobotPaired : State()
+        object RobotNeedsToBePaired : State()
+        object RobotIsPairing : State()
+        object RobotPairingFailed : State()
         object RobotNotFound : State()
     }
 
@@ -34,78 +42,36 @@ class BinderViewModel(private val context: Context) : ViewModel() {
     private val _event = MutableSharedFlow<InitialFragmentViewModel.Event>()
     val event = _event.asSharedFlow()
 
-    private val _currentState = MutableStateFlow<State>(State.Discovering())
+    private val _currentState = MutableStateFlow<State>(State.Initial)
     val currentState = _currentState.asStateFlow()
 
-    private var foundBluetoothDevices: Int = 0
+    private var scannedBluetoothDevicesCount: Int = 0
+    private var isPaired = false
+    private var foundedRobot: BluetoothDevice? = null
 
     val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 BluetoothAdapter.ACTION_STATE_CHANGED -> onBluetoothStateHasChanged(intent)
                 BluetoothDevice.ACTION_FOUND -> onBluetoothDeviceFound(intent)
-                BluetoothDevice.ACTION_BOND_STATE_CHANGED -> {
-                    val state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
-                    val prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR)
-
-                    if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING) {
-                        Timber.i("Is paired: ${intent.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)!!}")
-                    }
-                }
-                BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
-                    foundBluetoothDevices = 0
-                    _currentState.value = State.Discovering()
-                }
+                BluetoothDevice.ACTION_BOND_STATE_CHANGED -> onBoundStateChanged(intent)
+                BluetoothAdapter.ACTION_DISCOVERY_STARTED -> _currentState.value = State.Discovering()
                 BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
-                    if (_currentState.value !is State.RobotFound)
+                    if (foundedRobot == null)
                         _currentState.value = State.RobotNotFound
                 }
             }
         }
     }
 
-    init {
-        validateAndStart()
-    }
-
-    private fun onBluetoothStateHasChanged(intent: Intent) {
-        if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR) == BluetoothAdapter.STATE_ON) {
-            Timber.i("Bluetooth: Start discovering...")
+    fun startDiscoveringRobot() {
+        if (bluetoothAllowedAndEnabled())
             startBluetooth()
-        } else {
-            Timber.i("Bluetooth: Disabled!")
-            _currentState.value = State.BluetoothIsDisabled
-        }
     }
 
-    private fun onBluetoothDeviceFound(intent: Intent) {
-        if (_currentState.value is State.RobotFound)
-            return
-
-        foundBluetoothDevices++
-        val device: BluetoothDevice = intent.requireParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-
-        //I do not know how to identify the robot so decided to do that by MAC -> I know this is bullshit
-        if (device.address == ROBOT_MAC_ADDRESS) {
-            Timber.i("Found: $device. Name: ${device.name} ${device.uuids}")
-            _currentState.value = State.RobotFound
-            bluetoothAdapter!!.cancelDiscovery()
-        } else
-            _currentState.value = State.Discovering(foundBluetoothDevices)
-    }
-
-    private fun validateAndStart() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-            _currentState.value = State.PermissionDenied
-            return
-        }
-
-        if (!bluetoothAdapter!!.isEnabled) {
-            _currentState.value = State.BluetoothIsDisabled
-            return
-        }
-
-        startBluetooth()
+    fun askToPair() {
+        _currentState.value = State.RobotIsPairing
+        foundedRobot!!.createBond()
     }
 
     fun rescan() {
@@ -113,19 +79,103 @@ class BinderViewModel(private val context: Context) : ViewModel() {
     }
 
     fun bluetoothPermissionsAreGranted() {
-        bluetoothAdapter!!.startDiscovery()
+        startBluetooth()
+    }
+
+    fun retryPairing() {
+        askToPair()
+    }
+
+    private fun onBoundStateChanged(intent: Intent) {
+        val state = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+        val prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.ERROR)
+
+        if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING && !isPaired) {
+            isPaired = true
+            val robotBluetoothDevice: BluetoothDevice = intent.requireParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+            makeBluetoothSocketConnection(robotBluetoothDevice)
+        } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDING) {
+            _currentState.value = State.RobotPairingFailed
+        }
+    }
+
+    private fun onBluetoothStateHasChanged(intent: Intent) {
+        if (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR) == BluetoothAdapter.STATE_ON) {
+            startDiscoveringRobot()
+        } else {
+            _currentState.value = State.BluetoothIsDisabled
+        }
+    }
+
+    private fun onBluetoothDeviceFound(intent: Intent) {
+        if (foundedRobot != null)
+            return
+
+        scannedBluetoothDevicesCount++
+        val device: BluetoothDevice = intent.requireParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+
+        //I do not know how to identify the robot so decided to do that by MAC -> I know this is bullshit
+        if (device.address == ROBOT_MAC_ADDRESS) {
+            onRobotFound(device)
+            bluetoothAdapter!!.cancelDiscovery()
+        } else
+            _currentState.value = State.Discovering(scannedBluetoothDevicesCount)
+    }
+
+    private fun onRobotFound(device: BluetoothDevice) {
+        foundedRobot = device
+        if (isPaired(device)) {
+            _currentState.value = State.RobotPaired
+            makeBluetoothSocketConnection(device)
+        } else {
+            _currentState.value = State.RobotNeedsToBePaired
+        }
+    }
+
+    private fun bluetoothAllowedAndEnabled(): Boolean {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            _currentState.value = State.PermissionDenied
+            return false
+        }
+
+        if (!bluetoothAdapter!!.isEnabled) {
+            _currentState.value = State.BluetoothIsDisabled
+            return false
+        }
+
+        return true
+    }
+
+
+    private fun makeBluetoothSocketConnection(device: BluetoothDevice) {
+        viewModelScope.launch {
+            RobotBluetoothConnection.makeConnection(device)
+            RobotBluetoothConnection.setWifiSettings("dupa", "dupa1")
+        }
     }
 
     private fun startBluetooth() {
+        scannedBluetoothDevicesCount = 0
         if (bluetoothAdapter == null)
             Timber.i("Bluetooth is not supported")
         else {
             if (bluetoothAdapter.isEnabled) {
-                Timber.i("Bluetooth is enabled!")
-                bluetoothAdapter.startDiscovery()
+                _currentState.value = State.Discovering()
+                viewModelScope.launch {
+                    delay(5000)
+                    bluetoothAdapter.startDiscovery()
+                }
             } else
-                Timber.i("Bluetooth is disabled")
+                _currentState.value = State.BluetoothIsDisabled
         }
+    }
+
+    private fun isPaired(device: BluetoothDevice): Boolean {
+        bluetoothAdapter!!.bondedDevices.forEach {
+            if (it.address == device.address)
+                return true
+        }
+        return false
     }
 
     companion object {
