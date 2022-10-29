@@ -15,7 +15,6 @@ import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentBinderBinding
 import com.yurii.vaccumcleaner.screens.devices.BluetoothDevicesViewModel
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
-import timber.log.Timber
 
 class BinderFragment : Fragment(R.layout.fragment_binder) {
     private val binding: FragmentBinderBinding by viewBinding()
@@ -30,15 +29,14 @@ class BinderFragment : Fragment(R.layout.fragment_binder) {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().registerReceiver(viewModel.broadcastReceiver, BluetoothDevicesViewModel.REQUIRED_BROADCAST_FILTERS)
 
-        binding.giveAccess.setOnClickListener {
-            locationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        binding.apply {
+            findRobot.setOnClickListener { viewModel.startDiscoveringRobot() }
+            turnOnBluetooth.setOnClickListener { launchBluetooth.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)) }
+            giveAccess.setOnClickListener { locationPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION) }
+            rescan.setOnClickListener { viewModel.rescan() }
+            pair.setOnClickListener { viewModel.askToPair() }
+            retryPairing.setOnClickListener { viewModel.retryPairing() }
         }
-
-        binding.turnOnBluetooth.setOnClickListener {
-            launchBluetooth.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
-        }
-
-        binding.rescan.setOnClickListener { viewModel.rescan() }
 
         viewModel.currentState.observeOnLifecycle(viewLifecycleOwner) { state ->
             updateLayoutVisibilityDependingOnState(state)
@@ -47,11 +45,15 @@ class BinderFragment : Fragment(R.layout.fragment_binder) {
 
     private fun updateLayoutVisibilityDependingOnState(state: BinderViewModel.State) {
         binding.apply {
-            layoutLoading.isVisible = state is BinderViewModel.State.Discovering
+            layoutRobotRequiresToBePaired.isVisible = state is BinderViewModel.State.RobotNeedsToBePaired
+            layoutRobotIsPairing.isVisible = state is BinderViewModel.State.RobotIsPairing
+            layoutInit.isVisible = state is BinderViewModel.State.Initial
+            layoutScaning.isVisible = state is BinderViewModel.State.Discovering
             layoutRequestPermissions.isVisible = state is BinderViewModel.State.PermissionDenied
             layoutTurnOnBluetooth.isVisible = state is BinderViewModel.State.BluetoothIsDisabled
             layoutRobotIsNotFound.isVisible = state is BinderViewModel.State.RobotNotFound
-            layoutRobotIsFound.isVisible = state is BinderViewModel.State.RobotFound
+            layoutRobotIsPaired.isVisible = state is BinderViewModel.State.RobotPaired
+            layoutRobotPairingFailed.isVisible = state is BinderViewModel.State.RobotPairingFailed
         }
     }
 
