@@ -1,17 +1,5 @@
 package com.yurii.vaccumcleaner.robot
-
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.yurii.vaccumcleaner.utils.requesthandler.RequestHandler
-
-@JsonClass(generateAdapter = true)
-data class MotorRequestModule(@Json(name = "motor_name") val motorName: String, val value: Int)
-
-@JsonClass(generateAdapter = true)
-data class MovementRequestModel(val direction: String, val speed: Int)
-
-@JsonClass(generateAdapter = true)
-data class StopMovementRequestModel(@Json(name = "with_break") val withBreak: Boolean)
 
 class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robot {
 

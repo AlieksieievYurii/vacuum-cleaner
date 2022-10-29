@@ -157,3 +157,12 @@ data class WpaConfig(
     val ssid: String,
     val password: String
 )
+
+@JsonClass(generateAdapter = true)
+data class MotorRequestModule(@Json(name = "motor_name") val motorName: String, val value: Int)
+
+@JsonClass(generateAdapter = true)
+data class MovementRequestModel(val direction: String, val speed: Int)
+
+@JsonClass(generateAdapter = true)
+data class StopMovementRequestModel(@Json(name = "with_break") val withBreak: Boolean)
