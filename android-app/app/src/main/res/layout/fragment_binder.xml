@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,10 +26,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/required_connection" />
+            app:layout_constraintTop_toBottomOf="@id/title" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,6 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:gravity="center"
+                tools:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView
@@ -65,16 +64,18 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_scaning"
+                android:id="@+id/layout_discovering_robot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
+                    android:id="@+id/discovering_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Scanning..." />
+                    android:textAlignment="center"
+                    android:text="@string/label_discovering_info" />
             </LinearLayout>
 
             <LinearLayout

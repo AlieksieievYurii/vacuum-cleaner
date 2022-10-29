@@ -15,6 +15,7 @@ import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentBinderBinding
 import com.yurii.vaccumcleaner.screens.devices.BluetoothDevicesViewModel
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.runAnimation
 
 class BinderFragment : Fragment(R.layout.fragment_binder) {
     private val binding: FragmentBinderBinding by viewBinding()
@@ -24,6 +25,8 @@ class BinderFragment : Fragment(R.layout.fragment_binder) {
         if (isGranted)
             viewModel.bluetoothPermissionsAreGranted()
     }
+
+    private var currentPlayingAnimationId = -1
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,6 +43,21 @@ class BinderFragment : Fragment(R.layout.fragment_binder) {
 
         viewModel.currentState.observeOnLifecycle(viewLifecycleOwner) { state ->
             updateLayoutVisibilityDependingOnState(state)
+
+            when (state) {
+                BinderViewModel.State.BluetoothIsDisabled -> runSafelyAnimation(R.raw.failed, infinitive = false)
+                is BinderViewModel.State.Discovering -> {
+                    runSafelyAnimation(R.raw.bluetooth_scanning)
+                    binding.discoveringInfo.text = getString(R.string.label_discovering_info, state.found)
+                }
+                BinderViewModel.State.Initial -> runSafelyAnimation(R.raw.required_connection)
+                BinderViewModel.State.PermissionDenied -> runSafelyAnimation(R.raw.failed, infinitive = false)
+                BinderViewModel.State.RobotIsPairing -> runSafelyAnimation(R.raw.bluetooth_scanning, infinitive = false)
+                BinderViewModel.State.RobotNeedsToBePaired -> runSafelyAnimation(R.raw.info)
+                BinderViewModel.State.RobotNotFound -> runSafelyAnimation(R.raw.failed, infinitive = false)
+                BinderViewModel.State.RobotPaired -> runSafelyAnimation(R.raw.done, infinitive = false)
+                BinderViewModel.State.RobotPairingFailed -> runSafelyAnimation(R.raw.failed, infinitive = false)
+            }
         }
     }
 
@@ -48,12 +66,19 @@ class BinderFragment : Fragment(R.layout.fragment_binder) {
             layoutRobotRequiresToBePaired.isVisible = state is BinderViewModel.State.RobotNeedsToBePaired
             layoutRobotIsPairing.isVisible = state is BinderViewModel.State.RobotIsPairing
             layoutInit.isVisible = state is BinderViewModel.State.Initial
-            layoutScaning.isVisible = state is BinderViewModel.State.Discovering
+            layoutDiscoveringRobot.isVisible = state is BinderViewModel.State.Discovering
             layoutRequestPermissions.isVisible = state is BinderViewModel.State.PermissionDenied
             layoutTurnOnBluetooth.isVisible = state is BinderViewModel.State.BluetoothIsDisabled
             layoutRobotIsNotFound.isVisible = state is BinderViewModel.State.RobotNotFound
             layoutRobotIsPaired.isVisible = state is BinderViewModel.State.RobotPaired
             layoutRobotPairingFailed.isVisible = state is BinderViewModel.State.RobotPairingFailed
+        }
+    }
+
+    private fun runSafelyAnimation(animationResId: Int, infinitive: Boolean = true) {
+        if (animationResId != currentPlayingAnimationId) {
+            binding.animationView.runAnimation(animationResId, infinitive = infinitive)
+            currentPlayingAnimationId = animationResId
         }
     }
 
