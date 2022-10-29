@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.RobotBluetoothConnection
-import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.utils.requireParcelableExtra
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,9 +36,13 @@ class BinderViewModel(private val context: Context) : ViewModel() {
         object RobotNotFound : State()
     }
 
+    sealed class Event {
+        object NavigateToWifiSettingsScreen : Event()
+    }
+
     private val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
 
-    private val _event = MutableSharedFlow<InitialFragmentViewModel.Event>()
+    private val _event = MutableSharedFlow<Event>()
     val event = _event.asSharedFlow()
 
     private val _currentState = MutableStateFlow<State>(State.Initial)
@@ -93,7 +96,7 @@ class BinderViewModel(private val context: Context) : ViewModel() {
         if (state == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING && !isPaired) {
             isPaired = true
             val robotBluetoothDevice: BluetoothDevice = intent.requireParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-            makeBluetoothSocketConnection(robotBluetoothDevice)
+            makeBluetoothSocketConnectionAndNavigateToWifiSettingsScreen(robotBluetoothDevice)
         } else if (state == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDING) {
             _currentState.value = State.RobotPairingFailed
         }
@@ -126,7 +129,7 @@ class BinderViewModel(private val context: Context) : ViewModel() {
         foundedRobot = device
         if (isPaired(device)) {
             _currentState.value = State.RobotPaired
-            makeBluetoothSocketConnection(device)
+            makeBluetoothSocketConnectionAndNavigateToWifiSettingsScreen(device)
         } else {
             _currentState.value = State.RobotNeedsToBePaired
         }
@@ -147,10 +150,10 @@ class BinderViewModel(private val context: Context) : ViewModel() {
     }
 
 
-    private fun makeBluetoothSocketConnection(device: BluetoothDevice) {
+    private fun makeBluetoothSocketConnectionAndNavigateToWifiSettingsScreen(device: BluetoothDevice) {
         viewModelScope.launch {
             RobotBluetoothConnection.makeConnection(device)
-            RobotBluetoothConnection.setWifiSettings("dupa", "dupa1")
+            _event.emit(Event.NavigateToWifiSettingsScreen)
         }
     }
 

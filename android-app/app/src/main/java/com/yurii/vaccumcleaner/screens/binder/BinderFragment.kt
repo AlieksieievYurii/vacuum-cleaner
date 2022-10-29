@@ -10,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentBinderBinding
@@ -57,6 +58,12 @@ class BinderFragment : Fragment(R.layout.fragment_binder) {
                 BinderViewModel.State.RobotNotFound -> runSafelyAnimation(R.raw.failed, infinitive = false)
                 BinderViewModel.State.RobotPaired -> runSafelyAnimation(R.raw.done, infinitive = false)
                 BinderViewModel.State.RobotPairingFailed -> runSafelyAnimation(R.raw.failed, infinitive = false)
+            }
+        }
+
+        viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
+                BinderViewModel.Event.NavigateToWifiSettingsScreen -> findNavController().navigate(R.id.action_binderFragment_to_wifiSettingsFragment)
             }
         }
     }
