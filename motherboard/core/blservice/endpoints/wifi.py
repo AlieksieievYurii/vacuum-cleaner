@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from time import sleep
 
 from utils.os import OperationSystem
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field
@@ -16,16 +17,24 @@ class WifiCredentialsResponseModel(object):
     key_mgmt: str
 
 
+@dataclass
+class NetworkInfo(object):
+    ip_address: str
+
+
 class SetWifiCredentialsRequestHandler(RequestHandler):
-    endpoint = '/set-wifi-credentials'
+    endpoint = '/setup-wifi'
     request_model = SetWifiCredentialsRequestModel
-    response_model = None
+    response_model = NetworkInfo
 
     def __init__(self, os: OperationSystem):
         self._os = os
 
     def perform(self, request: Request, data: AttributeHolder):
         self._os.set_wifi_credentials(data.ssid, data.password)
+        self._os.apply_wifi_settings()
+        sleep(10)
+        return NetworkInfo(self._os.get_ip_address())
 
 
 class GetCurrentWifiCredentialsRequestHandler(RequestHandler):
