@@ -34,6 +34,10 @@ class BluetoothCommunicator : Communicator {
         writer.println(data)
     }
 
+    override fun close() {
+        bluetoothSocket?.close()
+    }
+
     companion object {
         private const val ROBOT_UUID = "94f39d29-7d6d-437d-973b-fba39e49d4ee"
     }

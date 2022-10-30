@@ -21,8 +21,6 @@ class WifiCommunicator : Communicator {
 
     fun isConnected() = socket.isConnected
 
-    fun closeConnection() = socket.close()
-
     override fun read(): String {
         return socketReader.readLine()
     }
@@ -30,6 +28,10 @@ class WifiCommunicator : Communicator {
     override fun send(data: String) {
         val writer = PrintWriter(socket.outputStream, true)
         writer.println(data)
+    }
+
+    override fun close() {
+        socket.close()
     }
 
 }
