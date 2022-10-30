@@ -1,4 +1,4 @@
-package com.yurii.vaccumcleaner
+package com.yurii.vaccumcleaner.utils
 
 import android.content.Context
 

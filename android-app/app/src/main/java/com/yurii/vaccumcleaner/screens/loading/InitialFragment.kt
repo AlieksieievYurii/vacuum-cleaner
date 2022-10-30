@@ -8,7 +8,7 @@ import android.viewbinding.library.fragment.viewBinding
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.yurii.vaccumcleaner.Injector
+import com.yurii.vaccumcleaner.utils.Injector
 import com.yurii.vaccumcleaner.databinding.FragmentInitialBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.runAnimation

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.MyApplication
-import com.yurii.vaccumcleaner.Preferences
+import com.yurii.vaccumcleaner.utils.Preferences
 import com.yurii.vaccumcleaner.robot.CleaningStatusEnum
 import com.yurii.vaccumcleaner.robot.Robot
 import com.yurii.vaccumcleaner.robot.RobotConnection

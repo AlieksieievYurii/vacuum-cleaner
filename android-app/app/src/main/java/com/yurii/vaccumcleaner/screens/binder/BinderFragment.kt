@@ -11,7 +11,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.yurii.vaccumcleaner.Injector
+import com.yurii.vaccumcleaner.utils.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentBinderBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle

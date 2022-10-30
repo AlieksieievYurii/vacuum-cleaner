@@ -1,9 +1,8 @@
-package com.yurii.vaccumcleaner
+package com.yurii.vaccumcleaner.utils
 
 import android.content.Context
 import com.yurii.vaccumcleaner.robot.RobotBluetoothConnection
 import com.yurii.vaccumcleaner.robot.RobotConnection
-import com.yurii.vaccumcleaner.robot.RobotMockUpImpl
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import com.yurii.vaccumcleaner.screens.algo.AlgorithmSetupViewModel
 import com.yurii.vaccumcleaner.screens.binder.BinderViewModel
@@ -14,6 +13,7 @@ import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
 import com.yurii.vaccumcleaner.screens.pid.PidSettingsViewModel
 import com.yurii.vaccumcleaner.screens.wifi.WifiSettingsViewModel
+import com.yurii.vaccumcleaner.utils.Preferences
 import com.yurii.vaccumcleaner.utils.ServiceContextManager
 
 object Injector {
