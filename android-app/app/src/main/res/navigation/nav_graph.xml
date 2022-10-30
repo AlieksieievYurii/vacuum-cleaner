@@ -102,5 +102,10 @@
         <argument
             android:name="ip_address"
             app:argType="string" />
+        <action
+            android:id="@+id/action_wifiSetupDone_to_initialFragment"
+            app:destination="@id/initialFragment"
+            app:popUpTo="@id/wifiSetupDone"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>
