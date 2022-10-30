@@ -23,6 +23,8 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
         viewBinding.viewModel = viewModel
         observeDiscoveryState()
         observeEvents()
+
+        requireActivity().registerReceiver(viewModel.broadcastReceiver, InitialFragmentViewModel.REQUIRED_BROADCAST_FILTERS)
     }
 
     private fun observeDiscoveryState() {
@@ -43,6 +45,16 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
                     viewBinding.layoutRobotIsNotFound.isVisible = false
                     viewBinding.animationView.runAnimation(R.raw.done)
                 }
+                InitialFragmentViewModel.State.WifiDisabled -> {
+                    viewBinding.status.text = "Please enable Wi-Fi"
+                    viewBinding.animationView.runAnimation(R.raw.failed)
+                    viewBinding.layoutRobotIsNotFound.isVisible = false
+                }
+                is InitialFragmentViewModel.State.Error -> {
+                    viewBinding.animationView.runAnimation(R.raw.failed)
+                    viewBinding.status.text = getString(R.string.label_error_occurred_with_message, state.errorMessage)
+                    viewBinding.layoutRobotIsNotFound.isVisible = true
+                }
             }
         }
     }
@@ -55,5 +67,10 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
                 InitialFragmentViewModel.Event.NavigateToExecutionScreen -> findNavController().navigate(R.id.action_initialFragment_to_cleaningExecutionFragment)
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        requireActivity().unregisterReceiver(viewModel.broadcastReceiver)
     }
 }

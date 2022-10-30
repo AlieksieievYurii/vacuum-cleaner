@@ -14,6 +14,7 @@ import com.yurii.vaccumcleaner.screens.loading.InitialFragmentViewModel
 import com.yurii.vaccumcleaner.screens.panel.PanelViewModel
 import com.yurii.vaccumcleaner.screens.pid.PidSettingsViewModel
 import com.yurii.vaccumcleaner.screens.wifi.WifiSettingsViewModel
+import com.yurii.vaccumcleaner.utils.ServiceContextManager
 
 object Injector {
 
@@ -23,6 +24,7 @@ object Injector {
 
     fun provideInitialFragmentViewModel(context: Context): InitialFragmentViewModel.Factory {
         return InitialFragmentViewModel.Factory(
+            ServiceContextManager(context),
             Preferences(context),
             RobotSocketDiscovery(context)
         )
