@@ -88,4 +88,7 @@
     <string name="label_robot_found_and_paired">Robot is found and paired</string>
     <string name="label_bluetooth_connection">Bluetooth connection</string>
     <string name="label_wifi_setup">Wifi Setup</string>
+    <string name="label_wifi_is_setup">Wi-fi has been setup successfully</string>
+    <string name="label_connect">Connect</string>
+    <string name="label_ip_address">IP Address: %s</string>
 </resources>

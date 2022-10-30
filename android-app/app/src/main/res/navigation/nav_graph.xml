@@ -9,15 +9,12 @@
         android:id="@+id/wifiSettingsFragment"
         android:name="com.yurii.vaccumcleaner.screens.wifi.WifiSettingsFragment"
         android:label="WifiSettingsFragment"
-        tools:layout="@layout/fragment_wifi_settings" />
-    <fragment
-        android:id="@+id/debugFragment"
-        android:name="com.yurii.vaccumcleaner.screens.debug.DebugFragment"
-        android:label="DebugFragment"
-        tools:layout="@layout/fragment_debug">
-        <argument
-            android:name="bluetoothDevice"
-            app:argType="android.bluetooth.BluetoothDevice" />
+        tools:layout="@layout/fragment_wifi_settings" >
+        <action
+            android:id="@+id/action_wifiSettingsFragment_to_wifiSetupDone"
+            app:destination="@id/wifiSetupDone"
+            app:popUpTo="@id/wifiSettingsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/initialFragment"
@@ -96,5 +93,14 @@
             app:destination="@id/panelFragment"
             app:popUpTo="@id/cleaningExecutionFragment"
             app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/wifiSetupDone"
+        android:name="com.yurii.vaccumcleaner.screens.wifi.WifiSetupDoneFragment"
+        android:label="WifiSetupDone"
+        tools:layout="@layout/fragment_wifi_setup_done">
+        <argument
+            android:name="ip_address"
+            app:argType="string" />
     </fragment>
 </navigation>
