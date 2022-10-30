@@ -16,7 +16,7 @@ object RobotConnection {
 
     fun closeConnectionIfOpen() {
         if (wifiCommunicator.isConnected())
-            wifiCommunicator.closeConnection()
+            wifiCommunicator.close()
     }
 
     fun getRobotAPI() = robot
@@ -31,6 +31,10 @@ object RobotBluetoothConnection {
     suspend fun makeConnection(bluetoothDevice: BluetoothDevice) {
         bluetoothCommunicator.makeConnection(bluetoothDevice)
         requestHandler.start()
+    }
+
+    fun closeConnection() {
+        requestHandler.stop()
     }
 
     fun getRobotAPI(): Robot {

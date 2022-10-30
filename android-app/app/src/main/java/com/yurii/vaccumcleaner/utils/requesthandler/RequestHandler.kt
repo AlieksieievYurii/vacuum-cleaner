@@ -7,6 +7,7 @@ import com.yurii.vaccumcleaner.utils.synchronizedAppend
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import timber.log.Timber
+import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeoutException
 import kotlin.concurrent.thread
@@ -18,8 +19,15 @@ class RequestHandler(private val communicator: Communicator) {
     private val responseAdapter = moshi.adapter(Response::class.java)
     private val responses = mutableListOf<Response>()
 
+    private var isStopped = false
+
     fun start() {
         thread(start = true) { listenForIncomingResponses() }
+    }
+
+    fun stop() {
+        isStopped = true
+        communicator.close()
     }
 
     suspend fun <R : Any> send(endpoint: String, requestModel: Any?, responseModel: Class<R>?, timeout: Int = 1000): R? {
@@ -54,10 +62,17 @@ class RequestHandler(private val communicator: Communicator) {
 
     private fun listenForIncomingResponses() {
         while (true) {
-            val data = communicator.read()
-            val d = responseAdapter.fromJson(data)
+            val data = try {
+                communicator.read()
+            } catch (error: IOException) {
+                if (isStopped)
+                    break
+                else throw error
+            }
             Timber.d(data)
-            responses.synchronizedAppend(this, d!!)
+
+            val parsedData = responseAdapter.fromJson(data)
+            responses.synchronizedAppend(this, parsedData ?: throw IllegalStateException("Could not parse the data: $data"))
         }
     }
 }
