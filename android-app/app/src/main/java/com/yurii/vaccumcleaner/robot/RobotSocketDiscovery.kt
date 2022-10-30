@@ -86,7 +86,7 @@ class RobotSocketDiscovery(context: Context) {
     }
 
     private fun getHostsPerSubnet(subnetMask: Int): Int =
-        when(Formatter.formatIpAddress(subnetMask)) {
+        when(val it = Formatter.formatIpAddress(subnetMask)) {
             "255.0.0.0" -> 16_277_214
             "255.128.0.0" -> 8_388_606
             "255.192.0.0" -> 4_194_302
@@ -110,6 +110,6 @@ class RobotSocketDiscovery(context: Context) {
             "255.255.255.240" -> 14
             "255.255.255.248" -> 6
             "255.255.255.252" -> 2
-            else -> throw IllegalStateException("Unhandled network mask!")
+            else -> throw IllegalStateException("Unhandled network mask! $it")
     }
 }
