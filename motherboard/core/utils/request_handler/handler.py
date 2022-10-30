@@ -131,7 +131,7 @@ class RequestHandlerService(object):
         Example:
             >>> class SomeClass(object):
             >>>     some_var = Field(name='someVar', type=str, is_required=True)
-            >>> data = {'someVar': 'some value'}
+            >> data = {'someVar': 'some value'}
             >> obj = RequestHandlerService._parse_fields(SomeClass, data)
             >> obj.some_var # some value
 
@@ -160,6 +160,7 @@ class RequestHandlerService(object):
         for handler in self._request_handlers:
             if handler.endpoint == request.endpoint:
                 return handler
+        return None
 
     def _send_successful_result(self, request: Request, response_data) -> None:
         response = Response(endpoint=request.endpoint,

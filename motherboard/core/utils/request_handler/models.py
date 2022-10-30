@@ -2,7 +2,7 @@ import abc
 from dataclasses import dataclass
 from enum import Enum
 from typing import Type, Dict, Optional, Any
-from utils.request_handler.exceptions import RequiredFieldIsNotFound, InvalidRequestData
+from utils.request_handler.exceptions import InvalidRequestData
 
 
 class AttributeHolder(object):
@@ -59,7 +59,7 @@ class Request(object):
 class Response(object):
     endpoint: str
     request_id: str
-    status: Status
+    status: str
     data: Optional[Dict] = None
     error_message: Optional[str] = None
 
