@@ -5,6 +5,7 @@ import android.view.View
 import android.viewbinding.library.fragment.viewBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentWifiSettingsBinding
@@ -25,9 +26,12 @@ class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {
 
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
 
-        viewModel.event.observeOnLifecycle(viewLifecycleOwner) {event ->
-            when(event) {
+        viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
+            when (event) {
                 is WifiSettingsViewModel.Event.ShowError -> showError(binding.root, getString(R.string.label_error_occurred), event.error)
+                is WifiSettingsViewModel.Event.NavigateToWifiSetupDoneScreen -> findNavController().navigate(
+                    WifiSettingsFragmentDirections.actionWifiSettingsFragmentToWifiSetupDone(event.deviceIpAddress)
+                )
             }
         }
     }
