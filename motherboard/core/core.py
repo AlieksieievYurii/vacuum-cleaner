@@ -76,13 +76,14 @@ class Core(object):
                 raise error
             return None
 
-        self._robot.core_is_initialized(is_successful=True)
-        self._robot.beep(3, 100)
-        self._bluetooth_service.start()
-        #
-        # self._wifi_endpoints_handler.start()
-        #
-        # self._initialization()
+        try:
+            self._initialization()
+        except Exception as error:
+            self._logger.critical(f'Initialization is failed. Reason: {error}')
+            if self._debug:
+                raise error
+            return None
+
         try:
             self._run_core_loop()
         except Exception as error:
@@ -93,6 +94,12 @@ class Core(object):
             self._logger.info('==== Core has been finished successfully ===')
 
     def _initialization(self) -> None:
+        self._robot.core_is_initialized(is_successful=True)
+        self._robot.beep(3, 100)
+
+        self._bluetooth_service.start()
+        self._wifi_service.start()
+
         self._init_pid_settings()
         self._algorithm_manager.set_algorithm(self._config.get_selected_cleaning_algorithm())
         self._set_core_data_time()
