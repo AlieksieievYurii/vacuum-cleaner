@@ -29,9 +29,12 @@
             android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:textAlignment="center"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/animationView"
-            app:layout_constraintStart_toStartOf="@+id/animationView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/animationView"
             tools:text="Loading..." />
 
@@ -48,17 +51,20 @@
 
             <Button
                 android:id="@+id/bind"
+                style="@style/ButtonDarkLight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="@{() -> viewModel.navigateToBindRobot()}"
-                android:text="Bind" />
+                android:text="@string/label_bind" />
 
             <Button
                 android:id="@+id/rescan"
+                style="@style/ButtonDarkLight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:onClick="@{() -> viewModel.rescan()}"
-                android:text="Rescan" />
+                android:text="@string/label_rescan" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

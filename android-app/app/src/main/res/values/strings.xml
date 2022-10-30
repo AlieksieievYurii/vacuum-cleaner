@@ -44,7 +44,7 @@
     <string name="label_charged">Charged</string>
     <string name="label_open">Open</string>
     <string name="label_error_occurred">Error occurred</string>
-    <string name="label_can_not_find_robot">Can\'t find the robot</string>
+    <string name="label_can_not_find_robot">Can\'t find the robot. If the robot is not connected to the network, click Bind and setup Wi-Fi</string>
     <string name="label_discovering">Discovering…</string>
     <string name="label_connected_with_ip">Connected. IP: %s</string>
     <string name="label_proportional_value">Proportional</string>
@@ -91,4 +91,6 @@
     <string name="label_wifi_is_setup">Wi-fi has been setup successfully</string>
     <string name="label_connect">Connect</string>
     <string name="label_ip_address">IP Address: %s</string>
+    <string name="label_bind">Bind</string>
+    <string name="label_error_occurred_with_message">"Error occurred: %s</string>
 </resources>
