@@ -131,15 +131,7 @@ class Core(object):
                 self._shut_down_core()
                 break
 
-            bl_button = self._robot.data.bluetooth_button
-
-            if bl_button is ButtonState.CLICK and not self._bluetooth_service.is_alive():
-                self._logger.info('Start Bluetooth service...')
-                self._bluetooth_service.start()
-
-            if bl_button is ButtonState.LONG_PRESS and not self._bluetooth_service.is_paring_process_enabled:
-                self._logger.info('Enable pairing...')
-                self._bluetooth_service.enable_pairing()
+            self._handle_bluetooth_events()
 
             wifi_service_event: Optional[int] = self._wifi_service.events.get()
             if wifi_service_event == WifiService.WIFI_SERVICE_FAILED_EVENT:
@@ -168,6 +160,31 @@ class Core(object):
         #     print('B CLICK')
         # elif but4 is ButtonState.LONG_PRESS:
         #     print('B LONG PRESS')
+
+    def _handle_bluetooth_events(self) -> None:
+        bl_button = self._robot.data.bluetooth_button
+        if bl_button is ButtonState.CLICK and not self._bluetooth_service.is_alive():
+            self._logger.info('Start Bluetooth service...')
+            self._bluetooth_service.start()
+
+        if bl_button is ButtonState.LONG_PRESS and not self._bluetooth_service.is_paring_process_enabled:
+            if not self._bluetooth_service.is_alive():
+                self._logger.info('Start Bluetooth service...')
+                self._bluetooth_service.start()
+            self._logger.info('Enable pairing...')
+            self._bluetooth_service.enable_pairing()
+
+        bluetooth_service_event: Optional[int] = self._bluetooth_service.events.get()
+        if bluetooth_service_event in (BluetoothService.START_SERVICE_EVENT, BluetoothService.DISCONNECTED_EVENT,
+                                       BluetoothService.FINISH_PAIRING_EVENT):
+            self._robot.set_bluetooth_led_state(green=False, state=LedState.ON)
+        elif bluetooth_service_event == BluetoothService.CONNECTED_EVENT:
+            self._robot.set_bluetooth_led_state(green=True, state=LedState.ON)
+        elif bluetooth_service_event == BluetoothService.START_PAIRING_EVENT:
+            self._robot.set_bluetooth_led_state(green=True, state=LedState.BLINKING)
+        elif bluetooth_service_event == BluetoothService.ERROR_OCCURRED_EVENT:
+            self._robot.set_bluetooth_led_state(green=False, state=LedState.BLINKING)
+            self._logger.error('Error occurred in Bluetooth Service')
 
     def _is_shutting_down_triggered(self) -> bool:
         return self._robot.data.is_shut_down_button_triggered or self._operation_shut_down
