@@ -33,6 +33,7 @@ void setup() {
   instruction_handler.add(0x14, on_rotate);
   instruction_handler.add(0x15, on_set_pid_settings);
   instruction_handler.add(0x16, on_set_booting_up_state);
+  instruction_handler.add(0x17, on_bluetooth_led_state);
   instruction_handler.add(0xff, on_set_timer_to_turn_off);
 
   
