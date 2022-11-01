@@ -14,6 +14,8 @@ import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
 import com.yurii.vaccumcleaner.utils.ui.showError
 
+import android.widget.ArrayAdapter
+
 
 class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {
     private val viewModel: WifiSettingsViewModel by viewModels { Injector.provideWifiSettingsViewModel(bluetoothProvider = true) }
@@ -22,6 +24,7 @@ class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
 
@@ -31,6 +34,11 @@ class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {
         }
 
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
+
+        viewModel.availableAccessPoints.observeOnLifecycle(viewLifecycleOwner) {
+            val adapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, it)
+            binding.ssid.setAdapter(adapter)
+        }
 
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {

@@ -23,6 +23,9 @@ class WifiSettingsViewModel(private val robot: Robot) : ViewModel() {
     private val _event = MutableSharedFlow<Event>()
     val event = _event.asSharedFlow()
 
+    private val _availableAccessPoints: MutableStateFlow<List<String>> = MutableStateFlow(emptyList())
+    val availableAccessPoints = _availableAccessPoints.asStateFlow()
+
     val ssidField = ObservableField(String.Empty)
     val passwordField = ObservableField(String.Empty)
 
@@ -44,6 +47,7 @@ class WifiSettingsViewModel(private val robot: Robot) : ViewModel() {
             val currentWpaConfig = robot.getCurrentWpaConfig()
             ssidField.set(currentWpaConfig.ssid)
             passwordField.set(currentWpaConfig.password)
+            _availableAccessPoints.value = robot.getNetworkScan().availableAccessPoints.map { it.ssid }
             _isLoading.value = false
         }
     }
