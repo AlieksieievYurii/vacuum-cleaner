@@ -1,5 +1,6 @@
 from datetime import datetime
 from time import sleep
+from typing import Optional
 
 from a1.models import ButtonState
 from a1.robot import Robot, LedState
@@ -97,6 +98,7 @@ class Core(object):
     def _initialization(self) -> None:
         self._robot.core_is_initialized(is_successful=True)
         self._robot.set_error_state(enable=False)
+        self._robot.set_error_led(LedState.OFF)
 
         self._robot.beep(1, 50)
 
@@ -138,6 +140,10 @@ class Core(object):
             if bl_button is ButtonState.LONG_PRESS and not self._bluetooth_service.is_paring_process_enabled:
                 self._logger.info('Enable pairing...')
                 self._bluetooth_service.enable_pairing()
+
+            wifi_service_event: Optional[int] = self._wifi_service.events.get()
+            if wifi_service_event == WifiService.WIFI_SERVICE_FAILED_EVENT:
+                self._robot.set_error_led(LedState.ON)
         #
         # but = self._robot.data.button_up
         # if but is ButtonState.CLICK:
