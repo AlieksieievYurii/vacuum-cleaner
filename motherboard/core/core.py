@@ -99,6 +99,7 @@ class Core(object):
             self._logger.info('==== Core has been finished successfully ===')
 
     def _initialization(self) -> None:
+        self._bluetooth_service.disable_bluetooth()
         self._robot.core_is_initialized(is_successful=True)
         self._robot.set_error_state(enable=False)
         self._robot.set_error_led(LedState.OFF)
