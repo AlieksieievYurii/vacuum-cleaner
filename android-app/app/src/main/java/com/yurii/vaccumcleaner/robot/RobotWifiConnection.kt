@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothDevice
 import com.yurii.vaccumcleaner.utils.requesthandler.RequestHandler
 import java.lang.IllegalArgumentException
 
-object RobotConnection {
+object RobotWifiConnection {
     private val wifiCommunicator = WifiCommunicator()
     private val requestHandler = RequestHandler(wifiCommunicator)
     private val robot = RobotWifiImplementation(requestHandler)

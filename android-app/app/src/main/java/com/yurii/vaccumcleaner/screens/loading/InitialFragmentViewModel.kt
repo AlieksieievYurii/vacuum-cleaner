@@ -11,7 +11,7 @@ import com.yurii.vaccumcleaner.MyApplication
 import com.yurii.vaccumcleaner.utils.Preferences
 import com.yurii.vaccumcleaner.robot.CleaningStatusEnum
 import com.yurii.vaccumcleaner.robot.Robot
-import com.yurii.vaccumcleaner.robot.RobotConnection
+import com.yurii.vaccumcleaner.robot.RobotWifiConnection
 import com.yurii.vaccumcleaner.robot.RobotSocketDiscovery
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,7 +84,7 @@ class InitialFragmentViewModel(
         if (savedIp != null) {
             if (robotSocketDiscovery.tryConnect(savedIp)) {
                 delay(1000)
-                RobotConnection.makeConnection(savedIp, MyApplication.ROBOT_SOCKET_PORT)
+                RobotWifiConnection.makeConnection(savedIp, MyApplication.ROBOT_SOCKET_PORT)
                 setConnectedStatus(savedIp)
             } else
                 startDiscovering()
@@ -101,7 +101,7 @@ class InitialFragmentViewModel(
                 _state.value = State.NotFound(wasIpSaved = false)
             else {
                 val robotIp = r.first()
-                RobotConnection.makeConnection(robotIp, 1489)
+                RobotWifiConnection.makeConnection(robotIp, 1489)
                 preferences.saveRobotIpAddress(robotIp)
                 setConnectedStatus(robotIp)
             }
@@ -109,7 +109,7 @@ class InitialFragmentViewModel(
     }
 
     private suspend fun setConnectedStatus(robotIp: String) {
-        val robot: Robot = RobotConnection.getRobotAPI()
+        val robot: Robot = RobotWifiConnection.getRobotAPI()
         val status = robot.getCleaningStatus().status
         _state.value = State.Connected(robotIp)
         delay(2000)
