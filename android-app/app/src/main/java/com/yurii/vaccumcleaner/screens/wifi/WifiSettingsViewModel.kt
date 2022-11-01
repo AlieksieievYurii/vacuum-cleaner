@@ -44,10 +44,10 @@ class WifiSettingsViewModel(private val robot: Robot) : ViewModel() {
     init {
         netWorkScope.launch {
             _isLoading.value = true
+            _availableAccessPoints.value = robot.getNetworkScan().availableAccessPoints.map { it.ssid }
             val currentWpaConfig = robot.getCurrentWpaConfig()
             ssidField.set(currentWpaConfig.ssid)
             passwordField.set(currentWpaConfig.password)
-            _availableAccessPoints.value = robot.getNetworkScan().availableAccessPoints.map { it.ssid }
             _isLoading.value = false
         }
     }

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from time import sleep
+from typing import List
 
 from utils.os import OperationSystem, OperationSystemException
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field
@@ -22,6 +23,17 @@ class NetworkInfo(object):
     ip_address: str
 
 
+@dataclass
+class AccessPoint(object):
+    ssid: str
+    address: str
+
+
+@dataclass
+class NetWorkScan(object):
+    available_access_points: List[AccessPoint]
+
+
 class SetWifiCredentialsRequestHandler(RequestHandler):
     endpoint = '/setup-wifi'
     request_model = SetWifiCredentialsRequestModel
@@ -39,6 +51,21 @@ class SetWifiCredentialsRequestHandler(RequestHandler):
             return NetworkInfo(ip)
         else:
             raise OperationSystemException('Can not get IP. The robot is not connected to a network')
+
+
+class GetAvailableAccessPointsRequestHandler(RequestHandler):
+    endpoint = '/get-available-access-points'
+    request_model = None
+    response_model = NetWorkScan
+
+    def __init__(self, os: OperationSystem):
+        self._os = os
+
+    def perform(self, request: Request, data: AttributeHolder):
+        aps = self._os.get_available_access_points()
+        return NetWorkScan(
+            available_access_points=list(map(lambda ap: AccessPoint(ssid=ap['ssid'], address=ap['address']), aps))
+        )
 
 
 class GetCurrentWifiCredentialsRequestHandler(RequestHandler):
