@@ -28,6 +28,14 @@ class Robot(ABC):
         pass
 
     @abc.abstractmethod
+    def set_wifi_led(self, state: LedState) -> None:
+        pass
+
+    @abc.abstractmethod
+    def set_error_led(self, state: LedState) -> None:
+        pass
+
+    @abc.abstractmethod
     def set_vacuum_motor(self, value: int) -> Job:
         pass
 
@@ -142,6 +150,12 @@ class RobotUART(Robot):
     def set_bluetooth_led_state(self, green: bool, state: LedState) -> None:
         self._socket.send_instruction(0x17, f'{state.value};{"G" if green else "R"}').expect().raise_if_failed()
 
+    def set_wifi_led(self, state: LedState) -> None:
+        self._socket.send_instruction(0x02, f'{state.value}').expect().raise_if_failed()
+
+    def set_error_led(self, state: LedState) -> None:
+        self._socket.send_instruction(0x03, f'{state.value}').expect().raise_if_failed()
+
     def set_vacuum_motor(self, value: int) -> Job:
         return self._socket.send_instruction(0x08, f'{value:x}')
 
@@ -240,6 +254,12 @@ class RobotMockUp(Robot):
 
     def set_bluetooth_led_state(self, green: bool, state: LedState) -> None:
         self._logger.debug(f'Send: Set Bluetooth led({"green" if green else "red"}) state -> state: {state}')
+
+    def set_wifi_led(self, state: LedState) -> None:
+        self._logger.debug(f'Send: Set Wifi Led state -> state: {state}')
+
+    def set_error_led(self, state: LedState) -> None:
+        self._logger.debug(f'Send: Set Error Led state -> state: {state}')
 
     def set_vacuum_motor(self, value: int) -> Job:
         self._logger.debug(f'Send: set_vacuum_motor. Value: {value}')
