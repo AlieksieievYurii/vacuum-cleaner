@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from time import sleep
 
-from utils.os import OperationSystem
+from utils.os import OperationSystem, OperationSystemException
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field
 
 
@@ -34,7 +34,11 @@ class SetWifiCredentialsRequestHandler(RequestHandler):
         self._os.set_wifi_credentials(data.ssid, data.password)
         self._os.apply_wifi_settings()
         sleep(10)
-        return NetworkInfo(self._os.get_ip_address())
+        ip = self._os.get_ip_address()
+        if ip:
+            return NetworkInfo(ip)
+        else:
+            raise OperationSystemException('Can not get IP. The robot is not connected to a network')
 
 
 class GetCurrentWifiCredentialsRequestHandler(RequestHandler):

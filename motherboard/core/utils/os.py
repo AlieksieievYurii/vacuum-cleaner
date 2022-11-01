@@ -3,6 +3,7 @@ from pathlib import Path
 from sys import platform
 import re
 import subprocess
+from typing import Optional
 
 
 class OperationSystemException(Exception):
@@ -90,9 +91,10 @@ class OperationSystem(ABC):
         """
 
     @abstractmethod
-    def get_ip_address(self) -> str:
+    def get_ip_address(self) -> Optional[str]:
         """
-        Abstract function that is supposed to return robot's IP address in the local network
+        Abstract function that is supposed to return robot's IP address in the local network if the robot is connected
+        to the network. Otherwise returns None
 
         :return: ip address
         """
@@ -138,7 +140,7 @@ class WindowsOperationSystem(OperationSystem):
             'key_mgmt': 'WPA-PSK'
         }
 
-    def get_ip_address(self) -> str:
+    def get_ip_address(self) -> Optional[str]:
         return "192.168.18.12"
 
     def apply_wifi_settings(self) -> None:
@@ -190,14 +192,14 @@ class LinuxOperationSystem(OperationSystem):
         except Exception as error:
             raise OperationSystemException(f'Can not load WPA config: {error}')
 
-    def get_ip_address(self) -> str:
+    def get_ip_address(self) -> Optional[str]:
         output = subprocess.run(['ifconfig', 'wlan0'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         response = output.stdout.decode("utf-8")
         match = re.search(r'inet\s(\d+.\d+.\d+.\d+)', response)
         if match:
             return match.group(1)
         else:
-            raise OperationSystemException('Can not get IP. The robot is not connected to a network')
+            return None
 
     def apply_wifi_settings(self) -> None:
         output = subprocess.run(['wpa_cli', '-i', 'wlan0', 'reconfigure'], stdout=subprocess.PIPE,
