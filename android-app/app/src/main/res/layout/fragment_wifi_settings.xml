@@ -88,7 +88,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:onClick="@{() -> viewModel.applyWifiSettings()}"
             android:text="@string/label_apply"
             app:layout_constraintEnd_toEndOf="@+id/password_layout"
             app:layout_constraintStart_toStartOf="@+id/password_layout"

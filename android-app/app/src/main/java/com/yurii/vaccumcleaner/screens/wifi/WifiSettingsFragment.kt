@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.utils.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentWifiSettingsBinding
+import com.yurii.vaccumcleaner.utils.hideKeyboard
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.LoadingDialog
 import com.yurii.vaccumcleaner.utils.ui.showError
@@ -23,6 +24,11 @@ class WifiSettingsFragment : Fragment(R.layout.fragment_wifi_settings) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        binding.apply.setOnClickListener {
+            viewModel.applyWifiSettings()
+            hideKeyboard()
+        }
 
         loadingDialog.observeState(viewModel.isLoading, viewLifecycleOwner)
 
