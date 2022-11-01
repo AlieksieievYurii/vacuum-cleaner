@@ -9,9 +9,9 @@ from utils.utils import millis
 
 
 class LedState(Enum):
-    OFF = 0
-    ON = 1
-    BLINKING = 2
+    OFF = 'L'
+    ON = 'H'
+    BLINKING = 'B'
 
 
 class Robot(ABC):
@@ -24,7 +24,7 @@ class Robot(ABC):
         pass
 
     @abc.abstractmethod
-    def set_bluetooth_led_state(self, state: LedState) -> None:
+    def set_bluetooth_led_state(self, green: bool, state: LedState) -> None:
         pass
 
     @abc.abstractmethod
@@ -139,9 +139,8 @@ class RobotUART(Robot):
         """
         self._socket.send_instruction(0x05, f'{count:x};{period:x}', timeout=None).expect().raise_if_failed()
 
-    def set_bluetooth_led_state(self, state: LedState) -> None:
-        pass
-        # self._socket.send_instruction(0x05, f'{count:x};{period:x}', timeout=None).expect().raise_if_failed()
+    def set_bluetooth_led_state(self, green: bool, state: LedState) -> None:
+        self._socket.send_instruction(0x17, f'{state.value};{"G" if green else "R"}').expect().raise_if_failed()
 
     def set_vacuum_motor(self, value: int) -> Job:
         return self._socket.send_instruction(0x08, f'{value:x}')
@@ -239,8 +238,8 @@ class RobotMockUp(Robot):
     def beep(self, count: int = 3, period: int = 100) -> None:
         self._logger.debug(f'Send: Beep -> Count: {count}; period: {period}')
 
-    def set_bluetooth_led_state(self, state: LedState) -> None:
-        self._logger.debug(f'Send: Set Bluetooth led state -> state: {state}')
+    def set_bluetooth_led_state(self, green: bool, state: LedState) -> None:
+        self._logger.debug(f'Send: Set Bluetooth led({"green" if green else "red"}) state -> state: {state}')
 
     def set_vacuum_motor(self, value: int) -> Job:
         self._logger.debug(f'Send: set_vacuum_motor. Value: {value}')
