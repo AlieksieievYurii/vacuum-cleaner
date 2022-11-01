@@ -8,7 +8,7 @@ settings_prod = {
     'LOGS_FOLDER': '/home/pi/logs',
     'CORE_CONFIG': '/home/pi/config.json',
     'A1_MOCKUP': False,
-    'CAPTURE_CORE_LOG': True,
+    'CAPTURE_CORE_LOG': False,
     'CAPTURE_WIFI_LOG': False,
     'CAPTURE_ROBOT_LOG': False,
     'CAPTURE_A1_LOG': False,

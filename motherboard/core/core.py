@@ -5,7 +5,8 @@ from typing import Optional
 from a1.models import ButtonState
 from a1.robot import Robot, LedState
 from algo.algo_manager import AlgorithmManager
-from blservice.endpoints.wifi import SetWifiCredentialsRequestHandler, GetCurrentWifiCredentialsRequestHandler
+from blservice.endpoints.wifi import SetWifiCredentialsRequestHandler, GetCurrentWifiCredentialsRequestHandler, \
+    GetAvailableAccessPointsRequestHandler
 from blservice.service import BluetoothService
 from utils.config import Configuration
 from utils.os import OperationSystem
@@ -48,6 +49,7 @@ class Core(object):
     def __register_endpoints(self):
         self._bluetooth_service.register_endpoint(SetWifiCredentialsRequestHandler(self._os))
         self._bluetooth_service.register_endpoint(GetCurrentWifiCredentialsRequestHandler(self._os))
+        self._bluetooth_service.register_endpoint(GetAvailableAccessPointsRequestHandler(self._os))
         self._wifi_service.register_endpoint(HelloWorldRequest())
         self._wifi_service.register_endpoint(GetRobotSysInfo())
         self._wifi_service.register_endpoint(Motor(self._robot))
