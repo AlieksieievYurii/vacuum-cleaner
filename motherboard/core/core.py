@@ -97,7 +97,6 @@ class Core(object):
         self._robot.core_is_initialized(is_successful=True)
         self._robot.beep(3, 100)
 
-        self._bluetooth_service.start()
         self._wifi_service.start()
 
         self._init_pid_settings()
@@ -126,9 +125,15 @@ class Core(object):
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
                 break
+
             bl_button = self._robot.data.bluetooth_button
 
-            if bl_button is ButtonState.LONG_PRESS:
+            if bl_button is ButtonState.CLICK and not self._bluetooth_service.is_alive():
+                self._logger.info('Start Bluetooth service...')
+                self._bluetooth_service.start()
+
+            if bl_button is ButtonState.LONG_PRESS and not self._bluetooth_service.is_paring_process_enabled:
+                self._logger.info('Enable pairing...')
                 self._bluetooth_service.enable_pairing()
         #
         # but = self._robot.data.button_up
