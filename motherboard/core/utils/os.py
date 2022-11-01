@@ -160,7 +160,7 @@ class WindowsOperationSystem(OperationSystem):
 class LinuxOperationSystem(OperationSystem):
 
     def __init__(self):
-        self._wpa_supplicant_conf_file = Path('/etc/wpa_supplicant/wpa_supplicant.conf1')
+        self._wpa_supplicant_conf_file = Path('/etc/wpa_supplicant/wpa_supplicant.conf')
 
     def set_wifi_credentials(self, ssid: str, password: str) -> None:
         content = WPA_SETTINS_CONTENT.format(ssid=ssid, psk=password)
@@ -190,8 +190,8 @@ class LinuxOperationSystem(OperationSystem):
             raise OperationSystemException('WPA file does not exist')
 
         wpa_conf_content = self._wpa_supplicant_conf_file.read_text()
-        ssid = re.search(r'ssid\s*=\s*\"(\S+)\"', wpa_conf_content)
-        psk = re.search(r'psk\s*=\s*\"(\S+)\"', wpa_conf_content)
+        ssid = re.search(r'ssid\s*=\s*\"(.+)\"', wpa_conf_content)
+        psk = re.search(r'psk\s*=\s*\"(.+)\"', wpa_conf_content)
         key_mgmt = re.search(r'key_mgmt\s*=\s*(\S+)', wpa_conf_content)
         try:
             return {
