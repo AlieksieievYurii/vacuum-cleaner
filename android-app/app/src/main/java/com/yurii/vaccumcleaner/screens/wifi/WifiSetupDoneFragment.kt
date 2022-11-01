@@ -18,7 +18,7 @@ class WifiSetupDoneFragment : Fragment(R.layout.fragment_wifi_setup_done) {
         super.onViewCreated(view, savedInstanceState)
         binding.ipAddress.text = getString(R.string.label_ip_address, args.ipAddress)
         binding.connect.setOnClickListener {
-            RobotBluetoothConnection.closeConnection()
+            RobotBluetoothConnection.closeConnectionIfOpened()
             findNavController().navigate(WifiSetupDoneFragmentDirections.actionWifiSetupDoneToInitialFragment())
         }
     }
