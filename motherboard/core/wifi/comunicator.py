@@ -7,6 +7,7 @@ from utils.communicator import Communicator, CommunicatorConnectionClosed
 class WifiCommunicator(Communicator):
     def __init__(self, port: int):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self._socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._socket.bind(('', port))
         self._connection = None
         self._reader = None
