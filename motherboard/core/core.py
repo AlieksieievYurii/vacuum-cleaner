@@ -10,6 +10,7 @@ from blservice.service import BluetoothService
 from utils.config import Configuration
 from utils.os import OperationSystem
 from utils.speetch.voice import Voice
+from utils.scheduler import Scheduler
 
 from utils.utils import get_typed_arg
 
@@ -40,6 +41,8 @@ class Core(object):
         self._voice: Voice = get_typed_arg('voice', Voice, kwargs)
         self._logger: Logger = get_typed_arg('logger', Logger, kwargs)
 
+        self.scheduler = Scheduler()
+        self.scheduler.register(interval=10000, fun=self._check_wifi_connection)
         self.__register_endpoints()
 
     def __register_endpoints(self):
@@ -136,30 +139,8 @@ class Core(object):
             wifi_service_event: Optional[int] = self._wifi_service.events.get()
             if wifi_service_event == WifiService.WIFI_SERVICE_FAILED_EVENT:
                 self._robot.set_error_led(LedState.ON)
-        #
-        # but = self._robot.data.button_up
-        # if but is ButtonState.CLICK:
-        #     print('UP CLICK')
-        # elif but is ButtonState.LONG_PRESS:
-        #     print('UP LONG PRESS')
-        #
-        # but2 = self._robot.data.button_down
-        # if but2 is ButtonState.CLICK:
-        #     print('DOWN CLICK')
-        # elif but2 is ButtonState.LONG_PRESS:
-        #     print('DOWN LONG PRESS')
-        #
-        # but3 = self._robot.data.button_ok
-        # if but3 is ButtonState.CLICK:
-        #     print('OK CLICK')
-        # elif but3 is ButtonState.LONG_PRESS:
-        #     print('OK LONG PRESS')
-        #
-        # but4 = self._robot.data.bluetooth_button
-        # if but4 is ButtonState.CLICK:
-        #     print('B CLICK')
-        # elif but4 is ButtonState.LONG_PRESS:
-        #     print('B LONG PRESS')
+
+            self.scheduler.tick()
 
     def _handle_bluetooth_events(self) -> None:
         bl_button = self._robot.data.bluetooth_button
@@ -185,6 +166,9 @@ class Core(object):
         elif bluetooth_service_event == BluetoothService.ERROR_OCCURRED_EVENT:
             self._robot.set_bluetooth_led_state(green=False, state=LedState.BLINKING)
             self._logger.error('Error occurred in Bluetooth Service')
+
+    def _check_wifi_connection(self) -> None:
+        self._robot.set_wifi_led(LedState.ON if self._os.get_ip_address() else LedState.OFF)
 
     def _is_shutting_down_triggered(self) -> bool:
         return self._robot.data.is_shut_down_button_triggered or self._operation_shut_down
