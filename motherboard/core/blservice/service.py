@@ -8,6 +8,8 @@ from utils.request_handler.models import RequestHandler
 
 
 class BluetoothService(Thread):
+    PAIRING_PROCESS_TIMEOUT = 3 * 60
+
     def __init__(self, bluetooth_communicator: BluetoothCommunicator, logger: Logger):
         self._bluetooth_communicator = bluetooth_communicator
         self._logger = logger
@@ -31,7 +33,7 @@ class BluetoothService(Thread):
             ctl.pairable_on()
             ctl.agent_no_input_no_output()
             ctl.default_agent()
-            ctl.accept_incoming_pairing_request()
+            ctl.accept_incoming_pairing_request(self.PAIRING_PROCESS_TIMEOUT)
             self._logger.info('Pairing process has finished')
             self._is_paring_process_enabled = False
 
