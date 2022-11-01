@@ -28,7 +28,9 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_initialFragment_to_binderFragment"
-            app:destination="@id/binderFragment" />
+            app:destination="@id/binderFragment"
+            app:popUpTo="@id/initialFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_initialFragment_to_cleaningExecutionFragment"
             app:destination="@id/cleaningExecutionFragment"
