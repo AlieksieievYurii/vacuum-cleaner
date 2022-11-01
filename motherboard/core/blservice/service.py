@@ -66,6 +66,11 @@ class BluetoothService(Thread):
             self._logger.error(f'Error occurred in Bluetooth Service: {error}')
             self.events.emit(self.ERROR_OCCURRED_EVENT)
 
+    def disable_bluetooth(self):
+        with Bluetoothctl(self._logger).open() as ctl:
+            ctl.agent_off()
+            ctl.power_off()
+
     def _handle_connections(self):
         while True:
             self._logger.info('Waiting for socket connection...')
