@@ -44,7 +44,7 @@
     <string name="label_charged">Charged</string>
     <string name="label_open">Open</string>
     <string name="label_error_occurred">Error occurred</string>
-    <string name="label_can_not_find_robot">Can\'t find the robot</string>
+    <string name="label_can_not_find_robot">Can\'t find the robot. If the robot is not connected to the network, click Bind and setup Wi-Fi</string>
     <string name="label_discovering">Discovering…</string>
     <string name="label_connected_with_ip">Connected. IP: %s</string>
     <string name="label_proportional_value">Proportional</string>
@@ -71,4 +71,26 @@
     <string name="label_reboot_confirmation_message">Do you want to reboot the robot?</string>
     <string name="label_start_time">Start time: %s</string>
     <string name="label_cleaning">Cleaning</string>
+    <string name="label_bluetooth_connection_info">You need to bound to the robot through Bluetooth connection in order to perform initial configuration. Please push the Bluetooth button on the robot to enable it and then click Find Robot</string>
+    <string name="label_find_robot">Find robot</string>
+    <string name="label_discovering_info">Scanning…\nFound %d Bluetooth devices</string>
+    <string name="label_turn_on_bluetooth">You need to turn on Bluetooth</string>
+    <string name="label_turn_on">Turn on</string>
+    <string name="label_location_permission_explained">You are required to allow knowing your location</string>
+    <string name="label_allow">label_allow</string>
+    <string name="label_robot_not_found">Robot is not found. Please make sure you turned on Bluetooth on the robot</string>
+    <string name="label_rescan">Rescan</string>
+    <string name="label_retry">Retry</string>
+    <string name="label_pairing_failed">Pairing has failed. Please make sure you have started pairing process (Long press Bluetooth button on the robot. The button must start blinking)</string>
+    <string name="label_robot_pairing_info">Robot is pairing. Please accept. Note: Pairing process time is 3 minutes</string>
+    <string name="label_pair">Pair</string>
+    <string name="label_pairing_required">Robot is found but is not paired. You need to pair. First of all enable pairing process by long click Bluetooth button on the robot. Note: pairing process lives max 3 minutes</string>
+    <string name="label_robot_found_and_paired">Robot is found and paired</string>
+    <string name="label_bluetooth_connection">Bluetooth connection</string>
+    <string name="label_wifi_setup">Wifi Setup</string>
+    <string name="label_wifi_is_setup">Wi-fi has been setup successfully</string>
+    <string name="label_connect">Connect</string>
+    <string name="label_ip_address">IP Address: %s</string>
+    <string name="label_bind">Bind</string>
+    <string name="label_error_occurred_with_message">"Error occurred: %s</string>
 </resources>

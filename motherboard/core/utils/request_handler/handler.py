@@ -7,8 +7,10 @@ from typing import Optional, List, Dict, Any
 
 from utils.communicator import Communicator, CommunicatorConnectionClosed
 from utils.logger import Logger
-from utils.request_handler.exceptions import ParsingRequestErrorException, RequiredFieldIsNotFound
+from utils.request_handler.exceptions import ParsingRequestErrorException, RequiredFieldIsNotFound, \
+    RequestHandlerException
 from utils.request_handler.models import Request, RequestHandler, Field, Response, Status, AttributeHolder, ListType
+from utils.utils import find
 
 
 class RequestHandlerService(object):
@@ -27,7 +29,9 @@ class RequestHandlerService(object):
         :param request_handler: instance of the class extending abstract RequestHandler class
         :return: None
         """
-        # TODO Handle the case when trying to register with already append endpoint
+
+        if find(lambda rh: rh.endpoint == request_handler.endpoint, self._request_handlers):
+            raise RequestHandlerException(f'The given endpoint already exists: {request_handler.endpoint}')
         self._request_handlers.append(request_handler)
 
     def start_handling(self) -> None:
@@ -60,6 +64,7 @@ class RequestHandlerService(object):
             try:
                 data = self._communicator.read()
             except CommunicatorConnectionClosed:
+                self._logger.info('Connection is closed')
                 self.is_connection_closed = True
             else:
                 self._logger.debug(f'Received data: {data}')
@@ -126,7 +131,7 @@ class RequestHandlerService(object):
         Example:
             >>> class SomeClass(object):
             >>>     some_var = Field(name='someVar', type=str, is_required=True)
-            >>> data = {'someVar': 'some value'}
+            >> data = {'someVar': 'some value'}
             >> obj = RequestHandlerService._parse_fields(SomeClass, data)
             >> obj.some_var # some value
 
@@ -155,6 +160,7 @@ class RequestHandlerService(object):
         for handler in self._request_handlers:
             if handler.endpoint == request.endpoint:
                 return handler
+        return None
 
     def _send_successful_result(self, request: Request, response_data) -> None:
         response = Response(endpoint=request.endpoint,

@@ -88,6 +88,7 @@ void loop(void) {
   }
 
   if (current_status == TURNED_OFF) {
+    is_error = false; // Reset Error if so
     SET_RELAY(LOW);
   }
   else if (current_status == TURNED_ON || current_status == BOOTING_UP) {
@@ -114,7 +115,7 @@ void on_receive_command(uint8_t command) {
         current_status = SHUTTING_DOWN;
       break;
     case SET_TURNED_OFF_STATE:
-      if (current_status == SHUTTING_DOWN)
+      if (current_status == SHUTTING_DOWN) 
         current_status = TURNED_OFF;
       break;
     case SET_ERROR_STATE:

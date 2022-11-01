@@ -151,3 +151,35 @@ enum class Power(val value: String) {
 data class PowerCommand(
     @Json(name = "command") val powerCommand: Power
 )
+
+@JsonClass(generateAdapter = true)
+data class WpaConfig(
+    val ssid: String,
+    val password: String
+)
+
+@JsonClass(generateAdapter = true)
+data class WifiSettingsRequestModel(
+    val ssid: String,
+    val password: String
+)
+
+@JsonClass(generateAdapter = true)
+data class NetworkInfo(
+    @Json(name = "ip_address") val ipAddress: String
+)
+
+@JsonClass(generateAdapter = true)
+data class MotorRequestModule(@Json(name = "motor_name") val motorName: String, val value: Int)
+
+@JsonClass(generateAdapter = true)
+data class MovementRequestModel(val direction: String, val speed: Int)
+
+@JsonClass(generateAdapter = true)
+data class StopMovementRequestModel(@Json(name = "with_break") val withBreak: Boolean)
+
+@JsonClass(generateAdapter = true)
+data class AccessPoint(val address: String, val ssid: String)
+
+@JsonClass(generateAdapter = true)
+data class NetworkScan(@Json(name = "available_access_points") val availableAccessPoints: List<AccessPoint>)

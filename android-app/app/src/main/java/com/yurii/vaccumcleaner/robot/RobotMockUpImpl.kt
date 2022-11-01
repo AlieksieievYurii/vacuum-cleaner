@@ -102,4 +102,18 @@ class RobotMockUpImpl : Robot {
     override suspend fun reboot() {
         Timber.i("Reboot")
     }
+
+    override suspend fun getCurrentWpaConfig(): WpaConfig {
+        Timber.i("getCurrentWpaConfig")
+        return WpaConfig("toya343245", "fewbf87gh2")
+    }
+
+    override suspend fun setWifiSettings(wifiSettings: WifiSettingsRequestModel): NetworkInfo {
+        Timber.i("setWifiSettings")
+        return NetworkInfo("192.168.18.14")
+    }
+
+    override suspend fun getNetworkScan(): NetworkScan {
+        return NetworkScan(listOf(AccessPoint("adef", "toya234234")))
+    }
 }

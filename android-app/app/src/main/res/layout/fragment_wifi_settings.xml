@@ -14,47 +14,31 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/title"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="32dp"
+            android:text="@string/label_wifi_setup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/loading"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:visibility="gone"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/loading" />
-
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:contentDescription="@string/content_description_icon"
-                android:src="@drawable/ic_error" />
-
-            <TextView
-                android:id="@+id/hint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                tools:text="Error" />
-        </LinearLayout>
-
+        <ImageView
+            android:id="@+id/wifi_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/ic_wifi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            tools:ignore="ContentDescription" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/ssid_layout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
@@ -62,16 +46,13 @@
             android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+            app:layout_constraintTop_toBottomOf="@+id/wifi_image">
 
-            <com.google.android.material.textfield.TextInputEditText
+            <AutoCompleteTextView
                 android:id="@+id/ssid"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:hint="@string/label_ssid"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
                 android:text="@={viewModel.ssidField}" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,10 +81,10 @@
 
         <Button
             android:id="@+id/apply"
+            style="@style/ButtonDarkLight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:onClick="@{() -> viewModel.applyWifiSettings()}"
             android:text="@string/label_apply"
             app:layout_constraintEnd_toEndOf="@+id/password_layout"
             app:layout_constraintStart_toStartOf="@+id/password_layout"

@@ -1,6 +1,6 @@
 import random
 import time
-from typing import Any
+from typing import Any, Optional, Iterable, Callable
 
 
 def random_true():
@@ -67,3 +67,18 @@ def boolean(value) -> bool:
             raise ValueError(f'Cannot convert string value "{value}" to Boolean')
     else:
         raise ValueError(f'Cannot "{value}" to Boolean')
+
+
+def find(fun: Callable, iterable: Iterable[Any]) -> Optional[Any]:
+    """
+    Finds the item in the given iterable object by given filter func.
+
+    :param fun: filter function
+    :param iterable: iterable object, e.g List
+    :return: Founded item from the given iterable object, otherwise None
+    """
+
+    for item in iterable:
+        if fun(item):
+            return item
+    return None

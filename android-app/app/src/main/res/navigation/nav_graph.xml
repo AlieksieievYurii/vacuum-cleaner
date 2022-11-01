@@ -6,42 +6,15 @@
     app:startDestination="@id/initialFragment">
 
     <fragment
-        android:id="@+id/bluetoothDevicesFragment"
-        android:name="com.yurii.vaccumcleaner.screens.devices.BluetoothDevicesFragment"
-        android:label="BluetoothDevicesFragment"
-        tools:layout="@layout/bluetooth_devices_fragment">
-        <action
-            android:id="@+id/action_bluetoothDevicesFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.yurii.vaccumcleaner.screens.settings.SettingsFragment"
-        android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings">
-        <action
-            android:id="@+id/action_settingsFragment_to_wifiSettingsFragment"
-            app:destination="@id/wifiSettingsFragment" />
-        <argument
-            android:name="bluetoothDevice"
-            app:argType="android.bluetooth.BluetoothDevice" />
-        <action
-            android:id="@+id/action_settingsFragment_to_debugFragment"
-            app:destination="@id/debugFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/wifiSettingsFragment"
         android:name="com.yurii.vaccumcleaner.screens.wifi.WifiSettingsFragment"
         android:label="WifiSettingsFragment"
-        tools:layout="@layout/fragment_wifi_settings" />
-    <fragment
-        android:id="@+id/debugFragment"
-        android:name="com.yurii.vaccumcleaner.screens.debug.DebugFragment"
-        android:label="DebugFragment"
-        tools:layout="@layout/fragment_debug">
-        <argument
-            android:name="bluetoothDevice"
-            app:argType="android.bluetooth.BluetoothDevice" />
+        tools:layout="@layout/fragment_wifi_settings" >
+        <action
+            android:id="@+id/action_wifiSettingsFragment_to_wifiSetupDone"
+            app:destination="@id/wifiSetupDone"
+            app:popUpTo="@id/wifiSettingsFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/initialFragment"
@@ -55,7 +28,9 @@
             app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_initialFragment_to_binderFragment"
-            app:destination="@id/binderFragment" />
+            app:destination="@id/binderFragment"
+            app:popUpTo="@id/initialFragment"
+            app:popUpToInclusive="true" />
         <action
             android:id="@+id/action_initialFragment_to_cleaningExecutionFragment"
             app:destination="@id/cleaningExecutionFragment"
@@ -93,7 +68,13 @@
         android:id="@+id/binderFragment"
         android:name="com.yurii.vaccumcleaner.screens.binder.BinderFragment"
         android:label="BinderFragment"
-        tools:layout="@layout/fragment_binder" />
+        tools:layout="@layout/fragment_binder" >
+        <action
+            android:id="@+id/action_binderFragment_to_wifiSettingsFragment"
+            app:destination="@id/wifiSettingsFragment"
+            app:popUpTo="@id/binderFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
     <fragment
         android:id="@+id/pidSettingsFragment"
         android:name="com.yurii.vaccumcleaner.screens.pid.PidSettingsFragment"
@@ -113,6 +94,20 @@
             android:id="@+id/action_cleaningExecutionFragment_to_panelFragment"
             app:destination="@id/panelFragment"
             app:popUpTo="@id/cleaningExecutionFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/wifiSetupDone"
+        android:name="com.yurii.vaccumcleaner.screens.wifi.WifiSetupDoneFragment"
+        android:label="WifiSetupDone"
+        tools:layout="@layout/fragment_wifi_setup_done">
+        <argument
+            android:name="ip_address"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_wifiSetupDone_to_initialFragment"
+            app:destination="@id/initialFragment"
+            app:popUpTo="@id/wifiSetupDone"
             app:popUpToInclusive="true" />
     </fragment>
 </navigation>

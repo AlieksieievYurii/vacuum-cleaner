@@ -3,7 +3,8 @@ package com.yurii.vaccumcleaner
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import com.yurii.vaccumcleaner.robot.RobotConnection
+import com.yurii.vaccumcleaner.robot.RobotBluetoothConnection
+import com.yurii.vaccumcleaner.robot.RobotWifiConnection
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private val viewModel: MainViewModel by viewModels { MainViewModel.Factory() }
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onDestroy() {
         super.onDestroy()
-        RobotConnection.closeConnectionIfOpen()
+        RobotWifiConnection.closeConnectionIfOpen()
+        RobotBluetoothConnection.closeConnectionIfOpened()
     }
 }

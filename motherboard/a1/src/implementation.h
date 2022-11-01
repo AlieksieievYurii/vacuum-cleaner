@@ -92,6 +92,20 @@ void on_led_err(uint16_t id, char* input) {
 void on_led_st(uint16_t id, char* input) {
   _handle_led(id, led_status, input);
 }
+//G/R;H/L/B
+void on_bluetooth_led_state(uint16_t id, char* input) {
+  btn_bluetooth_led_green.off();
+  btn_bluetooth_led_red.off();
+
+  switch(input[2]) {
+    case 'R': _handle_led(id, btn_bluetooth_led_red, input); break;
+    case 'G': _handle_led(id, btn_bluetooth_led_green, input); break;
+    default:
+      instruction_handler.on_failed(id, 0x2);
+      return;
+  }
+  instruction_handler.on_finished(id);
+}
 
 void on_beep(uint16_t id, char* input) {
   int8_t beep_count = fetch_unsigned_hex_number(input, 0);
@@ -435,6 +449,8 @@ void propagandate_tick_signal() {
   led_wifi.tick();
   led_error.tick();
   led_status.tick();
+  btn_bluetooth_led_red.tick();
+  btn_bluetooth_led_green.tick();
 
   btn_up.tick();
   btn_ok.tick();

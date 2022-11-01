@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.yurii.vaccumcleaner.Injector
+import com.yurii.vaccumcleaner.utils.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentControlBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle

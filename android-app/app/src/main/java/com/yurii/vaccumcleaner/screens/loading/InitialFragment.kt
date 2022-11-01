@@ -1,6 +1,5 @@
 package com.yurii.vaccumcleaner.screens.loading
 
-import android.animation.ValueAnimator
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -9,9 +8,10 @@ import android.viewbinding.library.fragment.viewBinding
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.yurii.vaccumcleaner.Injector
+import com.yurii.vaccumcleaner.utils.Injector
 import com.yurii.vaccumcleaner.databinding.FragmentInitialBinding
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
+import com.yurii.vaccumcleaner.utils.runAnimation
 
 
 class InitialFragment : Fragment(R.layout.fragment_initial) {
@@ -23,25 +23,37 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
         viewBinding.viewModel = viewModel
         observeDiscoveryState()
         observeEvents()
+
+        requireActivity().registerReceiver(viewModel.broadcastReceiver, InitialFragmentViewModel.REQUIRED_BROADCAST_FILTERS)
     }
 
     private fun observeDiscoveryState() {
         viewModel.state.observeOnLifecycle(viewLifecycleOwner) { state ->
             when (state) {
                 is InitialFragmentViewModel.State.NotFound -> {
-                    runAnimation(R.raw.failed)
+                    viewBinding.animationView.runAnimation(R.raw.failed)
                     viewBinding.status.setText(R.string.label_can_not_find_robot)
                     viewBinding.layoutRobotIsNotFound.isVisible = true
                 }
                 is InitialFragmentViewModel.State.Scanning -> {
                     viewBinding.status.setText(R.string.label_discovering)
-                    runAnimation(R.raw.scanning, infinitive = true)
+                    viewBinding.animationView.runAnimation(R.raw.scanning, infinitive = true)
                     viewBinding.layoutRobotIsNotFound.isVisible = false
                 }
                 is InitialFragmentViewModel.State.Connected -> {
                     viewBinding.status.text = getString(R.string.label_connected_with_ip, state.ip)
                     viewBinding.layoutRobotIsNotFound.isVisible = false
-                    runAnimation(R.raw.done)
+                    viewBinding.animationView.runAnimation(R.raw.done)
+                }
+                InitialFragmentViewModel.State.WifiDisabled -> {
+                    viewBinding.status.text = "Please enable Wi-Fi"
+                    viewBinding.animationView.runAnimation(R.raw.failed)
+                    viewBinding.layoutRobotIsNotFound.isVisible = false
+                }
+                is InitialFragmentViewModel.State.Error -> {
+                    viewBinding.animationView.runAnimation(R.raw.failed)
+                    viewBinding.status.text = getString(R.string.label_error_occurred_with_message, state.errorMessage)
+                    viewBinding.layoutRobotIsNotFound.isVisible = true
                 }
             }
         }
@@ -57,11 +69,8 @@ class InitialFragment : Fragment(R.layout.fragment_initial) {
         }
     }
 
-    private fun runAnimation(resource: Int, infinitive: Boolean = false) {
-        viewBinding.animationView.apply {
-            repeatCount = if (infinitive) ValueAnimator.INFINITE else 0
-            setAnimation(resource)
-            playAnimation()
-        }
+    override fun onStop() {
+        super.onStop()
+        requireActivity().unregisterReceiver(viewModel.broadcastReceiver)
     }
 }

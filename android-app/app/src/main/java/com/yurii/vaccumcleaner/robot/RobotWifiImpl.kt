@@ -1,17 +1,6 @@
 package com.yurii.vaccumcleaner.robot
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
 import com.yurii.vaccumcleaner.utils.requesthandler.RequestHandler
-
-@JsonClass(generateAdapter = true)
-data class MotorRequestModule(@Json(name = "motor_name") val motorName: String, val value: Int)
-
-@JsonClass(generateAdapter = true)
-data class MovementRequestModel(val direction: String, val speed: Int)
-
-@JsonClass(generateAdapter = true)
-data class StopMovementRequestModel(@Json(name = "with_break") val withBreak: Boolean)
 
 class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robot {
 
@@ -67,6 +56,18 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
 
     override suspend fun reboot() {
         requestHandler.send<Any>("/power", PowerCommand(Power.REBOOT), null)
+    }
+
+    override suspend fun getCurrentWpaConfig(): WpaConfig {
+        return requestHandler.send("/get-current-wifi-credentials", null, WpaConfig::class.java)!!
+    }
+
+    override suspend fun setWifiSettings(wifiSettings: WifiSettingsRequestModel): NetworkInfo {
+        return requestHandler.send("/setup-wifi", wifiSettings, NetworkInfo::class.java, timeout = 15000)!!
+    }
+
+    override suspend fun getNetworkScan(): NetworkScan {
+        return requestHandler.send("/get-available-access-points", null, NetworkScan::class.java)!!
     }
 
     override suspend fun setPidSettings(pidSettings: PidSettings) {
