@@ -3,7 +3,7 @@ from pathlib import Path
 from sys import platform
 import re
 import subprocess
-from typing import Optional
+from typing import Optional, List
 
 
 class OperationSystemException(Exception):
@@ -109,6 +109,10 @@ class OperationSystem(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_available_access_points(self) -> List[dict]:
+        pass
+
 
 class WindowsOperationSystem(OperationSystem):
     """
@@ -146,11 +150,17 @@ class WindowsOperationSystem(OperationSystem):
     def apply_wifi_settings(self) -> None:
         print('apply_wifi_settings')
 
+    def get_available_access_points(self) -> List[dict]:
+        return [
+            {'ssid': 'toya1', 'address': '3b:132:54:c5:f5'},
+            {'ssid': 'toya2', 'address': '4b:132:54:c5:f5'},
+        ]
+
 
 class LinuxOperationSystem(OperationSystem):
 
     def __init__(self):
-        self._wpa_supplicant_conf_file = Path('/etc/wpa_supplicant/wpa_supplicant.conf')
+        self._wpa_supplicant_conf_file = Path('/etc/wpa_supplicant/wpa_supplicant.conf1')
 
     def set_wifi_credentials(self, ssid: str, password: str) -> None:
         content = WPA_SETTINS_CONTENT.format(ssid=ssid, psk=password)
@@ -206,6 +216,22 @@ class LinuxOperationSystem(OperationSystem):
                                 stderr=subprocess.STDOUT)
         if output.stdout.decode("utf-8").strip() != 'OK':
             raise OperationSystemException(f'Applying Wi-fi settings has failed: {output.stdout}')
+
+    def get_available_access_points(self) -> List[dict]:
+        output = subprocess.run(['iwlist', 'wlan0', 'scan'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        re_ap_info_address = re.compile(r'Address:\s(.+)|ESSID:"(.+)"\n')
+        re_ap_info_ssid = re.compile(r'ESSID:"(.+)"\n')
+        aps = []
+        for str_ap in re.split(r'Cell\s\d+\s-\s', output.stdout.decode("utf-8")):
+            ap_info_address = re_ap_info_address.search(str_ap)
+            ap_info_ssid = re_ap_info_ssid.search(str_ap)
+            if ap_info_address and ap_info_ssid:
+                aps.append({
+                    'ssid': ap_info_ssid.group(1),
+                    'address': ap_info_address.group(1)
+                })
+
+        return aps
 
 
 def get_operation_system() -> OperationSystem:
