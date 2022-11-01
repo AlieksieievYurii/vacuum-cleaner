@@ -24,4 +24,5 @@ interface Robot {
     suspend fun reboot()
     suspend fun getCurrentWpaConfig(): WpaConfig
     suspend fun setWifiSettings(wifiSettings: WifiSettingsRequestModel): NetworkInfo
+    suspend fun getNetworkScan(): NetworkScan
 }

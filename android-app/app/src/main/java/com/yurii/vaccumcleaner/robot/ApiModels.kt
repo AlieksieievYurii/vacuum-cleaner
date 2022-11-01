@@ -177,3 +177,9 @@ data class MovementRequestModel(val direction: String, val speed: Int)
 
 @JsonClass(generateAdapter = true)
 data class StopMovementRequestModel(@Json(name = "with_break") val withBreak: Boolean)
+
+@JsonClass(generateAdapter = true)
+data class AccessPoint(val address: String, val ssid: String)
+
+@JsonClass(generateAdapter = true)
+data class NetworkScan(@Json(name = "available_access_points") val availableAccessPoints: List<AccessPoint>)

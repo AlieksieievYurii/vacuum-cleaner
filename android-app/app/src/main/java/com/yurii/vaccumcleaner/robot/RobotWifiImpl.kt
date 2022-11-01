@@ -66,6 +66,10 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
         return requestHandler.send("/setup-wifi", wifiSettings, NetworkInfo::class.java, timeout = 15000)!!
     }
 
+    override suspend fun getNetworkScan(): NetworkScan {
+        return requestHandler.send("/get-available-access-points", null, NetworkScan::class.java)!!
+    }
+
     override suspend fun setPidSettings(pidSettings: PidSettings) {
         requestHandler.send<Any>("/set-current-pid", pidSettings, null)
     }

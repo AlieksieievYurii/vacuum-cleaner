@@ -112,4 +112,8 @@ class RobotMockUpImpl : Robot {
         Timber.i("setWifiSettings")
         return NetworkInfo("192.168.18.14")
     }
+
+    override suspend fun getNetworkScan(): NetworkScan {
+        return NetworkScan(listOf(AccessPoint("adef", "toya234234")))
+    }
 }
