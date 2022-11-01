@@ -68,6 +68,7 @@ class A1Socket(object):
         self._reader_thread = ReaderThread(self._serial_con, serial_communicator)
 
     def open(self):
+        sleep(2)
         self._serial_con.open()
         sleep(2)
         self._serial_con.setDTR(False)

@@ -184,6 +184,7 @@ class Core(object):
         self._robot.set_shutting_down_led().expect()
         sleep(0.5)
         self._robot.set_timer_to_cut_off_power(15).expect()
+        sleep(1)
         self._logger.info('Close A1 Connection...')
         # TODO
         self._logger.info('Perform shutdown the system...')
