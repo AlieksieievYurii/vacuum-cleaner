@@ -2,7 +2,7 @@ from datetime import datetime
 from time import sleep
 
 from a1.models import ButtonState
-from a1.robot import Robot
+from a1.robot import Robot, LedState
 from algo.algo_manager import AlgorithmManager
 from blservice.endpoints.wifi import SetWifiCredentialsRequestHandler, GetCurrentWifiCredentialsRequestHandler
 from blservice.service import BluetoothService
@@ -88,6 +88,7 @@ class Core(object):
             self._run_core_loop()
         except Exception as error:
             self._logger.critical(f'Core loop is failed. Reason: {error}')
+            self._robot.set_error_state()
             if self._debug:
                 raise error
         else:
@@ -95,7 +96,9 @@ class Core(object):
 
     def _initialization(self) -> None:
         self._robot.core_is_initialized(is_successful=True)
-        self._robot.beep(3, 100)
+        self._robot.set_error_state(enable=False)
+
+        self._robot.beep(1, 50)
 
         self._wifi_service.start()
 

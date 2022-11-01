@@ -20,6 +20,10 @@ class Robot(ABC):
         pass
 
     @abc.abstractmethod
+    def set_error_state(self, enable: bool = True) -> None:
+        pass
+
+    @abc.abstractmethod
     def beep(self, count: int = 3, period: int = 100) -> None:
         pass
 
@@ -147,6 +151,9 @@ class RobotUART(Robot):
         """
         self._socket.send_instruction(0x05, f'{count:x};{period:x}', timeout=None).expect().raise_if_failed()
 
+    def set_error_state(self, enable: bool = True) -> None:
+        self._socket.send_instruction(0x11, f'{"T" if enable else "F"}').expect().raise_if_failed()
+
     def set_bluetooth_led_state(self, green: bool, state: LedState) -> None:
         self._socket.send_instruction(0x17, f'{state.value};{"G" if green else "R"}').expect().raise_if_failed()
 
@@ -260,6 +267,9 @@ class RobotMockUp(Robot):
 
     def set_error_led(self, state: LedState) -> None:
         self._logger.debug(f'Send: Set Error Led state -> state: {state}')
+
+    def set_error_state(self, enable: bool = True) -> None:
+        self._logger.debug(f'Send: Set Error State({"T" if enable else "F"})')
 
     def set_vacuum_motor(self, value: int) -> Job:
         self._logger.debug(f'Send: set_vacuum_motor. Value: {value}')
