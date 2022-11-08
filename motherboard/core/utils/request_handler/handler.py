@@ -8,7 +8,7 @@ from typing import Optional, List, Dict, Any
 from utils.communicator import Communicator, CommunicatorConnectionClosed
 from utils.logger import Logger
 from utils.request_handler.exceptions import ParsingRequestErrorException, RequiredFieldIsNotFound, \
-    RequestHandlerException
+    RequestHandlerException, InvalidRequestData
 from utils.request_handler.models import Request, RequestHandler, Field, Response, Status, AttributeHolder, ListType
 from utils.utils import find
 
@@ -108,21 +108,22 @@ class RequestHandlerService(object):
                     self._send_error(request, 'Wrong endpoint', True)
 
     def _perform_request(self, request: Request, request_handler: RequestHandler) -> None:
-        if request_handler.request_model:
-            attrs = self._parse_fields(request_handler.request_model, request.parameters)
-        else:
-            attrs = AttributeHolder()
-            # TODO make better
-            if request.parameters:
-                self._send_error(request, 'This endpoint does not require parameters')
-                return
         try:
-
-            response = request_handler.perform(request, attrs)
+            request_parameters = self._parse_request_parameters(request_handler.request_model, request.parameters)
+            response = request_handler.perform(request, request_parameters)
         except Exception as error:
             self._send_error(request, str(error))
         else:
             self._send_successful_result(request, response)
+
+    def _parse_request_parameters(self, request_model: Optional, parameters: Optional[Dict]):
+        if request_model:
+            return self._parse_fields(request_model, parameters)
+        else:
+            if parameters:
+                raise InvalidRequestData('This endpoint does not require parameters')
+            else:
+                return AttributeHolder()
 
     def _parse_fields(self, obj, data: Dict) -> AttributeHolder:
         """
