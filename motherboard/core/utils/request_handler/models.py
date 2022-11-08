@@ -52,7 +52,7 @@ class Request(object):
                        request_id=request['request_id'],
                        parameters=request.get('parameters'))
         except KeyError:
-            raise InvalidRequestData(data=request)
+            raise InvalidRequestData(f'{request}')
 
 
 @dataclass
