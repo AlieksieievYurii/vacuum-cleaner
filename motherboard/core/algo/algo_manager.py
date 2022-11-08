@@ -46,7 +46,7 @@ class AlgorithmManager(object):
         self._logger = logger
         self._state = ExecutionState()
 
-        self._algorithm_execution_info: Optional[AlgorithmManagerException] = None
+        self._algorithm_execution_info: Optional[AlgorithmExecutionInfo] = None
         self._algorithm: Optional[Algorithm] = None
         self._working_thread: Optional[Thread] = None
         self._configs_folder: Path = Path(__file__).parent / 'algorithms' / 'configs'
@@ -65,7 +65,7 @@ class AlgorithmManager(object):
                 f'Forbidden to set target algorithm during the execution. Current state: {self._state.state}')
 
         self._logger.info(f'Set Cleaning Algorithm: {name}')
-        algorithm = self._get_algorithm_class(name)
+        algorithm: Type[Algorithm] = self._get_algorithm_class(name)
         algorithm_arguments_holder = self._load_arguments(algorithm)
         self._algorithm = algorithm(algorithm_arguments_holder)
 
@@ -216,10 +216,9 @@ class AlgorithmManager(object):
         for algorithm in self.ALGORITHMS:
             if algorithm.get_name() == algorithm_name:
                 return algorithm
-        else:
-            raise AlgorithmManagerException(f'Can not find the given algorithm: {algorithm_name}')
+        raise AlgorithmManagerException(f'Can not find the given algorithm: {algorithm_name}')
 
-    def _load_arguments(self, algorithm: Algorithm) -> ArgumentsHolder:
+    def _load_arguments(self, algorithm: Type[Algorithm]) -> ArgumentsHolder:
         self._logger.info(f'Try to load "{algorithm.get_name()}" arguments from the config')
         try:
             args = self._load_arguments_from_file(algorithm)
@@ -309,15 +308,16 @@ class AlgorithmManager(object):
 
         raise AlgorithmManagerException(f'Unsupported type for the argument: {t}')
 
-    def _read_config_for(self, algorithm: Algorithm) -> dict:
+    def _read_config_for(self, algorithm: Type[Algorithm]) -> dict:
         config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         if not config_file.exists():
             raise LoadingAlgorithmArgumentsException(f'Config file for "{algorithm.get_name()}" does not exist!')
         return json.loads(config_file.read_bytes())
 
-    def _save_config_for(self, algorithm: Algorithm, parameters: dict) -> None:
+    def _save_config_for(self, algorithm: Type[Algorithm], parameters: dict) -> None:
         config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         config_file.write_text(json.dumps(parameters, indent=4))
 
     def _add_execution_to_history(self, record: AlgorithmExecutionInfo):
+        """TODO: Implement history mechanism"""
         pass
