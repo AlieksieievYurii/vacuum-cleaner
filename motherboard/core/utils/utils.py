@@ -39,7 +39,7 @@ def constrain_number(value: int, min_value: int, max_value: int) -> int:
     """
     Constrains given integer value with minimum value and maximum.
 
-    :param value: integer number to consrain
+    :param value: integer number to constrain
     :param min_value: minimum value including
     :param max_value: maximum value including
     :return: constrained integer value

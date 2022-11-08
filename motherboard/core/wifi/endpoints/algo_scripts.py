@@ -7,6 +7,10 @@ from utils.config import Configuration
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field, ListType
 
 
+class AlgoScriptEndpointException(Exception):
+    pass
+
+
 @dataclass
 class AlgorithmParameter(object):
     name: str
@@ -107,7 +111,7 @@ class ManageCleaningExecutionRequest(RequestHandler):
         }[data.command]
 
         if not command:
-            raise Exception(f'Wrong command: {data.command}')
+            raise AlgoScriptEndpointException(f'Wrong command: {data.command}')
         else:
             command()
 

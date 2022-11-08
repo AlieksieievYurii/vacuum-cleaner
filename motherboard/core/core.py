@@ -18,7 +18,6 @@ from utils.utils import get_typed_arg
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
 from wifi.endpoints.algo_scripts import GetAlgorithmsRequest, SetAlgorithmScriptRequest, \
     ManageCleaningExecutionRequest, GetCleaningStatusRequest
-from wifi.endpoints.hello_world import HelloWorldRequest
 from utils.logger import Logger
 from wifi.endpoints.motor import Motor
 from wifi.endpoints.movement import Movement, StopMovement
@@ -50,7 +49,6 @@ class Core(object):
         self._bluetooth_service.register_endpoint(SetWifiCredentialsRequestHandler(self._os))
         self._bluetooth_service.register_endpoint(GetCurrentWifiCredentialsRequestHandler(self._os))
         self._bluetooth_service.register_endpoint(GetAvailableAccessPointsRequestHandler(self._os))
-        self._wifi_service.register_endpoint(HelloWorldRequest())
         self._wifi_service.register_endpoint(GetRobotSysInfo())
         self._wifi_service.register_endpoint(Motor(self._robot))
         self._wifi_service.register_endpoint(Movement(self._robot))
