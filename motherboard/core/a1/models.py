@@ -124,8 +124,8 @@ class A1Data(object):
         self._bluetooth_button_click: ButtonState = ButtonState.NOTHING
         self.end_right_trig: bool = False
         self.end_left_trig: bool = False
-        self.end_dust_box_trig: bool = False
-        self.end_lid_trig: bool = False
+        self.dust_box_present: bool = False
+        self.lid_is_closed: bool = False
         self.rangefinder_left_value: int = 0
         self.rangefinder_center_value: int = 0
         self.rangefinder_right_value: int = 0
@@ -241,8 +241,8 @@ class A1Data(object):
     def _parse_and_set_ends_state(self, value: int) -> None:
         self.end_right_trig = bool(value & 0x1)
         self.end_left_trig = bool(value & 0x2)
-        self.end_lid_trig = bool(value & 0x4)
-        self.end_dust_box_trig = bool(value & 0x8)
+        self.lid_is_closed = bool(value & 0x4)
+        self.dust_box_present = bool(value & 0x8)
 
     def _parse_dis_values(self, value: int) -> None:
         self.rangefinder_left_value = value & 0xFF

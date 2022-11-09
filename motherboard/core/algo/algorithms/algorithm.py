@@ -2,9 +2,7 @@ import abc
 from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
-
-from a1.models import A1Data
+from typing import Any, Optional
 from a1.robot import Robot
 
 
@@ -12,15 +10,27 @@ class AlgorithmException(Exception):
     pass
 
 
+# Pause Reason Codes
+MANUAL_PAUSE_REASON: str = '_manual_pause_'
+LID_IS_OPENED_PAUSE_REASON: str = '_lid_is_opened_'
+DUST_BOX_OUT_PAUSE_REASON: str = '_dust_box_out_'
+# ===============================
+
+# Stop Reason Codes
+MANUAL_STOP_REASON: str = '_manual_stop_'
+ERROR_OCCURRED_STOP_REASON: str = '_error_occurred_stop_'
+
+
 class ExecutionState(object):
     class State(Enum):
-        NONE = "none"
+        IDLE = "idle"
         RUNNING = "running"
         PAUSED = "paused"
         STOPPED = "stopped"
 
-    def __init__(self, init_value=State.NONE):
+    def __init__(self, init_value=State.IDLE):
         self._state = init_value
+        self._pause_reason: Optional[str] = None
 
     @property
     def is_break_event(self) -> bool:
@@ -28,9 +38,18 @@ class ExecutionState(object):
 
     @property
     def is_working(self) -> bool:
-        return self._state is not self.State.NONE
+        return self._state is not self.State.IDLE
+
+    def set_pause_state(self, reason: str):
+        self._pause_reason = reason
+        self.set_state(self.State.PAUSED)
+
+    @property
+    def pause_reason(self) -> Optional[str]:
+        return self._pause_reason
 
     def set_state(self, state: State):
+        print(f'Set state: {state}. Current state: {self._state}')
         self._state = state
 
     def equals(self, state: State) -> bool:
@@ -108,8 +127,9 @@ class Algorithm(ABC):
         >>> class SomeAlgorithm(Algorithm):
         >>>     param_a = FieldParameter('paramA', str, default='hi')
         >>>     param_b = FieldParameter('paramB', int, default=123)
-        >>>     def loop(self, data: A1Data):
+        >>>     def loop(self, robot: Robot, state: ExecutionState):
         >>>         pass
+        >>>     ...
         >>> SomeAlgorithm.get_parameters()
         >>> {"param_a": FieldParameter('paramA', str, 'hi'), "param_b": FieldParameter('paramB', int, 123)}
 

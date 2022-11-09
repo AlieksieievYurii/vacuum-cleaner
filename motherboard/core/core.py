@@ -5,6 +5,7 @@ from typing import Optional
 from a1.models import ButtonState
 from a1.robot import Robot, LedState
 from algo.algo_manager import AlgorithmManager
+from algo.algorithms.algorithm import LID_IS_OPENED_PAUSE_REASON, DUST_BOX_OUT_PAUSE_REASON, ExecutionState
 from blservice.endpoints.wifi import SetWifiCredentialsRequestHandler, GetCurrentWifiCredentialsRequestHandler, \
     GetAvailableAccessPointsRequestHandler
 from blservice.service import BluetoothService
@@ -140,6 +141,12 @@ class Core(object):
             wifi_service_event: Optional[int] = self._wifi_service.events.get()
             if wifi_service_event == WifiService.WIFI_SERVICE_FAILED_EVENT:
                 self._robot.set_error_led(LedState.ON)
+
+            if self._algorithm_manager.current_state.equals(ExecutionState.State.RUNNING):
+                if not self._robot.data.lid_is_closed:
+                    self._algorithm_manager.pause(LID_IS_OPENED_PAUSE_REASON)
+                elif not self._robot.data.dust_box_present:
+                    self._algorithm_manager.pause(DUST_BOX_OUT_PAUSE_REASON)
 
             self.scheduler.tick()
 

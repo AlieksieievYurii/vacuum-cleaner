@@ -60,7 +60,7 @@ class AlgorithmManager(object):
         :return: None
         """
 
-        if not self._state.equals(ExecutionState.State.NONE):
+        if not self._state.equals(ExecutionState.State.IDLE):
             raise AlgorithmManagerException(
                 f'Forbidden to set target algorithm during the execution. Current state: {self._state.state}')
 
@@ -156,10 +156,10 @@ class AlgorithmManager(object):
         self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
         self._working_thread.start()
 
-    def pause(self):
+    def pause(self, reason: str):
         if not self._state.equals(ExecutionState.State.RUNNING):
             raise AlgorithmManagerException(f'Can not pause while the state is: {self._state.state}')
-        self._state.set_state(ExecutionState.State.PAUSED)
+        self._state.set_pause_state(reason)
 
     def resume(self):
         if not self._state.equals(ExecutionState.State.PAUSED):
@@ -181,7 +181,7 @@ class AlgorithmManager(object):
         :return: None
         """
 
-        if self._state.equals(ExecutionState.State.NONE) or self._state.equals(ExecutionState.State.STOPPED):
+        if self._state.equals(ExecutionState.State.IDLE) or self._state.equals(ExecutionState.State.STOPPED):
             raise AlgorithmManagerException(f'You can not stop execution while state: {self._state.state}')
 
         self._state.set_state(ExecutionState.State.STOPPED)
@@ -190,7 +190,7 @@ class AlgorithmManager(object):
         self._algorithm_execution_info.finish_time = datetime.now()
         self._add_execution_to_history(self._algorithm_execution_info)
         self._algorithm_execution_info = None
-        self._state.set_state(ExecutionState.State.NONE)
+        self._state.set_state(ExecutionState.State.IDLE)
 
     def _algorithm_loop(self) -> None:
         self._algorithm.on_prepare(self._robot)

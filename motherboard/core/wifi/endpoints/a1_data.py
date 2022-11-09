@@ -32,8 +32,8 @@ class GetA1DataRequestHandler(RequestHandler):
         return A1DataResponseModel(
             el=self._robot.data.end_left_trig,
             er=self._robot.data.end_right_trig,
-            eb=self._robot.data.end_dust_box_trig,
-            ec=self._robot.data.end_lid_trig,
+            eb=self._robot.data.dust_box_present,
+            ec=self._robot.data.lid_is_closed,
             lrs=self._robot.data.rangefinder_left_value,
             crs=self._robot.data.rangefinder_center_value,
             rrs=self._robot.data.rangefinder_right_value,
