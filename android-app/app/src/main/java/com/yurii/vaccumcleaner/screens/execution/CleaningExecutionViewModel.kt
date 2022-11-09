@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.yurii.vaccumcleaner.robot.CleaningExecutionInfo
 import com.yurii.vaccumcleaner.robot.CleaningStatusEnum
+import com.yurii.vaccumcleaner.robot.PauseStopReason
 import com.yurii.vaccumcleaner.robot.Robot
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,6 +26,9 @@ class CleaningExecutionViewModel(private val robot: Robot) : ViewModel() {
     private val _cleaningExecutionInfo: MutableStateFlow<CleaningExecutionInfo?> = MutableStateFlow(null)
     val cleaningExecutionInfo = _cleaningExecutionInfo.asStateFlow()
 
+    private val _pauseReason: MutableStateFlow<PauseStopReason?> = MutableStateFlow(null)
+    val pauseReason = _pauseReason.asStateFlow()
+
     private val _event: MutableSharedFlow<Event> = MutableSharedFlow()
     val event = _event.asSharedFlow()
 
@@ -41,6 +45,7 @@ class CleaningExecutionViewModel(private val robot: Robot) : ViewModel() {
         netWorkScope.launch {
             val cleaningStatus = robot.getCleaningStatus()
             _cleaningExecutionInfo.value = cleaningStatus.requireCleaningInfo()
+            _pauseReason.value = cleaningStatus.reason
             _isPaused.value = cleaningStatus.status == CleaningStatusEnum.PAUSED
         }
     }

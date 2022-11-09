@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.yurii.vaccumcleaner.utils.Injector
 import com.yurii.vaccumcleaner.R
 import com.yurii.vaccumcleaner.databinding.FragmentCleaningExecutionBinding
+import com.yurii.vaccumcleaner.robot.PauseStopReason
 import com.yurii.vaccumcleaner.utils.observeOnLifecycle
 import com.yurii.vaccumcleaner.utils.ui.showError
 
@@ -21,6 +22,24 @@ class CleaningExecutionFragment : Fragment(R.layout.fragment_cleaning_execution)
 
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
+
+        viewModel.pauseReason.observeOnLifecycle(viewLifecycleOwner) { pauseReason ->
+            binding.pauseReason.apply {
+                when (pauseReason) {
+                    PauseStopReason.LID_IS_OPENED -> {
+                        visibility = View.VISIBLE
+                        text = getString(R.string.label_lid_opened)
+                    }
+                    PauseStopReason.DUST_BOX_OUT -> {
+                        visibility = View.VISIBLE
+                        text = getString(R.string.label_box_out)
+                    }
+                    else -> {
+                        visibility = View.INVISIBLE
+                    }
+                }
+            }
+        }
 
         viewModel.event.observeOnLifecycle(viewLifecycleOwner) { event ->
             when (event) {
