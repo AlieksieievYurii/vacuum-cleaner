@@ -15,14 +15,7 @@ class Simple(Algorithm):
     reverse_dis_speed = FieldParameter('reverse_distance_speed', range(0, 2000), default=1000)
     reverse_with_break = FieldParameter('reverse_with_break', bool, default=False)
 
-    # test = FieldParameter('test', ['1', '2', '3'], default='2')
-    # test2 = FieldParameter('test2', int, default=1)
-    # test233 = FieldParameter('test22', float, default=1.0)
-    # test3 = FieldParameter('test3', bool, default=False)
-    # test31 = FieldParameter('test31', bool, default=False)
-    # test32 = FieldParameter('test32', bool, default=True)
-    # test33 = FieldParameter('test33', bool, default=True)
-    # test4 = FieldParameter('test4', str, default='dupa')
+    vacuum_motor_value = FieldParameter('vacuum_motor', range(0, 100), default=50)
 
     def __init__(self, arguments: ArgumentsHolder):
         super().__init__(arguments)
@@ -62,18 +55,30 @@ class Simple(Algorithm):
             self._is_lower_speed = False
 
     def on_prepare(self, robot: Robot):
-        robot.set_left_brush_motor(10)
+        robot.set_main_brush_motor(50)
+        robot.set_left_brush_motor(70)
+        robot.set_right_brush_motor(70)
+        robot.set_vacuum_motor(int(self._args.vacuum_motor_value))
 
     def on_pause(self, robot: Robot):
-        robot.stop_movement(True)
-        robot.set_left_brush_motor(2)
+        robot.set_main_brush_motor(30)
+        robot.stop_movement(with_break=True)
+        robot.set_left_brush_motor(10)
+        robot.set_right_brush_motor(10)
+        robot.set_vacuum_motor(0)
 
     def on_resume(self, robot: Robot):
-        robot.set_left_brush_motor(10)
+        robot.set_left_brush_motor(70)
+        robot.set_right_brush_motor(70)
+        robot.set_main_brush_motor(50)
+        robot.set_vacuum_motor(int(self._args.vacuum_motor_value))
 
     def on_finish(self, robot: Robot):
-        robot.stop_movement(True)
+        robot.stop_movement(with_break=True)
         robot.set_left_brush_motor(0)
+        robot.set_right_brush_motor(0)
+        robot.set_main_brush_motor(0)
+        robot.set_vacuum_motor(0)
 
     def _move_backward(self, robot: Robot) -> None:
         robot.move_backward(self._args.reverse_dis, self._args.reverse_dis_speed,
