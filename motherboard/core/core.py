@@ -130,7 +130,7 @@ class Core(object):
             self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
-        # self._voice.say_introduction()
+        self._voice.say_introduction()
         while True:
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
@@ -141,12 +141,15 @@ class Core(object):
             wifi_service_event: Optional[int] = self._wifi_service.events.get()
             if wifi_service_event == WifiService.WIFI_SERVICE_FAILED_EVENT:
                 self._robot.set_error_led(LedState.ON)
+                self._voice.say_something_is_wrong()
 
             if self._algorithm_manager.current_state.equals(ExecutionState.State.RUNNING):
                 if not self._robot.data.lid_is_closed:
                     self._algorithm_manager.pause(LID_IS_OPENED_PAUSE_REASON)
+                    self._voice.say_lid_is_opened()
                 elif not self._robot.data.dust_box_present:
                     self._algorithm_manager.pause(DUST_BOX_OUT_PAUSE_REASON)
+                    self._voice.say_dust_box_is_out()
 
             self.scheduler.tick()
 
@@ -174,6 +177,7 @@ class Core(object):
         elif bluetooth_service_event == BluetoothService.ERROR_OCCURRED_EVENT:
             self._robot.set_bluetooth_led_state(green=False, state=LedState.BLINKING)
             self._logger.error('Error occurred in Bluetooth Service')
+            self._voice.say_something_is_wrong()
 
     def _check_wifi_connection(self) -> None:
         self._robot.set_wifi_led(LedState.ON if self._os.get_ip_address() else LedState.OFF)
@@ -188,6 +192,7 @@ class Core(object):
         self._robot.set_main_brush_motor(0)
         self._robot.set_left_brush_motor(0)
         self._robot.set_right_brush_motor(0)
+        self._voice.say_goodbye()
         self._logger.info('Stop Wifi Service...')
         # self._wifi_endpoints_handler.stop() TODO
         self._logger.info('Stop Bluetooth Service...')

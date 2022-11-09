@@ -10,6 +10,7 @@ from algo.algorithms.smart import Smart
 from algo.algorithms.algorithm import Algorithm, ArgumentsHolder, ExecutionState
 from algo.algorithms.simple import Simple
 from utils.logger import Logger
+from utils.speetch.voice import Voice
 
 
 class AlgorithmManagerException(Exception):
@@ -41,9 +42,10 @@ class AlgorithmManager(object):
         Smart
     ]
 
-    def __init__(self, robot: Robot, logger: Logger):
+    def __init__(self, robot: Robot, voice: Voice, logger: Logger):
         self._robot = robot
         self._logger = logger
+        self._voice = voice
         self._state = ExecutionState()
 
         self._algorithm_execution_info: Optional[AlgorithmExecutionInfo] = None
@@ -154,6 +156,7 @@ class AlgorithmManager(object):
         self._state.set_state(ExecutionState.State.RUNNING)
         self._algorithm_execution_info = AlgorithmExecutionInfo.create(self.get_current_algorithm_name())
         self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
+        self._voice.say_start_cleaning()
         self._working_thread.start()
 
     def pause(self, reason: str):
@@ -191,6 +194,7 @@ class AlgorithmManager(object):
         self._add_execution_to_history(self._algorithm_execution_info)
         self._algorithm_execution_info = None
         self._state.set_state(ExecutionState.State.IDLE)
+        self._voice.say_cleaning_is_finished()
 
     def _algorithm_loop(self) -> None:
         self._algorithm.on_prepare(self._robot)
