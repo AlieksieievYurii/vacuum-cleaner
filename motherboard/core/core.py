@@ -183,6 +183,11 @@ class Core(object):
 
     def _shut_down_core(self) -> None:
         self._logger.info('Preparing to shutdown')
+        self._logger.info('Disable all motors...')
+        self._robot.set_vacuum_motor(0)
+        self._robot.set_main_brush_motor(0)
+        self._robot.set_left_brush_motor(0)
+        self._robot.set_right_brush_motor(0)
         self._logger.info('Stop Wifi Service...')
         # self._wifi_endpoints_handler.stop() TODO
         self._logger.info('Stop Bluetooth Service...')
