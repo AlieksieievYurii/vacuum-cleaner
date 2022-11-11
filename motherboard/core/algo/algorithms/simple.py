@@ -55,30 +55,30 @@ class Simple(Algorithm):
             self._is_lower_speed = False
 
     def on_prepare(self, robot: Robot):
-        robot.set_main_brush_motor(50)
-        robot.set_left_brush_motor(70)
-        robot.set_right_brush_motor(70)
-        robot.set_vacuum_motor(int(self._args.vacuum_motor_value))
+        robot.set_main_brush_motor(50).expect()
+        robot.set_left_brush_motor(70).expect()
+        robot.set_right_brush_motor(70).expect()
+        robot.set_vacuum_motor(int(self._args.vacuum_motor_value)).expect()
 
     def on_pause(self, robot: Robot):
-        robot.set_main_brush_motor(30)
+        robot.set_vacuum_motor(0).expect()
+        robot.set_main_brush_motor(30).expect()
         robot.stop_movement(with_break=True)
-        robot.set_left_brush_motor(10)
-        robot.set_right_brush_motor(10)
-        robot.set_vacuum_motor(0)
+        robot.set_left_brush_motor(10).expect()
+        robot.set_right_brush_motor(10).expect()
 
     def on_resume(self, robot: Robot):
-        robot.set_left_brush_motor(70)
-        robot.set_right_brush_motor(70)
-        robot.set_main_brush_motor(50)
+        robot.set_left_brush_motor(70).expect()
+        robot.set_right_brush_motor(70).expect()
+        robot.set_main_brush_motor(50).expect()
         robot.set_vacuum_motor(int(self._args.vacuum_motor_value))
 
     def on_finish(self, robot: Robot):
-        robot.stop_movement(with_break=True)
-        robot.set_left_brush_motor(0)
-        robot.set_right_brush_motor(0)
-        robot.set_main_brush_motor(0)
-        robot.set_vacuum_motor(0)
+        robot.stop_movement(with_break=True).expect()
+        robot.set_vacuum_motor(0).expect()
+        robot.set_left_brush_motor(0).expect()
+        robot.set_right_brush_motor(0).expect()
+        robot.set_main_brush_motor(0).expect()
 
     def _move_backward(self, robot: Robot) -> None:
         robot.move_backward(self._args.reverse_dis, self._args.reverse_dis_speed,

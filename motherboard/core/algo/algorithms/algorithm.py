@@ -49,7 +49,6 @@ class ExecutionState(object):
         return self._pause_reason
 
     def set_state(self, state: State):
-        print(f'Set state: {state}. Current state: {self._state}')
         self._state = state
 
     def equals(self, state: State) -> bool:

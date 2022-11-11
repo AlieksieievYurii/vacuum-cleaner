@@ -164,16 +164,16 @@ class RobotUART(Robot):
         self._socket.send_instruction(0x03, f'{state.value}').expect().raise_if_failed()
 
     def set_vacuum_motor(self, value: int) -> Job:
-        return self._socket.send_instruction(0x08, f'{value:x}')
+        return self._socket.send_instruction(0x08, f'{value:x}', timeout=5000)
 
     def set_left_brush_motor(self, value: int) -> Job:
-        return self._socket.send_instruction(0x09, f'{value:x}')
+        return self._socket.send_instruction(0x09, f'{value:x}', timeout=5000)
 
     def set_right_brush_motor(self, value: int) -> Job:
-        return self._socket.send_instruction(0x0A, f'{value:x}')
+        return self._socket.send_instruction(0x0A, f'{value:x}', timeout=5000)
 
     def set_main_brush_motor(self, value: int) -> Job:
-        return self._socket.send_instruction(0x12, f'{value:x}')
+        return self._socket.send_instruction(0x12, f'{value:x}', timeout=5000)
 
     def walk_forward(self, speed: int) -> Job:
         return self._walk(forward=True, speed=speed)
