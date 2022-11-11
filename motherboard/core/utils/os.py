@@ -161,6 +161,7 @@ class LinuxOperationSystem(OperationSystem):
 
     def __init__(self):
         self._wpa_supplicant_conf_file = Path('/etc/wpa_supplicant/wpa_supplicant.conf')
+        self._playing_sound_process: Optional[subprocess.Popen] = None
 
     def set_wifi_credentials(self, ssid: str, password: str) -> None:
         content = WPA_SETTINGS_CONTENT.format(ssid=ssid, psk=password)
@@ -170,7 +171,11 @@ class LinuxOperationSystem(OperationSystem):
         subprocess.run(['reboot'])
 
     def play_sound(self, file: Path) -> None:
-        subprocess.run(['omxplayer', file.as_posix()], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if self._playing_sound_process and self._playing_sound_process.returncode is None:
+            self._playing_sound_process.terminate()
+
+        self._playing_sound_process = subprocess.Popen(['omxplayer', file.as_posix()], stdout=subprocess.PIPE,
+                                                       stderr=subprocess.DEVNULL)
 
     def shutdown(self) -> None:
         subprocess.run(['shutdown', '-r', 'now'], check=True)
