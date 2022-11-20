@@ -188,21 +188,15 @@ class Core(object):
     def _shut_down_core(self) -> None:
         self._logger.info('Preparing to shutdown')
         self._logger.info('Disable all motors...')
-        self._robot.set_vacuum_motor(0)
-        self._robot.set_main_brush_motor(0)
-        self._robot.set_left_brush_motor(0)
-        self._robot.set_right_brush_motor(0)
+        self._robot.set_vacuum_motor(0).expect()
+        self._robot.set_main_brush_motor(0).expect()
+        self._robot.set_left_brush_motor(0).expect()
+        self._robot.set_right_brush_motor(0).expect()
         self._voice.say_goodbye()
-        self._logger.info('Stop Wifi Service...')
-        # self._wifi_endpoints_handler.stop() TODO
-        self._logger.info('Stop Bluetooth Service...')
-        # self._bluetooth_endpoints_handler.stop() TODO
         self._logger.info('Send signal to turn off the robot in 10 seconds to A1...')
         self._robot.set_shutting_down_led().expect()
-        sleep(0.5)
+        sleep(5)
         self._robot.set_timer_to_cut_off_power(15).expect()
         sleep(1)
-        self._logger.info('Close A1 Connection...')
-        # TODO
         self._logger.info('Perform shutdown the system...')
         self._os.shutdown()
