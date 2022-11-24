@@ -69,7 +69,7 @@ class AlgorithmManager(object):
         self._logger.info(f'Set Cleaning Algorithm: {name}')
         algorithm: Type[Algorithm] = self._get_algorithm_class(name)
         algorithm_arguments_holder = self._load_arguments(algorithm)
-        self._algorithm = algorithm(algorithm_arguments_holder)
+        self._algorithm = algorithm(algorithm_arguments_holder, self._logger)
 
     def save_algorithm_arguments(self, algorithm_name: str, arguments: dict) -> None:
         """
@@ -213,7 +213,8 @@ class AlgorithmManager(object):
         while True:
             if self._state.equals(ExecutionState.State.RUNNING):
                 self._algorithm.on_resume(self._robot)
-            if self._state.equals(ExecutionState.State.STOPPED) or self._state.equals(ExecutionState.State.RUNNING):
+                break
+            elif self._state.equals(ExecutionState.State.STOPPED):
                 break
 
     def _get_algorithm_class(self, algorithm_name: str) -> Type[Algorithm]:

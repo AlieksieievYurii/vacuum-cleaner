@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Optional
 from a1.robot import Robot
+from utils.logger import Logger
 
 
 class AlgorithmException(Exception):
@@ -81,8 +82,9 @@ class Algorithm(ABC):
     cleaning/movement logic fo the robot
     """
 
-    def __init__(self, arguments: ArgumentsHolder):
+    def __init__(self, arguments: ArgumentsHolder, logger: Logger):
         self._args = arguments
+        self._logger = logger
 
     @abc.abstractmethod
     def on_prepare(self, robot: Robot):
@@ -110,6 +112,9 @@ class Algorithm(ABC):
         if not name:
             raise AlgorithmException('You must define NAME class variable')
         return name
+
+    def print_info(self, message: str) -> None:
+        self._logger.info(f'Algorithm<{self.get_name()}>: {message}')
 
     @classmethod
     def get_description(cls) -> str:

@@ -150,6 +150,12 @@ class Core(object):
                 elif not self._robot.data.dust_box_present:
                     self._algorithm_manager.pause(DUST_BOX_OUT_PAUSE_REASON)
                     self._voice.say_dust_box_is_out()
+            elif self._algorithm_manager.current_state.equals(ExecutionState.State.PAUSED):
+                if self._algorithm_manager.current_state.pause_reason == LID_IS_OPENED_PAUSE_REASON and \
+                        self._robot.data.lid_is_closed or \
+                        self._algorithm_manager.current_state.pause_reason == DUST_BOX_OUT_PAUSE_REASON and \
+                    self._robot.data.dust_box_present:
+                    self._algorithm_manager.resume()
 
             self.scheduler.tick()
 

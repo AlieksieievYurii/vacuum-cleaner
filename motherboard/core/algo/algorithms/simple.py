@@ -4,6 +4,7 @@ from typing import Optional
 from a1.models import Job
 from a1.robot import Robot
 from algo.algorithms.algorithm import Algorithm, FieldParameter, ArgumentsHolder, ExecutionState
+from utils.logger import Logger
 
 from utils.utils import random_true
 
@@ -13,6 +14,7 @@ class Simple(Algorithm):
     DESCRIPTION: str = 'Just simple algorithm of cleaning'
 
     speed = FieldParameter('speed', range(0, 2000), default=1000)
+    enable_vacuum_motor = FieldParameter('enable_motor', bool, default=True)
     reverse_dis = FieldParameter('reverse_distance', range(0, 1000), default=20)
     reverse_dis_speed = FieldParameter('reverse_distance_speed', range(0, 2000), default=1000)
     reverse_with_break = FieldParameter('reverse_with_break', bool, default=False)
@@ -20,13 +22,15 @@ class Simple(Algorithm):
 
     vacuum_motor_value = FieldParameter('vacuum_motor', range(0, 100), default=50)
 
-    def __init__(self, arguments: ArgumentsHolder):
-        super().__init__(arguments)
+    def __init__(self, arguments: ArgumentsHolder, logger: Logger):
+        super().__init__(arguments, logger)
 
         self._is_lower_speed = False
 
     def loop(self, robot: Robot, state: ExecutionState):
+        self.print_info('Start the algorithm loop')
         while not state.is_break_event:
+            self.print_info('Walk forward')
             robot.walk_forward(self._args.speed).expect()
             while not state.is_break_event:
                 self._correct_speed(robot)
@@ -34,6 +38,7 @@ class Simple(Algorithm):
                     break
                 if self._args.cliff_enabled:
                     self._check_cliffs(robot)
+            self.print_info('Quit the algorithm loop')
 
     def _check_bumpers(self, robot: Robot, state: ExecutionState) -> bool:
         if robot.data.end_right_trig or robot.data.end_left_trig:
@@ -60,18 +65,21 @@ class Simple(Algorithm):
             self._is_lower_speed = False
 
     def on_prepare(self, robot: Robot):
+        self.print_info('On prepare')
         self._start_motors(robot)
 
     def _start_motors(self, robot: Robot) -> None:
         mbm_job: Job = robot.set_main_brush_motor(50)
         lbm_job: Job = robot.set_left_brush_motor(70)
         rbm_job: Job = robot.set_right_brush_motor(70)
-        robot.set_vacuum_motor(int(self._args.vacuum_motor_value)).expect()
+        if self._args.enable_vacuum_motor:
+            robot.set_vacuum_motor(int(self._args.vacuum_motor_value)).expect()
         mbm_job.expect()
         lbm_job.expect()
         rbm_job.expect()
 
     def on_pause(self, robot: Robot):
+        self.print_info('On pause')
         robot.stop_movement(with_break=True).expect()
 
         vm_job: Job = robot.set_vacuum_motor(0)
@@ -85,9 +93,11 @@ class Simple(Algorithm):
         rbm_job.expect()
 
     def on_resume(self, robot: Robot):
+        self.print_info('On resume')
         self._start_motors(robot)
 
     def on_finish(self, robot: Robot):
+        self.print_info('On finish')
         robot.stop_movement(with_break=True).expect()
 
         vm_job: Job = robot.set_vacuum_motor(0)
@@ -123,8 +133,11 @@ class Simple(Algorithm):
     def _step_aside_and_rotate(self, robot: Robot, rotate_left: Optional[bool]):
         def await_and_check(job):
             while True:
-                if job.response and robot.data.back_center_cliff_breakage or robot.data.back_left_cliff_breakage \
+                if job.response:
+                    break
+                elif robot.data.back_center_cliff_breakage or robot.data.back_left_cliff_breakage \
                         or robot.data.back_right_cliff_breakage:
+                    robot.stop_movement(True)
                     break
 
         bm_job = robot.move_backward(20, self._args.reverse_dis_speed, self._args.reverse_with_break)
