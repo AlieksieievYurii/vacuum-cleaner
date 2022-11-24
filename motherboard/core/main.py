@@ -41,8 +41,9 @@ def main() -> None:
     wifi_service = WifiService(wifi_communicator, wifi_logger)
     bluetooth_communicator = BluetoothCommunicator()
     bluetooth_service = BluetoothService(bluetooth_communicator, bluetooth_logger)
-    algorithm_manager = AlgorithmManager(robot, algorithm_manager_logger)
     voice: Voice = RudeMaximVoice(operation_system)
+    algorithm_manager = AlgorithmManager(robot, voice, algorithm_manager_logger)
+
     core = Core(os=operation_system,
                 robot=robot,
                 config=config,

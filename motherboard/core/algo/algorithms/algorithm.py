@@ -2,25 +2,36 @@ import abc
 from abc import ABC
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
-
-from a1.models import A1Data
+from typing import Any, Optional
 from a1.robot import Robot
+from utils.logger import Logger
 
 
 class AlgorithmException(Exception):
     pass
 
 
+# Pause Reason Codes
+MANUAL_PAUSE_REASON: str = '_manual_pause_'
+LID_IS_OPENED_PAUSE_REASON: str = '_lid_is_opened_'
+DUST_BOX_OUT_PAUSE_REASON: str = '_dust_box_out_'
+# ===============================
+
+# Stop Reason Codes
+MANUAL_STOP_REASON: str = '_manual_stop_'
+ERROR_OCCURRED_STOP_REASON: str = '_error_occurred_stop_'
+
+
 class ExecutionState(object):
     class State(Enum):
-        NONE = "none"
+        IDLE = "idle"
         RUNNING = "running"
         PAUSED = "paused"
         STOPPED = "stopped"
 
-    def __init__(self, init_value=State.NONE):
+    def __init__(self, init_value=State.IDLE):
         self._state = init_value
+        self._pause_reason: Optional[str] = None
 
     @property
     def is_break_event(self) -> bool:
@@ -28,7 +39,15 @@ class ExecutionState(object):
 
     @property
     def is_working(self) -> bool:
-        return self._state is not self.State.NONE
+        return self._state is not self.State.IDLE
+
+    def set_pause_state(self, reason: str):
+        self._pause_reason = reason
+        self.set_state(self.State.PAUSED)
+
+    @property
+    def pause_reason(self) -> Optional[str]:
+        return self._pause_reason
 
     def set_state(self, state: State):
         self._state = state
@@ -63,8 +82,9 @@ class Algorithm(ABC):
     cleaning/movement logic fo the robot
     """
 
-    def __init__(self, arguments: ArgumentsHolder):
+    def __init__(self, arguments: ArgumentsHolder, logger: Logger):
         self._args = arguments
+        self._logger = logger
 
     @abc.abstractmethod
     def on_prepare(self, robot: Robot):
@@ -93,6 +113,9 @@ class Algorithm(ABC):
             raise AlgorithmException('You must define NAME class variable')
         return name
 
+    def print_info(self, message: str) -> None:
+        self._logger.info(f'Algorithm<{self.get_name()}>: {message}')
+
     @classmethod
     def get_description(cls) -> str:
         description = cls.__dict__.get('DESCRIPTION')
@@ -108,8 +131,9 @@ class Algorithm(ABC):
         >>> class SomeAlgorithm(Algorithm):
         >>>     param_a = FieldParameter('paramA', str, default='hi')
         >>>     param_b = FieldParameter('paramB', int, default=123)
-        >>>     def loop(self, data: A1Data):
+        >>>     def loop(self, robot: Robot, state: ExecutionState):
         >>>         pass
+        >>>     ...
         >>> SomeAlgorithm.get_parameters()
         >>> {"param_a": FieldParameter('paramA', str, 'hi'), "param_b": FieldParameter('paramB', int, 123)}
 

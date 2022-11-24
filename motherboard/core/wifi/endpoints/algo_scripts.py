@@ -2,9 +2,13 @@ from dataclasses import dataclass
 from typing import List, Any, Optional
 
 from algo.algo_manager import AlgorithmManager, AlgorithmExecutionInfo
-from algo.algorithms.algorithm import ExecutionState
+from algo.algorithms.algorithm import ExecutionState, MANUAL_PAUSE_REASON
 from utils.config import Configuration
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field, ListType
+
+
+class AlgoScriptEndpointException(Exception):
+    pass
 
 
 @dataclass
@@ -83,6 +87,7 @@ class SetAlgorithmScriptRequest(RequestHandler):
 @dataclass
 class CleaningStatus(object):
     status: str
+    reason: Optional[str]
     cleaning_info: Optional[AlgorithmExecutionInfo]
 
 
@@ -99,17 +104,17 @@ class ManageCleaningExecutionRequest(RequestHandler):
         self._algorithm_manager = algorithm_manager
 
     def perform(self, request: Request, data: AttributeHolder):
-        command: Optional = {
-            'start': self._algorithm_manager.start,
-            'pause': self._algorithm_manager.pause,
-            'resume': self._algorithm_manager.resume,
-            'stop': self._algorithm_manager.stop
-        }[data.command]
-
-        if not command:
-            raise Exception(f'Wrong command: {data.command}')
+        command: str = data.command
+        if command == 'start':
+            self._algorithm_manager.start()
+        elif command == 'pause':
+            self._algorithm_manager.pause(MANUAL_PAUSE_REASON)
+        elif command == 'resume':
+            self._algorithm_manager.resume()
+        elif command == 'stop':
+            self._algorithm_manager.stop()
         else:
-            command()
+            raise AlgoScriptEndpointException(f'Wrong command: {data.command}')
 
 
 class GetCleaningStatusRequest(RequestHandler):
@@ -122,10 +127,13 @@ class GetCleaningStatusRequest(RequestHandler):
 
     def perform(self, request: Request, data: AttributeHolder) -> CleaningStatus:
         if self._algorithm_manager.current_state.equals(ExecutionState.State.RUNNING):
-            status = 'running'
+            return CleaningStatus(status='running', reason=None,
+                                  cleaning_info=self._algorithm_manager.algorithm_execution_info)
         elif self._algorithm_manager.current_state.equals(ExecutionState.State.PAUSED):
-            status = 'paused'
+            return CleaningStatus(status='paused',
+                                  reason=self._algorithm_manager.current_state.pause_reason,
+                                  cleaning_info=self._algorithm_manager.algorithm_execution_info)
         else:
-            status = 'none'
 
-        return CleaningStatus(status=status, cleaning_info=self._algorithm_manager.algorithm_execution_info)
+            return CleaningStatus(status='idle', reason=None,
+                                  cleaning_info=self._algorithm_manager.algorithm_execution_info)

@@ -1,4 +1,4 @@
-from typing import Dict, Optional
+from typing import Dict
 
 
 class RequestHandlerException(Exception):
@@ -19,9 +19,7 @@ class InvalidRequestData(RequestHandlerException):
     """
     Exception representing the fail of Request Data parsing
     """
-
-    def __init__(self, data: Optional[str] = None):
-        super().__init__(f'Data: {data}')
+    pass
 
 
 class RequiredFieldIsNotFound(RequestHandlerException):

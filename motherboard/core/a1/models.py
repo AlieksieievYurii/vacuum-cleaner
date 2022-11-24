@@ -1,9 +1,9 @@
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Callable
 
-from a1.exceptions import CannotParse, InstructionTimeout, InstructionFailureException
+from a1.exceptions import CannotParse, InstructionTimeout, InstructionFailureException, A1Exception
 from utils.utils import millis, constrain_number
 
 
@@ -33,18 +33,18 @@ class Response(object):
     @property
     def data(self) -> str:
         if not self._data:
-            raise Exception('This response is not supposed to have data')
+            raise A1Exception('This response is not supposed to have data')
         return self._data
 
     @property
     def error_code(self):
         if self.is_successful:
-            raise Exception('The response is successful. So it does not have error code')
+            raise A1Exception('The response is successful. So it does not have error code')
         return self._error_code
 
     def raise_if_failed(self):
         if not self.is_successful:
-            raise Exception(f'The instruction has failed! ID:{self.id}. Error Code: {self.error_code}')
+            raise A1Exception(f'The instruction has failed! ID:{self.id}. Error Code: {self.error_code}')
 
     @classmethod
     def parse(cls, string: str) -> 'Response':
@@ -97,6 +97,8 @@ class Job(object):
                     raise InstructionFailureException(self._request, self._response.error_code)
                 return self._response
 
+        return None
+
 
 class ButtonState(Enum):
     NOTHING = 0
@@ -122,8 +124,8 @@ class A1Data(object):
         self._bluetooth_button_click: ButtonState = ButtonState.NOTHING
         self.end_right_trig: bool = False
         self.end_left_trig: bool = False
-        self.end_dust_box_trig: bool = False
-        self.end_lid_trig: bool = False
+        self.dust_box_present: bool = False
+        self.lid_is_closed: bool = False
         self.rangefinder_left_value: int = 0
         self.rangefinder_center_value: int = 0
         self.rangefinder_right_value: int = 0
@@ -137,8 +139,10 @@ class A1Data(object):
         self.battery_capacity: int = 0  # 0...100
         self.is_shut_down_button_triggered: bool = False
         self.charging_state: ChargingState = ChargingState.NO_CHARGING
-        self.right_wheel_speed: int = 0  # Sm per minute
-        self.left_wheel_speed: int = 0  # Sm per minute
+        # Sm per minute
+        self.right_wheel_speed: int = 0
+        # Sm per minute
+        self.left_wheel_speed: int = 0
 
     @property
     def button_up(self) -> ButtonState:
@@ -184,17 +188,18 @@ class A1Data(object):
         }
         for result in self.__PATTERN.findall(string):
             sensor_id = int(result[0], 16)
-            value = int(result[1])
-            f = parsers.get(sensor_id)
-            if f:
-                f(value)
+            value: int = int(result[1])
+            fun: Callable = parsers.get(sensor_id)
+            if fun:
+                fun(value)
 
     def _parse_wheels_speed(self, value: int) -> None:
         self.right_wheel_speed = value & 0xFFFF
         self.left_wheel_speed = (value >> 0x10) & 0xFFFF
 
     def _parse_power_controller_states(self, value: int) -> None:
-        power_state = value & 0x3  # Fetch first 3 bits which represents power state
+        # Fetch first 3 bits which represents power state
+        power_state = value & 0x3
         # 1 - booting up
         # 2 - 0x0 (TURNED_OFF)
         # 0x1 (BOOTING_UP)
@@ -236,8 +241,8 @@ class A1Data(object):
     def _parse_and_set_ends_state(self, value: int) -> None:
         self.end_right_trig = bool(value & 0x1)
         self.end_left_trig = bool(value & 0x2)
-        self.end_lid_trig = bool(value & 0x4)
-        self.end_dust_box_trig = bool(value & 0x8)
+        self.lid_is_closed = bool(value & 0x4)
+        self.dust_box_present = bool(value & 0x8)
 
     def _parse_dis_values(self, value: int) -> None:
         self.rangefinder_left_value = value & 0xFF

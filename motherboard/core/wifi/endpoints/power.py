@@ -1,6 +1,10 @@
 from utils.request_handler.models import RequestHandler, Field, Request, AttributeHolder
 
 
+class PowerEndpointException(Exception):
+    pass
+
+
 class PowerRequestModel(object):
     command = Field('command', str, is_required=True)
 
@@ -20,4 +24,4 @@ class PowerRequestHandler(RequestHandler):
         elif data.command == 'reboot':
             self._on_reboot()
         else:
-            raise Exception(f'Wrong command: {data.command}')
+            raise PowerEndpointException(f'Wrong command: {data.command}')

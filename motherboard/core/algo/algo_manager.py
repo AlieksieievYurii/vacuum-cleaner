@@ -10,6 +10,7 @@ from algo.algorithms.smart import Smart
 from algo.algorithms.algorithm import Algorithm, ArgumentsHolder, ExecutionState
 from algo.algorithms.simple import Simple
 from utils.logger import Logger
+from utils.speetch.voice import Voice
 
 
 class AlgorithmManagerException(Exception):
@@ -41,12 +42,13 @@ class AlgorithmManager(object):
         Smart
     ]
 
-    def __init__(self, robot: Robot, logger: Logger):
+    def __init__(self, robot: Robot, voice: Voice, logger: Logger):
         self._robot = robot
         self._logger = logger
+        self._voice = voice
         self._state = ExecutionState()
 
-        self._algorithm_execution_info: Optional[AlgorithmManagerException] = None
+        self._algorithm_execution_info: Optional[AlgorithmExecutionInfo] = None
         self._algorithm: Optional[Algorithm] = None
         self._working_thread: Optional[Thread] = None
         self._configs_folder: Path = Path(__file__).parent / 'algorithms' / 'configs'
@@ -60,14 +62,14 @@ class AlgorithmManager(object):
         :return: None
         """
 
-        if not self._state.equals(ExecutionState.State.NONE):
+        if not self._state.equals(ExecutionState.State.IDLE):
             raise AlgorithmManagerException(
                 f'Forbidden to set target algorithm during the execution. Current state: {self._state.state}')
 
         self._logger.info(f'Set Cleaning Algorithm: {name}')
-        algorithm = self._get_algorithm_class(name)
+        algorithm: Type[Algorithm] = self._get_algorithm_class(name)
         algorithm_arguments_holder = self._load_arguments(algorithm)
-        self._algorithm = algorithm(algorithm_arguments_holder)
+        self._algorithm = algorithm(algorithm_arguments_holder, self._logger)
 
     def save_algorithm_arguments(self, algorithm_name: str, arguments: dict) -> None:
         """
@@ -154,12 +156,13 @@ class AlgorithmManager(object):
         self._state.set_state(ExecutionState.State.RUNNING)
         self._algorithm_execution_info = AlgorithmExecutionInfo.create(self.get_current_algorithm_name())
         self._working_thread = Thread(name='algorithm-execution', target=self._algorithm_loop, daemon=False)
+        self._voice.say_start_cleaning()
         self._working_thread.start()
 
-    def pause(self):
+    def pause(self, reason: str):
         if not self._state.equals(ExecutionState.State.RUNNING):
             raise AlgorithmManagerException(f'Can not pause while the state is: {self._state.state}')
-        self._state.set_state(ExecutionState.State.PAUSED)
+        self._state.set_pause_state(reason)
 
     def resume(self):
         if not self._state.equals(ExecutionState.State.PAUSED):
@@ -181,7 +184,7 @@ class AlgorithmManager(object):
         :return: None
         """
 
-        if self._state.equals(ExecutionState.State.NONE) or self._state.equals(ExecutionState.State.STOPPED):
+        if self._state.equals(ExecutionState.State.IDLE) or self._state.equals(ExecutionState.State.STOPPED):
             raise AlgorithmManagerException(f'You can not stop execution while state: {self._state.state}')
 
         self._state.set_state(ExecutionState.State.STOPPED)
@@ -190,7 +193,8 @@ class AlgorithmManager(object):
         self._algorithm_execution_info.finish_time = datetime.now()
         self._add_execution_to_history(self._algorithm_execution_info)
         self._algorithm_execution_info = None
-        self._state.set_state(ExecutionState.State.NONE)
+        self._state.set_state(ExecutionState.State.IDLE)
+        self._voice.say_cleaning_is_finished()
 
     def _algorithm_loop(self) -> None:
         self._algorithm.on_prepare(self._robot)
@@ -209,17 +213,17 @@ class AlgorithmManager(object):
         while True:
             if self._state.equals(ExecutionState.State.RUNNING):
                 self._algorithm.on_resume(self._robot)
-            if self._state.equals(ExecutionState.State.STOPPED) or self._state.equals(ExecutionState.State.RUNNING):
+                break
+            elif self._state.equals(ExecutionState.State.STOPPED):
                 break
 
     def _get_algorithm_class(self, algorithm_name: str) -> Type[Algorithm]:
         for algorithm in self.ALGORITHMS:
             if algorithm.get_name() == algorithm_name:
                 return algorithm
-        else:
-            raise AlgorithmManagerException(f'Can not find the given algorithm: {algorithm_name}')
+        raise AlgorithmManagerException(f'Can not find the given algorithm: {algorithm_name}')
 
-    def _load_arguments(self, algorithm: Algorithm) -> ArgumentsHolder:
+    def _load_arguments(self, algorithm: Type[Algorithm]) -> ArgumentsHolder:
         self._logger.info(f'Try to load "{algorithm.get_name()}" arguments from the config')
         try:
             args = self._load_arguments_from_file(algorithm)
@@ -309,15 +313,16 @@ class AlgorithmManager(object):
 
         raise AlgorithmManagerException(f'Unsupported type for the argument: {t}')
 
-    def _read_config_for(self, algorithm: Algorithm) -> dict:
+    def _read_config_for(self, algorithm: Type[Algorithm]) -> dict:
         config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         if not config_file.exists():
             raise LoadingAlgorithmArgumentsException(f'Config file for "{algorithm.get_name()}" does not exist!')
         return json.loads(config_file.read_bytes())
 
-    def _save_config_for(self, algorithm: Algorithm, parameters: dict) -> None:
+    def _save_config_for(self, algorithm: Type[Algorithm], parameters: dict) -> None:
         config_file = self._configs_folder / f'{algorithm.get_name()}.json'
         config_file.write_text(json.dumps(parameters, indent=4))
 
     def _add_execution_to_history(self, record: AlgorithmExecutionInfo):
+        """TODO: Implement history mechanism"""
         pass

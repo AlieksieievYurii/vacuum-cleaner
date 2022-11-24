@@ -113,7 +113,7 @@ class InitialFragmentViewModel(
         val status = robot.getCleaningStatus().status
         _state.value = State.Connected(robotIp)
         delay(2000)
-        if (status == CleaningStatusEnum.NONE)
+        if (status == CleaningStatusEnum.IDLE)
             sendEvent(Event.NavigateToControlPanel)
         else
             sendEvent(Event.NavigateToExecutionScreen)

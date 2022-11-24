@@ -104,14 +104,25 @@ data class Algorithm(
 )
 
 enum class CleaningStatusEnum(val value: String) {
-    @Json(name = "none")
-    NONE("none"),
+    @Json(name = "idle")
+    IDLE("idle"),
 
     @Json(name = "running")
     RUNNING("running"),
 
     @Json(name = "paused")
     PAUSED("paused")
+}
+
+enum class PauseStopReason(val value: String) {
+    @Json(name = "_manual_pause_")
+    MANUAL("_manual_pause_"),
+
+    @Json(name = "_lid_is_opened_")
+    LID_IS_OPENED("_lid_is_opened_"),
+
+    @Json(name = "_dust_box_out_")
+    DUST_BOX_OUT("_dust_box_out_")
 }
 
 @JsonClass(generateAdapter = true)
@@ -124,10 +135,11 @@ data class CleaningExecutionInfo(
 @JsonClass(generateAdapter = true)
 data class CleaningStatus(
     val status: CleaningStatusEnum,
+    val reason: PauseStopReason?,
     @Json(name = "cleaning_info") val cleaningInfo: CleaningExecutionInfo?
 ) {
     fun requireCleaningInfo(): CleaningExecutionInfo {
-        if (status == CleaningStatusEnum.NONE)
+        if (status == CleaningStatusEnum.IDLE)
             throw IllegalStateException("Can not get Cleaning Info because it is not running")
 
         return cleaningInfo!!

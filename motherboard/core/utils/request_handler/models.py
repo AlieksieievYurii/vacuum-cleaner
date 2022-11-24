@@ -1,7 +1,7 @@
 import abc
 from dataclasses import dataclass
 from enum import Enum
-from typing import Type, Dict, Optional, Any
+from typing import Dict, Optional, Any
 from utils.request_handler.exceptions import InvalidRequestData
 
 
@@ -24,7 +24,7 @@ class Field(object):
 
     """
     name: str
-    type: Type
+    type: Any
     is_required: bool = False
 
 
@@ -52,7 +52,7 @@ class Request(object):
                        request_id=request['request_id'],
                        parameters=request.get('parameters'))
         except KeyError:
-            raise InvalidRequestData(data=request)
+            raise InvalidRequestData(f'{request}')
 
 
 @dataclass

@@ -1,5 +1,11 @@
+from typing import Callable
+
 from a1.robot import Robot
 from utils.request_handler.models import RequestHandler, Request, AttributeHolder, Field
+
+
+class MotorEndpointException(Exception):
+    pass
 
 
 class RequestModel(object):
@@ -22,11 +28,11 @@ class Motor(RequestHandler):
 
     def perform(self, request: Request, data: AttributeHolder) -> None:
         if data.value > 100 or data.value < 0:
-            raise Exception('Value must be in range 0..100')
+            raise MotorEndpointException('Value must be in range 0..100')
 
-        motor_fun_call = self._motors.get(data.motor_name)
+        motor_fun_call: Callable = self._motors.get(data.motor_name)
 
         if motor_fun_call:
             motor_fun_call(data.value)
         else:
-            raise Exception(f'There is not such motor name "{data.motor_name}"')
+            raise MotorEndpointException(f'There is not such motor name "{data.motor_name}"')

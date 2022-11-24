@@ -5,6 +5,7 @@ from typing import Optional
 from a1.models import ButtonState
 from a1.robot import Robot, LedState
 from algo.algo_manager import AlgorithmManager
+from algo.algorithms.algorithm import LID_IS_OPENED_PAUSE_REASON, DUST_BOX_OUT_PAUSE_REASON, ExecutionState
 from blservice.endpoints.wifi import SetWifiCredentialsRequestHandler, GetCurrentWifiCredentialsRequestHandler, \
     GetAvailableAccessPointsRequestHandler
 from blservice.service import BluetoothService
@@ -18,7 +19,6 @@ from utils.utils import get_typed_arg
 from wifi.endpoints.a1_data import GetA1DataRequestHandler
 from wifi.endpoints.algo_scripts import GetAlgorithmsRequest, SetAlgorithmScriptRequest, \
     ManageCleaningExecutionRequest, GetCleaningStatusRequest
-from wifi.endpoints.hello_world import HelloWorldRequest
 from utils.logger import Logger
 from wifi.endpoints.motor import Motor
 from wifi.endpoints.movement import Movement, StopMovement
@@ -50,7 +50,6 @@ class Core(object):
         self._bluetooth_service.register_endpoint(SetWifiCredentialsRequestHandler(self._os))
         self._bluetooth_service.register_endpoint(GetCurrentWifiCredentialsRequestHandler(self._os))
         self._bluetooth_service.register_endpoint(GetAvailableAccessPointsRequestHandler(self._os))
-        self._wifi_service.register_endpoint(HelloWorldRequest())
         self._wifi_service.register_endpoint(GetRobotSysInfo())
         self._wifi_service.register_endpoint(Motor(self._robot))
         self._wifi_service.register_endpoint(Movement(self._robot))
@@ -131,7 +130,7 @@ class Core(object):
             self._os.set_date_time(rtc_data_time)
 
     def _run_core_loop(self) -> None:
-        # self._voice.say_introduction()
+        self._voice.say_introduction()
         while True:
             if self._is_shutting_down_triggered():
                 self._shut_down_core()
@@ -142,6 +141,21 @@ class Core(object):
             wifi_service_event: Optional[int] = self._wifi_service.events.get()
             if wifi_service_event == WifiService.WIFI_SERVICE_FAILED_EVENT:
                 self._robot.set_error_led(LedState.ON)
+                self._voice.say_something_is_wrong()
+
+            if self._algorithm_manager.current_state.equals(ExecutionState.State.RUNNING):
+                if not self._robot.data.lid_is_closed:
+                    self._algorithm_manager.pause(LID_IS_OPENED_PAUSE_REASON)
+                    self._voice.say_lid_is_opened()
+                elif not self._robot.data.dust_box_present:
+                    self._algorithm_manager.pause(DUST_BOX_OUT_PAUSE_REASON)
+                    self._voice.say_dust_box_is_out()
+            elif self._algorithm_manager.current_state.equals(ExecutionState.State.PAUSED):
+                if self._algorithm_manager.current_state.pause_reason == LID_IS_OPENED_PAUSE_REASON and \
+                        self._robot.data.lid_is_closed or \
+                        self._algorithm_manager.current_state.pause_reason == DUST_BOX_OUT_PAUSE_REASON and \
+                    self._robot.data.dust_box_present:
+                    self._algorithm_manager.resume()
 
             self.scheduler.tick()
 
@@ -169,6 +183,7 @@ class Core(object):
         elif bluetooth_service_event == BluetoothService.ERROR_OCCURRED_EVENT:
             self._robot.set_bluetooth_led_state(green=False, state=LedState.BLINKING)
             self._logger.error('Error occurred in Bluetooth Service')
+            self._voice.say_something_is_wrong()
 
     def _check_wifi_connection(self) -> None:
         self._robot.set_wifi_led(LedState.ON if self._os.get_ip_address() else LedState.OFF)
@@ -178,16 +193,16 @@ class Core(object):
 
     def _shut_down_core(self) -> None:
         self._logger.info('Preparing to shutdown')
-        self._logger.info('Stop Wifi Service...')
-        # self._wifi_endpoints_handler.stop() TODO
-        self._logger.info('Stop Bluetooth Service...')
-        # self._bluetooth_endpoints_handler.stop() TODO
+        self._logger.info('Disable all motors...')
+        self._robot.set_vacuum_motor(0).expect()
+        self._robot.set_main_brush_motor(0).expect()
+        self._robot.set_left_brush_motor(0).expect()
+        self._robot.set_right_brush_motor(0).expect()
+        self._voice.say_goodbye()
         self._logger.info('Send signal to turn off the robot in 10 seconds to A1...')
         self._robot.set_shutting_down_led().expect()
-        sleep(0.5)
+        sleep(5)
         self._robot.set_timer_to_cut_off_power(15).expect()
         sleep(1)
-        self._logger.info('Close A1 Connection...')
-        # TODO
         self._logger.info('Perform shutdown the system...')
         self._os.shutdown()
