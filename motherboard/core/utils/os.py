@@ -200,9 +200,9 @@ class LinuxOperationSystem(OperationSystem):
         key_mgmt = re.search(r'key_mgmt\s*=\s*(\S+)', wpa_conf_content)
         try:
             return {
-                'ssid': ssid.group(1),
-                'psk': psk.group(1),
-                'key_mgmt': key_mgmt.group(1)
+                'ssid': ssid.group(1) if ssid else "",
+                'psk': psk.group(1) if psk else "",
+                'key_mgmt': key_mgmt.group(1) if key_mgmt else ""
             }
         except Exception as error:
             raise OperationSystemException(f'Can not load WPA config: {error}')
