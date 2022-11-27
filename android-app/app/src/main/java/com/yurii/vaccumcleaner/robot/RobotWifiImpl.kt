@@ -63,7 +63,7 @@ class RobotWifiImplementation(private val requestHandler: RequestHandler) : Robo
     }
 
     override suspend fun setWifiSettings(wifiSettings: WifiSettingsRequestModel): NetworkInfo {
-        return requestHandler.send("/setup-wifi", wifiSettings, NetworkInfo::class.java, timeout = 15000)!!
+        return requestHandler.send("/setup-wifi", wifiSettings, NetworkInfo::class.java, timeout = 20000)!!
     }
 
     override suspend fun getNetworkScan(): NetworkScan {

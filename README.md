@@ -10,6 +10,9 @@ This project is about how to create a simple vacuum cleaner robot. The following
 * Android Native App (SDK level >= 22) - is responsible for different configurations, analyzing, manual controlling etc.
 * 3D printing - the entire model is printed by 3D printer with PLA plastic. [Fusion 360](https://www.autodesk.com/products/fusion-360/overview) is used for parametric modeling and [Cura](https://ultimaker.com/software/ultimaker-cura) for slicing.
 
+[![image](https://user-images.githubusercontent.com/39415360/204157351-8009d299-9614-4320-a09e-5ee5d5719748.png)](https://www.youtube.com/watch?v=dgfaQ1eYDQo)
+
+
 ## Overview
 * The robot is a rounded shape with the following sizes: 385x99 mm
 * Weight: 3 KG
