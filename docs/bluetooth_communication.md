@@ -34,7 +34,7 @@ Fields:
 * (optional) `parameters` [json] - json object containing required input parameters for given request.
 
 ## Packet as Response
-This sort of packet is supposed to be reveived by a client as a response from a request.
+This sort of packet is supposed to be received by a client as a response from a request.
 ``` 
 {
   "type": "RESPONSE",
