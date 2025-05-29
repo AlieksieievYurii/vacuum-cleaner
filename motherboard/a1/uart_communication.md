@@ -12,7 +12,7 @@ There are two types of requests:
    `$S:<Id(4 bytes of hex)>\n` - if the command is executed successfully</br>
    `$F:<Id(4 bytes of hex)>:<code error(one byte of hex)>\n` - if the instruction has failed. The response also contains error code
 * **demandable** - after instruction execution, response callback with some data is sent. Response format:</br>
-  `$R:<Id(4 bytes of hex)>:<reponse data(char array, max should be 54 bytes)>\n` - if the command is executed successfully</br>
+  `$R:<Id(4 bytes of hex)>:<response data(char array, max should be 54 bytes)>\n` - if the command is executed successfully</br>
   `$F:<Id(4 bytes of hex)>:<code error(one byte of hex)>\n` - if the instruction has failed. The response also contains error code
 
 Example of the command: `#F1:7A31:H\n` and the response: `$S:7A31\n`.
