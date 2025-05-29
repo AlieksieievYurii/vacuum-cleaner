@@ -79,7 +79,7 @@ Response:
 * `password` [string] - the password of wifi
 
 ### Set Wifi
-This request sets given Wifi settins such as ssid and password. 
+This request sets given Wifi settings such as ssid and password. 
 Note: The request takes at least 10 seconds
 
 Request name: `set_wifi_settings`</br>
