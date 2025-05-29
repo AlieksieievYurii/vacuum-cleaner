@@ -1,5 +1,5 @@
 # Bluetooth communication
-This document describes how the communication between Rasbperry Pi Zero W and Android App is implemented via BLuetooth.
+This document describes how the communication between Raspberry Pi Zero W and Android App is implemented via BLuetooth.
 
 The entire process of communication is done by sending a JSON texts between two devices(Raspberry Pi and Android App). Each message is called `Packet`. Once the connection is established between two devices(in this case they are Raspberry Pi and Android App), packages can be sent in both directions. Raspberry Pi can accept requests and than handle it, also can send requests to the Android App.
 ![image](https://user-images.githubusercontent.com/39415360/135327957-4e9222cf-fe4f-478e-a888-0e3d026f421e.png)
