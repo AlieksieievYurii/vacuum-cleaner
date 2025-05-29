@@ -12,7 +12,7 @@ Assembled model:
 ![image](https://user-images.githubusercontent.com/39415360/141313228-57444d4d-fb4a-4730-8b9c-9480ef769b71.png)
 
 Advantages:
-* Simple constuction
+* Simple construction
 * Enough pulling power
 
 Disadvantages:
