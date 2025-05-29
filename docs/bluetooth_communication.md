@@ -88,7 +88,7 @@ Parameters:
 * `password` [string] - password of the wifi
 
 Response:
-* `is_connected` [boolean] - is True if succeded to connect
+* `is_connected` [boolean] - is True if succeeded to connect
 * `ip` [string] - the given IP by the network
 * (optional) `error_message` [string] - if something went wrong
 
