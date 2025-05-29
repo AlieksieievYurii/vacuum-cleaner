@@ -22,7 +22,7 @@ Disadvantages:
 --------------
 
 Next improvements:
-* Decrease heigh and weight sizes
+* Decrease height and weight sizes
 * Decrease diameter of turbine wheel from 80 mm to 55 mm
 * Decrease offset between the wall and the turbine wheel -> from 10 mm to 5mm
 * Move output pipe to the corner
