@@ -88,7 +88,7 @@ void calculate_and_print_measurements() {
   Serial.print("Pulses: "); Serial.println(wheel_pulse_count);
   Serial.print("Speed: "); Serial.print(rpm_right); Serial.println(" RPM");
   Serial.print("Distance: ");Serial.print(distance);Serial.println(" mm");
-  Serial.print("Forwad: "); Serial.println(forwad_direction);
+  Serial.print("Forward: "); Serial.println(forwad_direction);
   Serial.println();
 
   wheel_pulse_count = 0;

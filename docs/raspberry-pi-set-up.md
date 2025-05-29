@@ -31,7 +31,7 @@ Where:
     * If you only have one Raspberry Pi on your network, you can SSH into the device via its hostname: `ssh pi@raspberrypi.local`
     * If you have more than one Pi on your network, a number will be attached to the `hostname.raspberrypi-NUM.local`. `NUM` will be the order in which they came on the network
     * Default password is `raspberry`
-    * **Note:** if you have already tried to connect to Rasbperry Py, you may meet the following error while connecting via SSH: ![image](https://user-images.githubusercontent.com/39415360/133641502-f27d22b7-791f-4bd4-b71c-384008f68f1a.png) 
+    * **Note:** if you have already tried to connect to Raspberry Py, you may meet the following error while connecting via SSH: ![image](https://user-images.githubusercontent.com/39415360/133641502-f27d22b7-791f-4bd4-b71c-384008f68f1a.png) 
 
 To solve the issue, go to the .ssh folder, usually it is located in the user’s home directory -> `C:\Users\newgo\.ssh` and open the file `known_hosts`. In that file, you should delete line with raspberrypi.
 

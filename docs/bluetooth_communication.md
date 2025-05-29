@@ -1,5 +1,5 @@
 # Bluetooth communication
-This document describes how the communication between Rasbperry Pi Zero W and Android App is implemented via BLuetooth.
+This document describes how the communication between Raspberry Pi Zero W and Android App is implemented via BLuetooth.
 
 The entire process of communication is done by sending a JSON texts between two devices(Raspberry Pi and Android App). Each message is called `Packet`. Once the connection is established between two devices(in this case they are Raspberry Pi and Android App), packages can be sent in both directions. Raspberry Pi can accept requests and than handle it, also can send requests to the Android App.
 ![image](https://user-images.githubusercontent.com/39415360/135327957-4e9222cf-fe4f-478e-a888-0e3d026f421e.png)
@@ -34,7 +34,7 @@ Fields:
 * (optional) `parameters` [json] - json object containing required input parameters for given request.
 
 ## Packet as Response
-This sort of packet is supposed to be reveived by a client as a response from a request.
+This sort of packet is supposed to be received by a client as a response from a request.
 ``` 
 {
   "type": "RESPONSE",
@@ -50,7 +50,7 @@ This sort of packet is supposed to be reveived by a client as a response from a 
 Fields:
 * `request_id` [string] - an unique id that is taken from a correspondent request.
 * `request_name` [string] - a request name that is take from a correspondent request.
-* `status` [string] - contaning a response status. `OK` - when the request is done successfuly, `ERROR` - the request is failed due to unexpected failure, `BAD_REQUEST` - when request parameters are bad.
+* `status` [string] - containing a response status. `OK` - when the request is done successfully, `ERROR` - the request is failed due to unexpected failure, `BAD_REQUEST` - when request parameters are bad.
 * (optional) `error_message` [string] - if the `status` is `BAD_REQUEST` or `ERROR` this field is supposed to be added to the response, containing error message.
 * (optional) `response` [json] - json object containing output response from the request.
 
@@ -79,7 +79,7 @@ Response:
 * `password` [string] - the password of wifi
 
 ### Set Wifi
-This request sets given Wifi settins such as ssid and password. 
+This request sets given Wifi settings such as ssid and password. 
 Note: The request takes at least 10 seconds
 
 Request name: `set_wifi_settings`</br>
@@ -88,7 +88,7 @@ Parameters:
 * `password` [string] - password of the wifi
 
 Response:
-* `is_connected` [boolean] - is True if succeded to connect
+* `is_connected` [boolean] - is True if succeeded to connect
 * `ip` [string] - the given IP by the network
 * (optional) `error_message` [string] - if something went wrong
 

@@ -1,7 +1,7 @@
 /*
    PowerController is a board based on Arduino Nano that is responsible for proper switching on or off the main power.
    Also reads the battery's cells voltages. The board has DC-DC regulator that is considered as a charger,
-   so the board also checks if the battery is charging correclty.
+   so the board also checks if the battery is charging correctly.
    The board itself is supposed to be connected with motherboard(with A1 module) by I2C protocol as Slave. A1 module sends specific commands, e.g
    to say that the mother board has been booted up or is goint to shut down.
 */
