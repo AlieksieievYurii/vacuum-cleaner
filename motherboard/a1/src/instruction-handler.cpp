@@ -105,7 +105,7 @@ void InstructionHandler::on_failed(uint16_t request_id, uint8_t error_code) {
 
 InstructionStatus InstructionHandler::_handle(char* input) {
   if (input[0] != START_PREFIX || // Validate if starts with command prefix
-      input[COMMAND_SIZE + 1] != ID_DEVIDER || // Validate ID devider
+      input[COMMAND_SIZE + 1] != ID_DEVIDER || // Validate ID divider
       input[COMMAND_SIZE + 1 + ID_SIZE + 1] != PARAMETERS_DEVIDER // Validate parameters devider
      )
     return WRONG_INSTRUCTION;
