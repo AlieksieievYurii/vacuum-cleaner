@@ -16,7 +16,7 @@ Advantages:
 * Enough pulling power
 
 Disadvantages:
-* Big size -> height: 130 mm, weight: 103 mm, lenght: 107 mm
+* Big size -> height: 130 mm, weight: 103 mm, length: 107 mm
 * High current -> 12v ~ 3.9 A
 * No sensor of speed
 --------------
